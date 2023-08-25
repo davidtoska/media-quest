@@ -1,0 +1,10 @@
+{
+  "name": "@media-quest/builder",
+  "version": "0.0.1",
+  "description": "Builder library for Media-quest schemas",
+  "main": "./src/public-api.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@media-quest/engine": "0.0.1"
+  }
+}
