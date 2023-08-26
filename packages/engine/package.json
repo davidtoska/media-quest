@@ -1,7 +1,14 @@
 {
   "name": "@media-quest/engine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Rendering engine for media-quest schemas.",
-  "main": "./src/public-api.ts",
-  "license": "MIT"
+  "main": "dist/public-api.js",
+  "module": "dist/public-api.mjs",
+  "types": "dist/public-api.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsup src/public-api.ts --format cjs,esm --dts",
+    "prepublishOnly": "npm run build"
+  }
 }

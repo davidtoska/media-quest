@@ -1,5 +1,5 @@
 import { dummyAudioFiles, dummyVideoFiles } from "./hardcoded-media";
-import { BuilderSchema } from "../../src/builder";
+import { BuilderSchema } from "@media-quest/builder";
 
 const s = BuilderSchema.create("test", "Dummy-schema", "xy");
 

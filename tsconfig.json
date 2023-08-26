@@ -9,11 +9,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "rootDir": "./example/src",
-    "outDir": "./example/dist"
+    "rootDir": ".",
+    "outDir": "dist"
   },
-  "files": [
-    "example/src/*/**.ts"
+  "include": [
+    "example/src/*/**.ts",
+    "packages"
   ],
   "references": [
     {

@@ -2,7 +2,7 @@
 // import type { ImageFile } from '../../media/image-file';
 // import type { VideoFile } from '../../media/video-file';
 
-import { AudioFile, ImageFile, VideoFile } from "../../src/builder/media-files";
+import { AudioFile, ImageFile, VideoFile } from "@media-quest/builder";
 
 export const dummyVideoFiles = [
     {
