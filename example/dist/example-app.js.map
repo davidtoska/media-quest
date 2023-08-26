@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../packages/engine/src/public-api.ts", "../../packages/builder/src/public-api.ts", "../src/example-app.ts"],
-  "sourcesContent": ["export const createEngine = () => {\n  const engine = document.createElement(\"div\");\n  engine.innerText = \"ENGINE\";\n  return engine;\n}\n", "import {createEngine} from \"@media-quest/engine\";\nexport const logBuilder = () =>  {\n  const engine = createEngine();\n  console.log(engine.innerText);;\n  console.log(\"HELLO FROM BUILDER!! I Have imported engine with innerText: \" + engine.innerText)\n}\n", "import {logBuilder} from \"../../packages/builder\";\nimport {createEngine} from \"../../packages/engine\";\nconst e = createEngine();\nconst root = document.getElementById(\"root\") as HTMLDivElement;\nroot.appendChild(e)\nconsole.log(\"Update??\")\nlogBuilder();\n"],
-  "mappings": ";;;AAAO,MAAM,eAAe,MAAM;AAChC,UAAM,SAAS,SAAS,cAAc,KAAK;AAC3C,WAAO,YAAY;AACnB,WAAO;AAAA,EACT;;;ACHO,MAAM,aAAa,MAAO;AAC/B,UAAM,SAAS,aAAa;AAC5B,YAAQ,IAAI,OAAO,SAAS;AAAE;AAC9B,YAAQ,IAAI,iEAAiE,OAAO,SAAS;AAAA,EAC/F;;;ACHA,MAAM,IAAI,aAAa;AACvB,MAAM,OAAO,SAAS,eAAe,MAAM;AAC3C,OAAK,YAAY,CAAC;AAClB,UAAQ,IAAI,UAAU;AACtB,aAAW;",
-  "names": []
-}
