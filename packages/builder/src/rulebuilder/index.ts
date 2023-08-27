@@ -1,10 +1,10 @@
-export { BuilderCondition, type BuilderConditionDto } from "./Builder-condition";
+export { BuilderCondition, type BuilderConditionDto } from "./condition/Builder-condition";
 export {
-    BuilderConditionGroup,
-    type BuilderConditionGroupDto,
-    type ConditionGroupType,
-} from "./Builder-condition-group";
-export { BuilderOperator } from "./Builder-operator";
+  BuilderConditionGroup,
+  type BuilderConditionGroupDto,
+  type ConditionGroupType,
+} from "./condition/Builder-condition-group";
+export { BuilderOperator } from "./condition/Builder-operator";
 export { BuilderRule, type BuilderRuleDto } from "./Builder-rule";
 export { JumpToActionManager } from "./jump-to-action-manager";
 export { MultiSelectItem, ExcludeByPageIdSelectItem, ExcludeByTagSelectItem } from "./multi-select-item";
@@ -13,10 +13,10 @@ export { type ExcludeByPageAction, type ExcludeByTagAction, type JumpToPageActio
 export { RuleInput } from "./RuleInput";
 export { CustomVariable, BuilderVariableOption, type BuilderVariable, QuestionVariable } from "./RuleVariable";
 export {
-    SingleSelectItem,
-    OperatorSelectItem,
-    RuleOptionSelectItem,
-    RuleVariableSelectItem,
-    JumpToPageSelectItem,
+  SingleSelectItem,
+  OperatorSelectItem,
+  RuleOptionSelectItem,
+  RuleVariableSelectItem,
+  JumpToPageSelectItem,
 } from "./SingleSelectItem";
 export { TagActionManager } from "./tag-action-manager";

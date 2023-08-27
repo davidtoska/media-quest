@@ -1,62 +1,46 @@
-import {
-  BuilderCondition,
-  type BuilderConditionDto
-} from './Builder-condition';
-import { BuilderObject } from '../BuilderObject';
-import type { BuilderVariable } from './RuleVariable';
+import { BuilderCondition, type BuilderConditionDto } from "./Builder-condition";
+import { BuilderObject } from "../../BuilderObject";
+import type { BuilderVariable } from "../RuleVariable";
 
 const ConditionGroupType = {
   all: true,
   any: true,
   count: true,
-  range: true
+  range: true,
 };
 
 export type ConditionGroupType = keyof typeof ConditionGroupType;
 export interface BuilderConditionGroupDto {
-  readonly kind: 'condition-group';
+  readonly kind: "condition-group";
   readonly name: string;
   readonly type: ConditionGroupType;
   readonly conditions: ReadonlyArray<BuilderConditionDto>;
 }
 
-export class BuilderConditionGroup extends BuilderObject<
-  'builder-condition-group',
-  BuilderConditionGroupDto
-> {
-  static readonly isConditionGroupType = (
-    value: string | symbol
-  ): value is ConditionGroupType => {
-    if (typeof value !== 'string') {
+export class BuilderConditionGroup extends BuilderObject<"builder-condition-group", BuilderConditionGroupDto> {
+  static readonly isConditionGroupType = (value: string | symbol): value is ConditionGroupType => {
+    if (typeof value !== "string") {
       return false;
     }
     const validValues = Object.keys(ConditionGroupType);
     return validValues.includes(value);
   };
 
-  readonly objectType: 'builder-condition-group' = 'builder-condition-group';
+  readonly objectType: "builder-condition-group" = "builder-condition-group";
   private _type: ConditionGroupType;
-  name = '';
+  name = "";
   private readonly _conditions: Array<BuilderCondition>;
   private readonly _variableList: ReadonlyArray<BuilderVariable>;
 
-  public static readonly fromDto = (
-    dto: BuilderConditionGroupDto,
-    variableList: ReadonlyArray<BuilderVariable>
-  ) => {
+  public static readonly fromDto = (dto: BuilderConditionGroupDto, variableList: ReadonlyArray<BuilderVariable>) => {
     return new BuilderConditionGroup(dto, variableList);
   };
-  protected constructor(
-    dto: BuilderConditionGroupDto,
-    variableList: ReadonlyArray<BuilderVariable>
-  ) {
+  protected constructor(dto: BuilderConditionGroupDto, variableList: ReadonlyArray<BuilderVariable>) {
     super(dto);
     this.name = dto.name;
     this._type = dto.type;
     const conditionList = Array.isArray(dto.conditions) ? dto.conditions : [];
-    this._conditions = conditionList.map(dto =>
-      BuilderCondition.fromDto(dto, variableList)
-    );
+    this._conditions = conditionList.map((dto) => BuilderCondition.fromDto(dto, variableList));
     this._variableList = variableList;
   }
   get conditions(): ReadonlyArray<BuilderCondition> {
@@ -88,14 +72,12 @@ export class BuilderConditionGroup extends BuilderObject<
   }
 
   toJson(): BuilderConditionGroupDto {
-    const conditions: ReadonlyArray<BuilderConditionDto> = [
-      ...this._conditions.map(c => c.toJson())
-    ];
+    const conditions: ReadonlyArray<BuilderConditionDto> = [...this._conditions.map((c) => c.toJson())];
     return {
       name: this.name,
       conditions,
       type: this._type,
-      kind: 'condition-group'
+      kind: "condition-group",
     };
   }
   get type(): ConditionGroupType {
