@@ -464,14 +464,14 @@ declare const ConditionGroupType: {
 };
 type ConditionGroupType = keyof typeof ConditionGroupType;
 interface BuilderConditionGroupDto {
-    readonly kind: 'condition-group';
+    readonly kind: "condition-group";
     readonly name: string;
     readonly type: ConditionGroupType;
     readonly conditions: ReadonlyArray<BuilderConditionDto>;
 }
-declare class BuilderConditionGroup extends BuilderObject<'builder-condition-group', BuilderConditionGroupDto> {
+declare class BuilderConditionGroup extends BuilderObject<"builder-condition-group", BuilderConditionGroupDto> {
     static readonly isConditionGroupType: (value: string | symbol) => value is "all" | "any" | "count" | "range";
-    readonly objectType: 'builder-condition-group';
+    readonly objectType: "builder-condition-group";
     private _type;
     name: string;
     private readonly _conditions;
@@ -538,10 +538,10 @@ interface BuilderRuleDto {
     readonly excludePages: ReadonlyArray<string>;
     readonly jumpToPage: string | false;
 }
-declare class BuilderRule extends BuilderObject<'builder-rule', BuilderRuleDto> {
+declare class BuilderRule extends BuilderObject<"builder-rule", BuilderRuleDto> {
     private readonly dto;
     private readonly _ruleInput;
-    readonly objectType: 'builder-rule';
+    readonly objectType: "builder-rule";
     private _type;
     name: string;
     private readonly _conditions;
@@ -561,6 +561,24 @@ declare class BuilderRule extends BuilderObject<'builder-rule', BuilderRuleDto> 
     addConditionGroup(): BuilderConditionGroup;
     clone(): BuilderRuleDto;
     toJson(): BuilderRuleDto;
+}
+
+declare class PageActionManager {
+    readonly validOptions: RuleInput["_pageIdActions"];
+    readonly initialSelection: ReadonlyArray<string>;
+    private readonly _initialSelection;
+    readonly selectItems: ReadonlyArray<ExcludeByPageIdSelectItem>;
+    constructor(validOptions: RuleInput["_pageIdActions"], initialSelection: ReadonlyArray<string>);
+    getCurrentSelection(): ReadonlyArray<string>;
+}
+
+declare class TagActionManager {
+    readonly validOptions: RuleInput["_tagActions"];
+    readonly initialSelection: ReadonlyArray<string>;
+    private readonly _initialSelection;
+    readonly selectItems: ReadonlyArray<ExcludeByTagSelectItem>;
+    constructor(validOptions: RuleInput["_tagActions"], initialSelection: ReadonlyArray<string>);
+    getCurrentSelection(): ReadonlyArray<string>;
 }
 
 interface BuilderSchemaDto {
@@ -631,4 +649,4 @@ declare class BuilderText extends BuilderObject<'builder-text', BuilderTextDto> 
     toJson(): BuilderTextDto;
 }
 
-export { AudioFile, BuilderMainImageDto, BuilderMainText, BuilderMainTextDto, BuilderMainVideoDto, BuilderOption, BuilderOptionDto, BuilderPage, BuilderPageDto, BuilderPageType, BuilderQuestion, BuilderQuestionDto, BuilderQuestionType, BuilderSchema, BuilderSchemaDto, BuilderTag, BuilderTagDto, BuilderText, BuilderTextDto, ImageFile, TagCollection, VideoFile };
+export { AudioFile, BuilderCondition, BuilderConditionDto, BuilderConditionGroup, BuilderConditionGroupDto, BuilderMainImageDto, BuilderMainText, BuilderMainTextDto, BuilderMainVideoDto, BuilderOperator, BuilderOption, BuilderOptionDto, BuilderPage, BuilderPageDto, BuilderPageType, BuilderQuestion, BuilderQuestionDto, BuilderQuestionType, BuilderRule, BuilderRuleDto, BuilderSchema, BuilderSchemaDto, BuilderTag, BuilderTagDto, BuilderText, BuilderTextDto, BuilderVariable, BuilderVariableOption, ConditionGroupType, CustomVariable, ExcludeByPageAction, ExcludeByPageIdSelectItem, ExcludeByTagAction, ExcludeByTagSelectItem, ImageFile, JumpToActionManager, JumpToPageAction, JumpToPageSelectItem, MultiSelectItem, OperatorSelectItem, PageActionManager, QuestionVariable, RuleInput, RuleOptionSelectItem, RuleVariableSelectItem, SingleSelectItem, TagActionManager, TagCollection, VideoFile };

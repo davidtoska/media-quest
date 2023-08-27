@@ -1,6 +1,5 @@
 {
   "name": "media-quest",
-  "version": "0.0.2",
   "description": "A monorepo in TypeScript",
   "private": false,
   "workspaces": [
@@ -20,13 +19,13 @@
     "jest-environment-jsdom": "^29.6.4",
     "prettier": "^3.0.2",
     "rimraf": "^5.0.1",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@media-quest/builder": "0.0.2",
-    "@media-quest/engine": "0.0.2",
-    "ts-jest": "^29.1.1"
+    "@media-quest/builder": "0.0.3",
+    "@media-quest/engine": "0.0.3"
   }
 }

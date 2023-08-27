@@ -20,13 +20,32 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/public-api.ts
 var public_api_exports = {};
 __export(public_api_exports, {
+  BuilderCondition: () => BuilderCondition,
+  BuilderConditionGroup: () => BuilderConditionGroup,
   BuilderMainText: () => BuilderMainText,
+  BuilderOperator: () => BuilderOperator,
   BuilderOption: () => BuilderOption,
   BuilderPage: () => BuilderPage,
   BuilderQuestion: () => BuilderQuestion,
+  BuilderRule: () => BuilderRule,
   BuilderSchema: () => BuilderSchema,
   BuilderTag: () => BuilderTag,
   BuilderText: () => BuilderText,
+  BuilderVariableOption: () => BuilderVariableOption,
+  CustomVariable: () => CustomVariable,
+  ExcludeByPageIdSelectItem: () => ExcludeByPageIdSelectItem,
+  ExcludeByTagSelectItem: () => ExcludeByTagSelectItem,
+  JumpToActionManager: () => JumpToActionManager,
+  JumpToPageSelectItem: () => JumpToPageSelectItem,
+  MultiSelectItem: () => MultiSelectItem,
+  OperatorSelectItem: () => OperatorSelectItem,
+  PageActionManager: () => PageActionManager,
+  QuestionVariable: () => QuestionVariable,
+  RuleInput: () => RuleInput,
+  RuleOptionSelectItem: () => RuleOptionSelectItem,
+  RuleVariableSelectItem: () => RuleVariableSelectItem,
+  SingleSelectItem: () => SingleSelectItem,
+  TagActionManager: () => TagActionManager,
   TagCollection: () => TagCollection
 });
 module.exports = __toCommonJS(public_api_exports);
@@ -410,6 +429,15 @@ var QuestionVariable = class {
     this.pageNumber = pageNumber;
   }
   kind = "question-variable";
+  dataType = "numericWithOptions";
+};
+var CustomVariable = class {
+  constructor(varId, label, options) {
+    this.varId = varId;
+    this.label = label;
+    this.options = options;
+  }
+  kind = "configuration-variable";
   dataType = "numericWithOptions";
 };
 
@@ -840,7 +868,7 @@ var TagCollection = class _TagCollection {
   }
 };
 
-// src/rulebuilder/Builder-operator.ts
+// src/rulebuilder/condition/Builder-operator.ts
 var BuilderOperatorSymbols = {
   equal: true,
   notEqual: true,
@@ -871,7 +899,7 @@ var BuilderOperator;
   };
 })(BuilderOperator || (BuilderOperator = {}));
 
-// src/rulebuilder/Builder-condition.ts
+// src/rulebuilder/condition/Builder-condition.ts
 var BuilderCondition = class _BuilderCondition extends BuilderObject {
   objectType = "builder-condition";
   static NUMBER_OPERATORS = [
@@ -1026,7 +1054,7 @@ var BuilderCondition = class _BuilderCondition extends BuilderObject {
   }
 };
 
-// src/rulebuilder/Builder-condition-group.ts
+// src/rulebuilder/condition/Builder-condition-group.ts
 var ConditionGroupType = {
   all: true,
   any: true,
@@ -1054,9 +1082,7 @@ var BuilderConditionGroup = class _BuilderConditionGroup extends BuilderObject {
     this.name = dto.name;
     this._type = dto.type;
     const conditionList = Array.isArray(dto.conditions) ? dto.conditions : [];
-    this._conditions = conditionList.map(
-      (dto2) => BuilderCondition.fromDto(dto2, variableList)
-    );
+    this._conditions = conditionList.map((dto2) => BuilderCondition.fromDto(dto2, variableList));
     this._variableList = variableList;
   }
   get conditions() {
@@ -1082,9 +1108,7 @@ var BuilderConditionGroup = class _BuilderConditionGroup extends BuilderObject {
     return this.toJson();
   }
   toJson() {
-    const conditions = [
-      ...this._conditions.map((c) => c.toJson())
-    ];
+    const conditions = [...this._conditions.map((c) => c.toJson())];
     return {
       name: this.name,
       conditions,
@@ -1247,26 +1271,14 @@ var BuilderRule = class _BuilderRule extends BuilderObject {
         acc.push(condition);
       }
       if (curr.kind === "condition-group") {
-        const conditionGroup = BuilderConditionGroup.fromDto(
-          curr,
-          conditionInput
-        );
+        const conditionGroup = BuilderConditionGroup.fromDto(curr, conditionInput);
         acc.push(conditionGroup);
       }
       return acc;
     }, []);
-    this._pageActionManager = new PageActionManager(
-      _ruleInput.excludeByPageIdActions,
-      dto.excludePages
-    );
-    this._tagActionManager = new TagActionManager(
-      _ruleInput.excludeByTagActions,
-      dto.excludeTags
-    );
-    this.jumpToActionManager = new JumpToActionManager(
-      _ruleInput.jumpToPageActions,
-      dto.jumpToPage
-    );
+    this._pageActionManager = new PageActionManager(_ruleInput.excludeByPageIdActions, dto.excludePages);
+    this._tagActionManager = new TagActionManager(_ruleInput.excludeByTagActions, dto.excludeTags);
+    this.jumpToActionManager = new JumpToActionManager(_ruleInput.jumpToPageActions, dto.jumpToPage);
   }
   objectType = "builder-rule";
   _type = "all";
@@ -1308,9 +1320,7 @@ var BuilderRule = class _BuilderRule extends BuilderObject {
     return true;
   }
   addCondition() {
-    const condition = BuilderCondition.create(
-      this._ruleInput.getConditionInput()
-    );
+    const condition = BuilderCondition.create(this._ruleInput.getConditionInput());
     this._conditions.push(condition);
     return condition;
   }
@@ -1321,10 +1331,7 @@ var BuilderRule = class _BuilderRule extends BuilderObject {
       type: "all",
       conditions: []
     };
-    const newGroup = BuilderConditionGroup.fromDto(
-      dto,
-      this._ruleInput.questionVars
-    );
+    const newGroup = BuilderConditionGroup.fromDto(dto, this._ruleInput.questionVars);
     this._conditions.push(newGroup);
     return newGroup;
   }
@@ -2150,12 +2157,31 @@ var BuilderText = class _BuilderText extends BuilderObject {
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  BuilderCondition,
+  BuilderConditionGroup,
   BuilderMainText,
+  BuilderOperator,
   BuilderOption,
   BuilderPage,
   BuilderQuestion,
+  BuilderRule,
   BuilderSchema,
   BuilderTag,
   BuilderText,
+  BuilderVariableOption,
+  CustomVariable,
+  ExcludeByPageIdSelectItem,
+  ExcludeByTagSelectItem,
+  JumpToActionManager,
+  JumpToPageSelectItem,
+  MultiSelectItem,
+  OperatorSelectItem,
+  PageActionManager,
+  QuestionVariable,
+  RuleInput,
+  RuleOptionSelectItem,
+  RuleVariableSelectItem,
+  SingleSelectItem,
+  TagActionManager,
   TagCollection
 });
