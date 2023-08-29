@@ -4,7 +4,7 @@ import type { BuilderRuleDto } from "./Builder-rule";
 import type { BuilderConditionGroupDto } from "./condition/Builder-condition-group";
 import type { BuilderConditionDto } from "./condition/Builder-condition";
 import type { BuilderOperator } from "./condition/Builder-operator";
-import type { ExcludeByPageAction, ExcludeByTagAction } from "./RuleAction";
+import type { ExcludeByPageAction, ExcludeByTagAction, JumpToPageAction } from "./RuleAction";
 import { ExcludeByPageIdSelectItem, ExcludeByTagSelectItem } from "./multi-select-item";
 
 export namespace RuleBuilderTestUtils {
@@ -24,7 +24,8 @@ export namespace RuleBuilderTestUtils {
     };
     return action;
   };
-  export const excludeByPageIdAction = (pageId: string, pageNumber = 1) => {
+
+  export const excludeByPageIdAction = (pageId: string, pageNumber: number) => {
     const action: ExcludeByPageAction = {
       kind: "exclude-by-pageId",
       mainText: "",
@@ -33,6 +34,16 @@ export namespace RuleBuilderTestUtils {
     };
     return action;
   };
+  export const jumpToPageAction = (pageId: string, pageNumber: number) => {
+    const action: JumpToPageAction = {
+      kind: "jump-to-page",
+      mainText: "TEXT: " + pageId,
+      pageId,
+      pageNumber,
+    };
+    return action;
+  };
+
   export const excludeByTagActionList = () => {
     const list = [
       excludeByTagAction("tag1"),

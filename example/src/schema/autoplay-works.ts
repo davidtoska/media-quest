@@ -1,5 +1,6 @@
-import { dummyAudioFiles, dummyVideoFiles } from "./hardcoded-media";
+import { dummyAudioFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
 import { BuilderSchema } from "@media-quest/builder";
+import { IExampleSchema } from "./IExample-schema";
 
 const s = BuilderSchema.create("test", "Dummy-schema", "xy");
 
@@ -20,12 +21,12 @@ const p1 = s.addPage("question");
 p1.defaultQuestion.addOption("Ja", 1);
 p1.defaultQuestion.addOption("Nei", 0);
 p1.mainMedia = {
-    kind: "main-video",
-    mode: "optional",
-    preDelay: 0,
-    volume: 1,
-    controls: false,
-    file: video,
+  kind: "main-video",
+  mode: "optional",
+  preDelay: 0,
+  volume: 1,
+  controls: false,
+  file: video,
 };
 p1.mainText.text = "Sjekk at lyd-avspilling virker: (auto-play=false)";
 p1.mainText.autoplay = false;
@@ -45,12 +46,15 @@ autoplayVideoAndAudio.defaultQuestion.addOption("Vet ikke", 9);
 autoplayVideoAndAudio.mainText.audioFile = audio;
 autoplayVideoAndAudio.mainText.autoplay = true;
 autoplayVideoAndAudio.mainMedia = {
-    kind: "main-video",
-    file: video,
-    controls: true,
-    volume: 1,
-    mode: "autoplay",
-    preDelay: 2000,
+  kind: "main-video",
+  file: video,
+  controls: true,
+  volume: 1,
+  mode: "autoplay",
+  preDelay: 2000,
 };
 
-export const devSchema = s;
+export const autoplayWorks: IExampleSchema = {
+  menuLabel: "autoplay",
+  schema: s.compile().schema,
+};

@@ -9,6 +9,7 @@ import { BuilderObject } from "../BuilderObject";
 import { TagActionManager } from "./tag-action-manager";
 import { PageActionManager } from "./page-action-manager";
 import { JumpToActionManager } from "./jump-to-action-manager";
+import { Condition, DUtil, PageQueCommand, PageQueRules } from "@media-quest/engine";
 
 export interface BuilderRuleDto {
   readonly type: ConditionGroupType;
@@ -25,7 +26,7 @@ export class BuilderRule extends BuilderObject<"builder-rule", BuilderRuleDto> {
   // public countNumber = 1;
   private readonly _conditions: Array<BuilderCondition | BuilderConditionGroup> = [];
 
-  private _tagActionManager: TagActionManager;
+  private readonly _tagActionManager: TagActionManager;
   private _pageActionManager: PageActionManager;
   readonly jumpToActionManager: JumpToActionManager;
   public static readonly fromDto = (dto: BuilderRuleDto, input: RuleInput): BuilderRule => {
@@ -130,5 +131,71 @@ export class BuilderRule extends BuilderObject<"builder-rule", BuilderRuleDto> {
       excludeTags,
     };
     return dto;
+  }
+  toEngineRule(): PageQueRules {
+    const conditions: Condition[] = [];
+    this._conditions.forEach((c) => {
+      if (c) {
+        if (c instanceof BuilderCondition) {
+          const simpleCondition = c.toEngineCondition();
+          if (simpleCondition) {
+            conditions.push(simpleCondition);
+          }
+        }
+        if (c instanceof BuilderConditionGroup) {
+          const complexCondition = c.toEngineConditionComplex();
+          if (complexCondition) conditions.push(complexCondition);
+        }
+      }
+    });
+    let all: Condition[] = [];
+    let some: Condition[] = [];
+
+    if (this.type === "all") {
+      all = [...conditions];
+    }
+    const pageQueCommands: Array<PageQueCommand> = [];
+    const maybeJumpToPage = this.jumpToActionManager.selected;
+    if (maybeJumpToPage) {
+      const jumpCommand: PageQueCommand = {
+        kind: "PAGE_QUE_JUMP_TO_PAGE_COMMAND",
+        target: "PAGE_QUE",
+        targetId: "PAGE_QUE",
+        payload: { pageId: maybeJumpToPage.data.pageId },
+      };
+      pageQueCommands.push(jumpCommand);
+    }
+
+    const excludePageByIdList = this._pageActionManager.getEngineAction().map((a) => a.pageId);
+    if (excludePageByIdList.length) {
+      const command: PageQueCommand = {
+        kind: "PAGE_QUE_EXCLUDE_BY_PAGE_ID_COMMAND",
+        target: "PAGE_QUE",
+        targetId: "PAGE_QUE",
+        payload: { pageIds: [...excludePageByIdList] },
+      };
+      pageQueCommands.push(command);
+    }
+    const excludeTags = this._tagActionManager.getEngineActions().map((tagA) => tagA.tag);
+    if (excludeTags.length) {
+      const excludeTagsCommand: PageQueCommand = {
+        kind: "PAGE_QUE_EXCLUDE_BY_TAG_COMMAND",
+        target: "PAGE_QUE",
+        targetId: "PAGE_QUE",
+        payload: { tagIds: [...excludeTags] },
+      };
+      pageQueCommands.push(excludeTagsCommand);
+    }
+
+    const id = DUtil.randomObjectId();
+    const rule: PageQueRules = {
+      id: "",
+      description: this.name,
+      all,
+      some,
+      onFailure: [],
+      onSuccess: pageQueCommands,
+    };
+    return rule;
   }
 }

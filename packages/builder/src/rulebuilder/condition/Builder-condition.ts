@@ -2,6 +2,7 @@ import { BuilderObject } from "../../BuilderObject";
 import { BuilderOperator } from "./Builder-operator";
 import type { BuilderVariable, BuilderVariableOption } from "../RuleVariable";
 import { OperatorSelectItem, RuleOptionSelectItem, RuleVariableSelectItem } from "../SingleSelectItem";
+import { Condition } from "@media-quest/engine";
 export interface BuilderConditionDto {
   readonly kind: "condition";
   readonly operator: BuilderOperator | "";
@@ -100,6 +101,27 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     }
 
     return { isValid: true };
+  }
+
+  toEngineCondition(): Condition.Simple | false {
+    const val = this.value;
+    const op = this._operator;
+    const v = this._variable;
+    if (!val) return false;
+    if (!op) return false;
+    if (!v) return false;
+    if (op === "equal") {
+      const engineCondition: Condition.Simple = {
+        kind: "numeric-condition",
+        value: val.value,
+        valueLabel: val.label,
+        referenceId: v.varId,
+        referenceLabel: v.label,
+        operator: "eq",
+      };
+      return engineCondition;
+    }
+    return false;
   }
 
   private findVariableInUniverse(variableId: string): BuilderVariable | false {

@@ -135,6 +135,7 @@ export class BuilderSchema {
       input,
     );
     this._rules.push(rule);
+    return rule;
   }
   deleteRule(rule: BuilderRule) {
     this._rules = this._rules.filter((r) => r !== rule);

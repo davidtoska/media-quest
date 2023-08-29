@@ -9,6 +9,8 @@
   "scripts": {
     "dev": "node dev.js",
     "tsc:watch": "tsc --watch --noEmit",
+    "build:builder-lib": "cd packages/builder && npm run build",
+    "build:engine": "cd packages/engine && npm run build",
     "cloc": "npx cloc packages/",
     "test": "jest"
   },
@@ -25,7 +27,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@media-quest/builder": "0.0.3",
-    "@media-quest/engine": "0.0.3"
+    "@media-quest/builder": "0.0.4",
+    "@media-quest/engine": "0.0.4"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@media-quest/engine",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Rendering engine for media-quest schemas.",
   "main": "dist/public-api.js",
   "module": "dist/public-api.mjs",
@@ -9,6 +9,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsup src/public-api.ts --format cjs,esm --dts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "tsc:check": "tsc --watch --noEmit"
   }
 }

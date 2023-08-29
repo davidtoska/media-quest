@@ -2,6 +2,8 @@ import { BuilderRule, type BuilderRuleDto } from "./Builder-rule";
 import { RuleBuilderTestUtils as U } from "./RuleBuilder-test-utils";
 import { RuleInput } from "./RuleInput";
 import type { BuilderConditionGroupDto } from "./condition/Builder-condition-group";
+import { BuilderConditionDto } from "./condition/Builder-condition";
+import { Condition } from "@media-quest/engine";
 
 const { createBuilderVariables_A_H } = U;
 let questionVariables = createBuilderVariables_A_H();
@@ -9,23 +11,27 @@ const createDto = (): {
   ruleInput: RuleInput;
   builderRuleDto: BuilderRuleDto;
 } => {
-  const v1 = U.createRuleVariable("v1", 2);
+  const v1 = U.createRuleVariable("v1", 1);
   const v2 = U.createRuleVariable("v2", 2);
-  const v3 = U.createRuleVariable("v3", 2);
-  const v4 = U.createRuleVariable("v4", 2);
-  const vg1 = U.createRuleVariable("vg1", 2);
-  const vg2 = U.createRuleVariable("vg2", 2);
-  const vg3 = U.createRuleVariable("vg3", 2);
-  const vg4 = U.createRuleVariable("vg4", 2);
+  const v3 = U.createRuleVariable("v3", 3);
+  const v4 = U.createRuleVariable("v4", 4);
+  const vg1 = U.createRuleVariable("vg1", 5);
+  const vg2 = U.createRuleVariable("vg2", 6);
+  const vg3 = U.createRuleVariable("vg3", 7);
+  const vg4 = U.createRuleVariable("vg4", 8);
   const variableList = [v1, v2, v3, v4, vg1, vg2, vg3, vg4];
   const tagAction1 = U.excludeByTagAction("tag1");
   const tagAction2 = U.excludeByTagAction("tag2");
   const tagAction3 = U.excludeByTagAction("tag3");
   const tagAction4 = U.excludeByTagAction("tag4");
-  const pageAction1 = U.excludeByPageIdAction(v1.varId);
-  const pageAction2 = U.excludeByPageIdAction(v2.varId);
-  const pageAction3 = U.excludeByPageIdAction(v3.varId);
-  const pageAction4 = U.excludeByPageIdAction(v4.varId);
+  const pageAction1 = U.excludeByPageIdAction(v1.varId, v1.pageNumber);
+  const pageAction2 = U.excludeByPageIdAction(v2.varId, v2.pageNumber);
+  const pageAction3 = U.excludeByPageIdAction(v3.varId, v3.pageNumber);
+  const pageAction4 = U.excludeByPageIdAction(v4.varId, v4.pageNumber);
+  const jumpToPageAction1 = U.jumpToPageAction(v1.varId, v1.pageNumber);
+  const jumpToPageAction2 = U.jumpToPageAction(v2.varId, v2.pageNumber);
+  const jumpToPageAction3 = U.jumpToPageAction(v3.varId, v3.pageNumber);
+  const jumpToPageAction4 = U.jumpToPageAction(v4.varId, v1.pageNumber);
 
   // const pageAction =
   // const excludeByTagList = [];
@@ -34,7 +40,7 @@ const createDto = (): {
     [],
     [pageAction1, pageAction2, pageAction3, pageAction4],
     [tagAction1, tagAction2, tagAction3, tagAction4],
-    [],
+    [jumpToPageAction1, jumpToPageAction2, jumpToPageAction3, jumpToPageAction4],
   );
   const c1 = U.createConditionDto(v1);
   const c2 = U.createConditionDto(v2);
@@ -73,6 +79,7 @@ let dto: BuilderRuleDto = {
 
 const excludeByTagActionList = U.excludeByTagActionList();
 const pageActions = questionVariables.map((q) => U.excludeByPageIdAction(q.varId, q.pageNumber));
+
 let ruleInput = new RuleInput(questionVariables, [], [...pageActions], excludeByTagActionList, []);
 
 let rule: BuilderRule = BuilderRule.fromDto(dto, ruleInput);
@@ -203,5 +210,82 @@ describe("Builder Rule", () => {
 
     expect(ruleInput.excludeByTagActions.length).toStrictEqual(10);
     expect(ruleInput.excludeByTagActions.length).toStrictEqual(10);
+  });
+
+  test("toEngineRuleWorks: ", () => {
+    const input = createDto().ruleInput;
+    const v1 = input.questionVars[0];
+    const v2 = input.questionVars[1];
+    const tag1 = input.excludeByTagActions[0];
+    const pageAction1 = input.excludeByPageIdActions[0];
+
+    const c1: BuilderConditionDto = {
+      kind: "condition",
+      name: "condition 1",
+      variableId: v1.varId,
+      operator: "equal",
+      value: v1.options[0].value,
+    };
+    const c2: BuilderConditionDto = {
+      name: "nested-condition",
+      kind: "condition",
+      value: v2.options[0].value,
+      operator: "equal",
+      variableId: v2.varId,
+    };
+    const conditionGroupANY: BuilderConditionGroupDto = {
+      kind: "condition-group",
+      conditions: [c1, c2],
+      name: "or-condition",
+      type: "any",
+    };
+
+    const conditionGroupALL: BuilderConditionGroupDto = {
+      kind: "condition-group",
+      conditions: [c2],
+      name: "condition group ALL - in testing.",
+      type: "all",
+    };
+
+    const dtoWithOneCondition: BuilderRuleDto = {
+      type: "all",
+      name: "dto-with-one-condition",
+      excludePages: [pageAction1.pageId],
+      excludeTags: [tag1.tag],
+      jumpToPage: v1.varId,
+      conditions: [c1, conditionGroupALL, conditionGroupANY],
+    };
+
+    const actionCount =
+      dtoWithOneCondition.excludeTags.length +
+      dtoWithOneCondition.excludePages.length +
+      (dtoWithOneCondition.jumpToPage ? 1 : 0);
+
+    const rule = BuilderRule.fromDto(dtoWithOneCondition, input);
+    const engineRule = rule.toEngineRule();
+
+    // console.log(rule);
+    expect(engineRule.all.length).toBe(3);
+    expect(engineRule.some.length).toBe(0);
+
+    const simple1 = engineRule.all.find(
+      (c) => c.kind === "numeric-condition" && c.referenceId === c1.variableId,
+    ) as Condition.Numeric;
+    const complex1 = engineRule.all.find(
+      (c) => c.kind === "complex-condition" && c.all.length === 1,
+    ) as Condition.Complex;
+
+    const complexChild1 = complex1.all[0] as Condition.Numeric;
+    expect(simple1).toBeTruthy();
+    expect(simple1.operator === "eq").toBeTruthy();
+    expect(simple1.value === c1.value).toBeTruthy();
+    expect(simple1.referenceLabel).toBe(v1.label);
+    expect(complex1).toBeTruthy();
+    expect(complexChild1).toBeTruthy();
+    expect(complexChild1.referenceId).toBe(c2.variableId);
+    expect(complexChild1.value).toBe(c2.value);
+    expect(complexChild1.referenceLabel).toBe(v2.label);
+    expect(complexChild1.operator === "eq").toBeTruthy();
+    expect(engineRule.onSuccess.length).toBe(actionCount);
   });
 });

@@ -18,20 +18,45 @@ import {
   DVideoDto,
   Fact,
   PageDto,
+  PageQueCommand,
+  PageQueRules,
+  Rule,
   SchemaDto,
 } from "@media-quest/engine";
 import { AudioFile } from "../media-files";
+import { BuilderSchema } from "../Builder-schema";
+import { BuilderRule } from "../rulebuilder";
 
 const U = DUtil;
 const generateElementId = () => U.randomString(32);
 export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   readonly name = "Ispe default theme.";
+  private readonly TAG = "[ DEFAULT_THEME_COMPILER ]: ";
   constructor() {
     super(DefaultTheme);
   }
 
+  private compileRules(source: BuilderSchemaDto): Rule<PageQueCommand, never>[] {
+    const builderSchema = BuilderSchema.fromJson(source);
+    const ruleInput = builderSchema.getRuleInput();
+    const pageQueRules: Rule<PageQueCommand, never>[] = [];
+    source.rules.forEach((rule) => {
+      const engineRule = BuilderRule.fromDto(rule, ruleInput).toEngineRule();
+      if (!Rule.isEmpty(engineRule)) {
+        pageQueRules.push(engineRule);
+      } else {
+        console.groupCollapsed(this.TAG, "Throws away empty rule.");
+        console.log(rule);
+        console.log(ruleInput);
+        console.groupEnd();
+      }
+    });
+    return pageQueRules;
+  }
+
   compile(source: BuilderSchemaDto): SchemaDto {
     const pages = source.pages.map((p) => this.compilePage(p, source.id));
+    const rules = this.compileRules(source);
     const dto: SchemaDto = {
       backgroundColor: source.backgroundColor,
       baseHeight: source.baseHeight,
@@ -41,7 +66,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       pages,
       predefinedFacts: [],
       prefix: source.prefix,
-      rules: [],
+      rules,
       stateFromEvent: [
         {
           onEvent: "VIDEO_ENDED_EVENT",

@@ -1,13 +1,14 @@
-import { devSchema } from "./dummy-data/dev-schema";
 import { createMenu } from "./createMenu";
-import { testDto } from "./test-dto";
 import * as A from "@media-quest/engine";
+import { autoplayWorks } from "./schema/autoplay-works";
+import { rulesWork } from "./schema/rules-work";
+import { IExampleSchema } from "./schema/IExample-schema";
+import { SchemaDto } from "@media-quest/engine";
 console.log("DEV APP");
 
-const initialSchema = devSchema;
+const initialSchema = rulesWork.schema;
 
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
-export const a = testDto;
 const engineRoot = document.createElement("div");
 const nameElement = document.createElement("h1");
 nameElement.innerText = "Dev app";
@@ -15,33 +16,28 @@ nameElement.innerText = "Dev app";
 nameElement.style.textAlign = "center";
 engineRoot.style.margin = "60px auto";
 
+const createEngine = (schema: SchemaDto) => new A.SchemaEngine(engineRoot, 600, 1024, schema);
 // Client api
-let engine = new A.SchemaEngine(engineRoot, 500, 1024, initialSchema.compile().schema);
+let engine = createEngine(initialSchema);
 // console.log(JSON.stringify(devSchema), null, 2);
 engine.onCommandOrEvent = (_event_or_command) => {
   // console.log(_event_or_command);
 };
-const menu = createMenu([
-  {
-    label: "Test-Dto",
+console.log(rulesWork.schema);
+const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => void } => {
+  const label = example.menuLabel;
+  return {
+    label,
     onclick: () => {
-      nameElement.innerText = "Test-Dto";
+      nameElement.innerText = label;
       engine.destroy();
       engineRoot.innerHTML = "";
-      // engine.
-      engine = new A.SchemaEngine(engineRoot, 600, 1024, testDto);
+      engine = createEngine(example.schema);
     },
-  },
-  {
-    label: "Dev app",
-    onclick: () => {
-      nameElement.innerText = "Dev app";
-      engine.destroy();
-      engineRoot.innerHTML = "";
-      engine = new A.SchemaEngine(engineRoot, 600, 1024, initialSchema.compile().schema);
-    },
-  },
-]);
+  };
+};
+
+const menu = createMenu([toMenuItem(autoplayWorks), toMenuItem(rulesWork)]);
 document.body.prepend(menu);
 menu.after(engineRoot);
 menu.after(nameElement);

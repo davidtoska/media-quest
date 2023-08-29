@@ -1,18 +1,19 @@
 import { BuilderCondition, type BuilderConditionDto } from "./Builder-condition";
 import { BuilderObject } from "../../BuilderObject";
 import type { BuilderVariable } from "../RuleVariable";
+import { Condition } from "@media-quest/engine";
 
 const ConditionGroupType = {
   all: true,
   any: true,
   count: true,
-  range: true,
 };
 
 export type ConditionGroupType = keyof typeof ConditionGroupType;
 export interface BuilderConditionGroupDto {
   readonly kind: "condition-group";
   readonly name: string;
+  readonly count?: number;
   readonly type: ConditionGroupType;
   readonly conditions: ReadonlyArray<BuilderConditionDto>;
 }
@@ -79,6 +80,32 @@ export class BuilderConditionGroup extends BuilderObject<"builder-condition-grou
       type: this._type,
       kind: "condition-group",
     };
+  }
+
+  toEngineConditionComplex(): Condition.Complex | false {
+    const comp: Condition.Complex = {
+      kind: "complex-condition",
+      all: [],
+      some: [],
+      name: "",
+    };
+    const conditions: Condition.Simple[] = [];
+    this.conditions.forEach((c) => {
+      const maybeSimple = c.toEngineCondition();
+      if (maybeSimple) {
+        conditions.push(maybeSimple);
+      }
+    });
+    if (this._type === "all") {
+      return { ...comp, all: conditions };
+    }
+    if (this._type === "any") {
+      return { ...comp, some: conditions };
+    }
+
+    console.log("INVALID COMPLEX CONDITION. TODO IMPLEMENT range, and count.");
+
+    return false;
   }
   get type(): ConditionGroupType {
     return this._type;

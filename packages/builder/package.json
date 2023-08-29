@@ -1,6 +1,6 @@
 {
   "name": "@media-quest/builder",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Builder library for Media-quest schemas",
   "main": "dist/public-api.js",
   "module": "dist/public-api.mjs",
@@ -13,6 +13,6 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@media-quest/engine": "0.0.3"
+    "@media-quest/engine": "0.0.4"
   }
 }

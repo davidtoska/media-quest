@@ -166,4 +166,20 @@ describe("Builder Operator", () => {
     expect(c.value).toBe(false);
     expect(c.validate().isValid).toBe(false);
   });
+  test("toEngineConditionWorks", () => {
+    const universe = RuleBuilderTestUtils.createBuilderVariables_A_H();
+    const dto: BuilderConditionDto = {
+      kind: "condition",
+      name: "invalid variable name in dto",
+      variableId: "a",
+      operator: "equal",
+      value: 7,
+    };
+    const c = BuilderCondition.fromDto(dto, universe);
+    expect(c.variable).toBeInstanceOf(QuestionVariable);
+    expect(c.operator).toBe("equal");
+    expect(c.operatorsSelectItems.length).toBe(BuilderCondition.NUMBER_OPERATORS.length);
+    expect(c.value).toBe(false);
+    expect(c.validate().isValid).toBe(false);
+  });
 });

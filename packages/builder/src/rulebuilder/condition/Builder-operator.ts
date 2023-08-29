@@ -16,14 +16,14 @@ const BuilderOperatorSymbols = {
   empty: true,
   notEmpty: true,
   startsWith: true,
-  endsWith: true
+  endsWith: true,
 } as const;
 
 export type BuilderOperator = keyof typeof BuilderOperatorSymbols;
 
 export namespace BuilderOperator {
-  export const is = (symbol: string): symbol is BuilderOperator => {
-    if (typeof symbol !== 'string') {
+  export const is = (symbol?: string): symbol is BuilderOperator => {
+    if (typeof symbol !== "string") {
       return false;
     }
     return Object.keys(BuilderOperatorSymbols).includes(symbol);
