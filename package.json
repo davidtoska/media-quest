@@ -27,7 +27,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@media-quest/builder": "0.0.4",
-    "@media-quest/engine": "0.0.4"
+    "@media-quest/builder": "0.0.7",
+    "@media-quest/engine": "0.0.7"
   }
 }

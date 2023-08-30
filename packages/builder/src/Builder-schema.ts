@@ -192,17 +192,16 @@ export class BuilderSchema {
     this.pages.forEach((page, index) => {
       const pageVariables = page.getQuestionVariables(prefix, index);
       qVars.push(...pageVariables);
-      const pageId = page.prefix;
       const mainText = page.mainText.text;
       const jumpAction: JumpToPageAction = {
         kind: "jump-to-page",
-        pageId: pageId,
+        pageId: page.id,
         pageNumber: index,
         mainText: page.mainText.text,
       };
       const excludePageAction: ExcludeByPageAction = {
         kind: "exclude-by-pageId",
-        pageId,
+        pageId: page.id,
         pageNumber: index,
         mainText,
       };

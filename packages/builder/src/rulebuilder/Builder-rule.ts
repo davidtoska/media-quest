@@ -9,7 +9,7 @@ import { BuilderObject } from "../BuilderObject";
 import { TagActionManager } from "./tag-action-manager";
 import { PageActionManager } from "./page-action-manager";
 import { JumpToActionManager } from "./jump-to-action-manager";
-import { Condition, DUtil, PageQueCommand, PageQueRules } from "@media-quest/engine";
+import { Condition, PageQueCommand, PageQueRules } from "@media-quest/engine";
 
 export interface BuilderRuleDto {
   readonly type: ConditionGroupType;
@@ -132,18 +132,18 @@ export class BuilderRule extends BuilderObject<"builder-rule", BuilderRuleDto> {
     };
     return dto;
   }
-  toEngineRule(): PageQueRules {
+  toEngineRule(modulePrefix: string): PageQueRules {
     const conditions: Condition[] = [];
     this._conditions.forEach((c) => {
       if (c) {
         if (c instanceof BuilderCondition) {
-          const simpleCondition = c.toEngineCondition();
+          const simpleCondition = c.toEngineCondition(modulePrefix);
           if (simpleCondition) {
             conditions.push(simpleCondition);
           }
         }
         if (c instanceof BuilderConditionGroup) {
-          const complexCondition = c.toEngineConditionComplex();
+          const complexCondition = c.toEngineConditionComplex(modulePrefix);
           if (complexCondition) conditions.push(complexCondition);
         }
       }
@@ -187,9 +187,7 @@ export class BuilderRule extends BuilderObject<"builder-rule", BuilderRuleDto> {
       pageQueCommands.push(excludeTagsCommand);
     }
 
-    const id = DUtil.randomObjectId();
     const rule: PageQueRules = {
-      id: "",
       description: this.name,
       all,
       some,

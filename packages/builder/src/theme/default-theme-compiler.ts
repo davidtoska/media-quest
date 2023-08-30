@@ -1,5 +1,6 @@
 import { AbstractThemeCompiler } from "./AbstractThemeCompiler";
 import type { BuilderSchemaDto } from "../Builder-schema";
+import { BuilderSchema } from "../Builder-schema";
 import type { BuilderPageDto } from "../Builder-page";
 import { DStateProps } from "./standard-props";
 import { ThemeUtils } from "./theme-utils";
@@ -19,12 +20,10 @@ import {
   Fact,
   PageDto,
   PageQueCommand,
-  PageQueRules,
   Rule,
   SchemaDto,
 } from "@media-quest/engine";
 import { AudioFile } from "../media-files";
-import { BuilderSchema } from "../Builder-schema";
 import { BuilderRule } from "../rulebuilder";
 
 const U = DUtil;
@@ -41,7 +40,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     const ruleInput = builderSchema.getRuleInput();
     const pageQueRules: Rule<PageQueCommand, never>[] = [];
     source.rules.forEach((rule) => {
-      const engineRule = BuilderRule.fromDto(rule, ruleInput).toEngineRule();
+      const engineRule = BuilderRule.fromDto(rule, ruleInput).toEngineRule(source.prefix);
       if (!Rule.isEmpty(engineRule)) {
         pageQueRules.push(engineRule);
       } else {
@@ -55,8 +54,10 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   }
 
   compile(source: BuilderSchemaDto): SchemaDto {
-    const pages = source.pages.map((p) => this.compilePage(p, source.id));
+    const pages = source.pages.map((p) => this.compilePage(p, source.prefix));
     const rules = this.compileRules(source);
+    console.log(pages.map((p) => p.tags));
+
     const dto: SchemaDto = {
       backgroundColor: source.backgroundColor,
       baseHeight: source.baseHeight,
@@ -117,9 +118,10 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     };
     return dto;
   }
-  private compilePage(page: BuilderPageDto, _moduleId: string): PageDto {
-    // console.log(moduleId);
+  private compilePage(page: BuilderPageDto, modulePrefix: string): PageDto {
+    // console.log(_moduleId);
     // const textElement
+    const tags = page.tags ?? [];
     const { nextButton, mainText, id, mainMedia, _type } = page;
     const elements: DElementDto[] = [];
     const audioResourcesDto: DAudioDto[] = [];
@@ -135,7 +137,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     }
 
     if (_type === "question") {
-      const { buttons, question } = this.compileQuestion(id, page);
+      const variableId = modulePrefix + "_" + page.prefix;
+      const { buttons, question } = this.compileQuestion(id, page, variableId);
       // console.log(question);
       elements.push(...buttons, question);
     }
@@ -145,11 +148,12 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       const nextBtnElement: DElementDto = this.compileButton(id, nextButton, {
         kind: "next-button",
       });
+      const textStyle = mainMedia ? DefaultTheme.mainText.withMedia.text.css : DefaultTheme.mainText.noMedia.text.css;
       const element: DElementDto = {
         text: infoText,
         _tag: "p",
         id: generateElementId(),
-        style: DefaultTheme.mainText.withMedia.text.css,
+        style: textStyle,
       };
       elements.push(element);
       elements.push(nextBtnElement);
@@ -158,6 +162,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       const mainImageElement = this.compileImage(mainMedia);
       elements.push(mainImageElement);
     }
+
     if (mainMedia && mainMedia.kind === "main-video") {
       const videoOutput = this.compileVideo(mainMedia);
       mainVideo = videoOutput.videoDto;
@@ -200,7 +205,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       elements,
       id,
       mainVideoId,
-      tags: [],
+      tags: [...tags],
       video: videoResources,
     };
     return pageDto;
@@ -331,6 +336,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   private compileQuestion(
     pageId: string,
     page: BuilderPageDto,
+    variableId: string,
   ): {
     question: DTextDto;
     buttons: DDivDto[];
@@ -339,7 +345,9 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     // console.log(page);
     const q = page.defaultQuestion;
     const text = page.mainText.text;
-
+    const questionStyle = page.mainMedia
+      ? DefaultTheme.mainText.withMedia.text.css
+      : DefaultTheme.mainText.noMedia.text.css;
     const question: DTextDto = {
       _tag: "p",
       text,
@@ -347,12 +355,12 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       id: U.randomString(30),
       onClick: [],
       onStateChange: [],
-      style: DefaultTheme.mainText.withMedia.text.css,
+      style: questionStyle,
     };
     const buttons = q.options.map((o) => {
       const btns = this.compileButton(pageId, o, {
         kind: "response-button",
-        questionId: "",
+        questionId: variableId,
       });
       return btns;
     });

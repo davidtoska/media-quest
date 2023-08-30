@@ -1,12 +1,13 @@
 import { createMenu } from "./createMenu";
 import * as A from "@media-quest/engine";
 import { autoplayWorks } from "./schema/autoplay-works";
-import { rulesWork } from "./schema/rules-work";
+import { excludeByPageIdRuleWorks, excludeByTagWorks, jumpToRuleWorks } from "./schema/rules-work";
 import { IExampleSchema } from "./schema/IExample-schema";
 import { SchemaDto } from "@media-quest/engine";
+import { infopageWorks } from "./schema/infopage-works";
 console.log("DEV APP");
 
-const initialSchema = rulesWork.schema;
+const initialSchema = infopageWorks.schema;
 
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
 const engineRoot = document.createElement("div");
@@ -23,7 +24,6 @@ let engine = createEngine(initialSchema);
 engine.onCommandOrEvent = (_event_or_command) => {
   // console.log(_event_or_command);
 };
-console.log(rulesWork.schema);
 const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => void } => {
   const label = example.menuLabel;
   return {
@@ -37,7 +37,13 @@ const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => vo
   };
 };
 
-const menu = createMenu([toMenuItem(autoplayWorks), toMenuItem(rulesWork)]);
+const menu = createMenu([
+  toMenuItem(autoplayWorks),
+  toMenuItem(infopageWorks),
+  toMenuItem(excludeByPageIdRuleWorks),
+  toMenuItem(jumpToRuleWorks),
+  toMenuItem(excludeByTagWorks),
+]);
 document.body.prepend(menu);
 menu.after(engineRoot);
 menu.after(nameElement);

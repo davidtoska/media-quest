@@ -103,7 +103,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     return { isValid: true };
   }
 
-  toEngineCondition(): Condition.Simple | false {
+  toEngineCondition(modulePrefix: string): Condition.Simple | false {
     const val = this.value;
     const op = this._operator;
     const v = this._variable;
@@ -115,7 +115,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
         kind: "numeric-condition",
         value: val.value,
         valueLabel: val.label,
-        referenceId: v.varId,
+        referenceId: modulePrefix + "_" + v.varId,
         referenceLabel: v.label,
         operator: "eq",
       };

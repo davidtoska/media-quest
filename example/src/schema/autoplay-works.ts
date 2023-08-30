@@ -1,58 +1,39 @@
-import { dummyAudioFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
 import { BuilderSchema } from "@media-quest/builder";
 import { IExampleSchema } from "./IExample-schema";
+import { addQuestionPage109 } from "./helpers";
 
 const s = BuilderSchema.create("test", "Dummy-schema", "xy");
 
-const audio = dummyAudioFiles[0];
-const video = dummyVideoFiles[1];
 s.backgroundColor = "white";
-const q1 = s.addPage("question");
-q1.defaultQuestion.addOption("Ja", 1);
-q1.defaultQuestion.addOption("Nei", 0);
-q1.defaultQuestion.addOption("Kanckje", 2);
-q1.defaultQuestion.addOption("Vet ikke", 9);
-q1.mainText.text = "Sjekk at lyd-avspilling virker: (auto-play=false)";
 
-q1.mainText.audioFile = audio;
-q1.mainText.autoplay = false;
+// const addPage10 =
+const p1 = addQuestionPage109(s, "Q1:\n (audio-auto-play=false)", "q1", {
+  audio: true,
+  autoplayAudio: false,
+  video: false,
+  autoplayVideo: false,
+});
 
-const p1 = s.addPage("question");
-p1.defaultQuestion.addOption("Ja", 1);
-p1.defaultQuestion.addOption("Nei", 0);
-p1.mainMedia = {
-  kind: "main-video",
-  mode: "optional",
-  preDelay: 0,
-  volume: 1,
-  controls: false,
-  file: video,
-};
-p1.mainText.text = "Sjekk at lyd-avspilling virker: (auto-play=false)";
-p1.mainText.autoplay = false;
+const p2 = addQuestionPage109(s, "Q2:\n (audio-autoplay=false) \n (video-autoplay=false)", "q2", {
+  audio: true,
+  autoplayAudio: false,
+  video: true,
+  autoplayVideo: false,
+});
 
-const questionAutoPlayPage = s.addPage("question");
-questionAutoPlayPage.mainText.text = "Autoplay av spørsmål virker.";
-questionAutoPlayPage.defaultQuestion.addOption("Ja", 1);
-questionAutoPlayPage.defaultQuestion.addOption("Nei", 0);
-questionAutoPlayPage.mainText.audioFile = audio;
-questionAutoPlayPage.mainText.autoplay = true;
+const questionAutoPlayPage = addQuestionPage109(s, "Q3:\n (audio-autoplay=true)", "q3", {
+  audio: true,
+  autoplayAudio: true,
+  video: false,
+  autoplayVideo: false,
+});
 
-const autoplayVideoAndAudio = s.addPage("question", 3);
-autoplayVideoAndAudio.mainText.text = "Autoplay Video og Audio virker.";
-autoplayVideoAndAudio.defaultQuestion.addOption("Ja", 1);
-autoplayVideoAndAudio.defaultQuestion.addOption("Nei", 0);
-autoplayVideoAndAudio.defaultQuestion.addOption("Vet ikke", 9);
-autoplayVideoAndAudio.mainText.audioFile = audio;
-autoplayVideoAndAudio.mainText.autoplay = true;
-autoplayVideoAndAudio.mainMedia = {
-  kind: "main-video",
-  file: video,
-  controls: true,
-  volume: 1,
-  mode: "autoplay",
-  preDelay: 2000,
-};
+const autoplayVideoAndAudio = addQuestionPage109(s, "Q4:\n (audio-autoplay=true) \n (video-autoplay=true)", "q4", {
+  audio: true,
+  autoplayAudio: true,
+  video: true,
+  autoplayVideo: true,
+});
 
 export const autoplayWorks: IExampleSchema = {
   menuLabel: "autoplay",

@@ -82,7 +82,7 @@ export class BuilderConditionGroup extends BuilderObject<"builder-condition-grou
     };
   }
 
-  toEngineConditionComplex(): Condition.Complex | false {
+  toEngineConditionComplex(modulePrefix: string): Condition.Complex | false {
     const comp: Condition.Complex = {
       kind: "complex-condition",
       all: [],
@@ -91,7 +91,7 @@ export class BuilderConditionGroup extends BuilderObject<"builder-condition-grou
     };
     const conditions: Condition.Simple[] = [];
     this.conditions.forEach((c) => {
-      const maybeSimple = c.toEngineCondition();
+      const maybeSimple = c.toEngineCondition(modulePrefix);
       if (maybeSimple) {
         conditions.push(maybeSimple);
       }

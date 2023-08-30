@@ -122,11 +122,11 @@ export const DefaultTheme: IDefaultTheme = {
       text: {
         css: {
           w: 80,
-          y: 27,
+          y: 65,
           x: 10,
           textAlign: "center",
           textColor: "black",
-          fontSize: { _unit: "px", value: 30 },
+          fontSize: { _unit: "px", value: 40 },
         },
         cssDisabled: {},
         cssEnabled: {},
