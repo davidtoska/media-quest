@@ -6,7 +6,14 @@ import type { BuilderConditionDto } from "./condition/Builder-condition";
 import type { BuilderOperator } from "./condition/Builder-operator";
 import type { ExcludeByPageAction, ExcludeByTagAction, JumpToPageAction } from "./RuleAction";
 import { ExcludeByPageIdSelectItem, ExcludeByTagSelectItem } from "./multi-select-item";
+import { PageID } from "@media-quest/engine";
+import { PagePrefix, VarID, SchemaPrefix, PagePrefixValue } from "../prefix";
 
+const idPxx = () => {
+  const id = PageID.create();
+  const prefix = PagePrefix.fromStringOrThrow("pxx");
+  return { id, prefix: prefix };
+};
 export namespace RuleBuilderTestUtils {
   export const createOptions = () => [
     BuilderOption.create(0, "Nei"),
@@ -25,19 +32,23 @@ export namespace RuleBuilderTestUtils {
     return action;
   };
 
-  export const excludeByPageIdAction = (pageId: string, pageNumber: number) => {
+  export const excludeByPageIdAction = (pageId: PageID, pageNumber: number) => {
+    const pagePrefix = PagePrefix.castOrCreateRandom("").value;
     const action: ExcludeByPageAction = {
       kind: "exclude-by-pageId",
       mainText: "",
       pageId,
+      pagePrefix,
       pageNumber,
     };
     return action;
   };
-  export const jumpToPageAction = (pageId: string, pageNumber: number) => {
+  export const jumpToPageAction = (pageId: PageID, pageNumber: number) => {
+    const pagePrefix = PagePrefix.castOrCreateRandom("").value;
     const action: JumpToPageAction = {
       kind: "jump-to-page",
       mainText: "TEXT: " + pageId,
+      pagePrefix,
       pageId,
       pageNumber,
     };
@@ -59,22 +70,50 @@ export namespace RuleBuilderTestUtils {
     ] as const;
     return list;
   };
-  export const createRuleVariable = (id: string, pageNumber: number): QuestionVariable =>
-    new QuestionVariable(id, "Har du " + id + "?", createOptions(), pageNumber);
+  export const createRuleVariable = (varId: VarID, pageNumber: number): QuestionVariable =>
+    new QuestionVariable(varId, "Har du " + varId + "?", createOptions(), pageNumber);
 
   /**
    *
    */
-  export const createBuilderVariables_A_H = (): ReadonlyArray<QuestionVariable> => [
-    createRuleVariable("a", 3),
-    createRuleVariable("b", 4),
-    createRuleVariable("c", 5),
-    createRuleVariable("d", 6),
-    createRuleVariable("e", 7),
-    createRuleVariable("f", 8),
-    createRuleVariable("g", 9),
-    createRuleVariable("h", 10),
-  ];
+  export const createPagesAndVars_A_H = (schemaPrefix: SchemaPrefix) => {
+    const varId = (pagePrefix: string) => {
+      const pxx = PagePrefix.fromStringOrThrow(pagePrefix);
+      const qxx = VarID.create(schemaPrefix.value, pxx);
+      return qxx;
+    };
+    const pageAID = PageID.create();
+    const pageBID = PageID.create();
+    const pageCID = PageID.create();
+    const pageDID = PageID.create();
+    const pageEID = PageID.create();
+    const pageFID = PageID.create();
+    const pageGID = PageID.create();
+    const pageHID = PageID.create();
+    const a = createRuleVariable(varId("a"), 3);
+    const b = createRuleVariable(varId("b"), 4);
+    const c = createRuleVariable(varId("c"), 5);
+    const d = createRuleVariable(varId("d"), 6);
+    const e = createRuleVariable(varId("e"), 7);
+    const f = createRuleVariable(varId("f"), 8);
+    const g = createRuleVariable(varId("g"), 9);
+    const h = createRuleVariable(varId("h"), 10);
+    const list = [a, b, c, d, e, f, g, h];
+    const items = { a, b, c, d, e, f, g, h };
+    const pageIds = {
+      a: pageAID,
+      b: pageBID,
+      c: pageCID,
+      d: pageDID,
+      e: pageEID,
+      f: pageFID,
+      g: pageGID,
+
+      h: pageHID,
+    };
+    const pageIdList = [pageAID, pageBID, pageCID, pageDID, pageEID, pageFID, pageGID, pageHID];
+    return { list, items, pageIds, pageIdList };
+  };
 
   export const createConditionDto = (variable: BuilderVariable): BuilderConditionDto => {
     const operator: BuilderOperator = Math.random() > 0 ? "equal" : "notEqual";
@@ -97,12 +136,12 @@ export namespace RuleBuilderTestUtils {
     };
   };
 
-  export const createBuilderRuleDto = (): ReadonlyArray<BuilderRuleDto> => {
-    const variables = createBuilderVariables_A_H();
-    const condition0 = createConditionDto(variables[0]);
-    const condition1 = createConditionDto(variables[1]);
-    const condition3 = createConditionDto(variables[3]);
-    const condition5 = createConditionDto(variables[5]);
+  export const createBuilderRuleDto = (schemaPrefix: SchemaPrefix): ReadonlyArray<BuilderRuleDto> => {
+    const v = createPagesAndVars_A_H(schemaPrefix);
+    const condition0 = createConditionDto(v.items.a);
+    const condition1 = createConditionDto(v.items.b);
+    const condition3 = createConditionDto(v.items.c);
+    const condition5 = createConditionDto(v.items.e);
     const group = createConditionGroupDto([condition0, condition3]);
     // const action1: Exc
     const rule: BuilderRuleDto = {
@@ -119,7 +158,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_a",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -129,7 +169,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_b",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -139,7 +180,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_c",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -149,7 +191,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_d",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -159,7 +202,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_e",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -168,7 +212,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_f",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -178,7 +223,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_g",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -188,7 +234,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_h",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -198,7 +245,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_i",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },
@@ -208,7 +256,8 @@ export namespace RuleBuilderTestUtils {
     ExcludeByPageIdSelectItem.create(
       {
         kind: "exclude-by-pageId",
-        pageId: "page_j",
+        pageId: idPxx().id,
+        pagePrefix: idPxx().prefix,
         pageNumber: 5,
         mainText: "Har du noen gang vært deprimeri?? ",
       },

@@ -1,6 +1,7 @@
 import type { RuleInput } from "./RuleInput";
 import { ExcludeByPageIdSelectItem } from "./multi-select-item";
 import { ExcludeByPageAction } from "./RuleAction";
+import { PageID } from "@media-quest/engine";
 
 export class PageActionManager {
   private readonly _initialSelection: Set<string>;
@@ -17,7 +18,7 @@ export class PageActionManager {
     });
   }
 
-  getCurrentSelection(): ReadonlyArray<string> {
+  getCurrentSelection(): ReadonlyArray<PageID> {
     const selected = this.selectItems.filter((item) => item.isSelected).map((itm) => itm.data.pageId);
     return selected;
   }

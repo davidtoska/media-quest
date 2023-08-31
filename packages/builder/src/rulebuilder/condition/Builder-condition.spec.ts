@@ -2,6 +2,7 @@ import { BuilderCondition, type BuilderConditionDto } from "./Builder-condition"
 import { RuleBuilderTestUtils } from "../RuleBuilder-test-utils";
 import type { BuilderVariable, BuilderVariableOption } from "../RuleVariable";
 import { QuestionVariable } from "../RuleVariable";
+import { SchemaPrefix } from "../../prefix";
 
 let condition = BuilderCondition.create([]);
 
@@ -9,13 +10,15 @@ beforeEach(() => {
   condition = BuilderCondition.create([]);
 });
 
+const as = SchemaPrefix.fromValueOrThrow("as");
+
 describe("Builder Operator", () => {
   test("Can create", () => {
     expect(condition).toBeInstanceOf(BuilderCondition);
   });
   test("Can resolve dto from Variables in universe.", () => {
-    const vs = RuleBuilderTestUtils.createBuilderVariables_A_H();
-    const a = vs[0];
+    const vs = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
+    const a = vs.items.a;
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "a",
@@ -23,15 +26,15 @@ describe("Builder Operator", () => {
       operator: "equal",
       value: 1,
     };
-    const c = BuilderCondition.fromDto(dto, vs);
+    const c = BuilderCondition.fromDto(dto, vs.list);
     // c.setVariableList(vs);
     expect(c.operatorsSelectItems.length).toBe(2);
     expect(c.operator === "equal").toBe(true);
     expect(c.value).toBeTruthy();
   });
   test("Can not resolve value if invalid value", () => {
-    const vs = RuleBuilderTestUtils.createBuilderVariables_A_H();
-    const a = vs[0];
+    const vs = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
+    const a = vs.items.a;
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "a",
@@ -39,14 +42,14 @@ describe("Builder Operator", () => {
       operator: "equal",
       value: 8,
     };
-    const c = BuilderCondition.fromDto(dto, vs);
+    const c = BuilderCondition.fromDto(dto, vs.list);
     expect(c.operatorsSelectItems.length).toBe(2);
     expect(c.value).toBe(false);
     // expect(match).toBe(false);
   });
   test("Will nullify dto if not matchedFrom is called", () => {
-    const vs = RuleBuilderTestUtils.createBuilderVariables_A_H();
-    const a = vs[0];
+    const vs = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
+    const a = vs.items.a;
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "a",
@@ -63,8 +66,8 @@ describe("Builder Operator", () => {
     // expect(match).toBe(false);
   });
   test("Will not nullify if created with valid universe", () => {
-    const vs = RuleBuilderTestUtils.createBuilderVariables_A_H();
-    const a = vs[0];
+    const vs = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
+    const a = vs.items.a;
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "a",
@@ -72,7 +75,7 @@ describe("Builder Operator", () => {
       operator: "equal",
       value: 0,
     };
-    const c = BuilderCondition.fromDto(dto, vs);
+    const c = BuilderCondition.fromDto(dto, vs.list);
     expect(c.variable).toBeInstanceOf(QuestionVariable);
     expect(c.operator === "equal").toBe(true);
     const value = c.value as BuilderVariableOption;
@@ -81,8 +84,8 @@ describe("Builder Operator", () => {
     expect(c.variable).toBe(a);
   });
   test("Condition is valid, when in sync with universe.", () => {
-    const vs = RuleBuilderTestUtils.createBuilderVariables_A_H();
-    const a = vs[0];
+    const vs = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
+    const a = vs.items.a;
     const dto: BuilderConditionDto = {
       kind: "condition",
 
@@ -91,7 +94,7 @@ describe("Builder Operator", () => {
       operator: "equal",
       value: 0,
     };
-    const c = BuilderCondition.fromDto(dto, vs);
+    const c = BuilderCondition.fromDto(dto, vs.list);
     expect(c.variable).toBeInstanceOf(QuestionVariable);
     expect(c.operator === "equal").toBe(true);
     const value = c.value as BuilderVariableOption;
@@ -111,7 +114,7 @@ describe("Builder Operator", () => {
     expect(c.validate().isValid).toBe(false);
   });
   test("Condition is invalid, when variable dont exist in universe.", () => {
-    const universe = RuleBuilderTestUtils.createBuilderVariables_A_H();
+    const variables = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "invalid variable name in dto",
@@ -119,12 +122,12 @@ describe("Builder Operator", () => {
       operator: "equal",
       value: 9,
     };
-    const c = BuilderCondition.fromDto(dto, universe);
+    const c = BuilderCondition.fromDto(dto, variables.list);
     expect(c.variable).toBe(false);
     expect(c.validate().isValid).toBe(false);
   });
-  test("Condition is invalid if not all set, when variable dont exist in universe.", () => {
-    const universe = RuleBuilderTestUtils.createBuilderVariables_A_H();
+  test("Condition is invalid if not all set, when variable dont exist in variables.", () => {
+    const variables = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "invalid variable name in dto",
@@ -132,34 +135,39 @@ describe("Builder Operator", () => {
       operator: "equal",
       value: 9,
     };
-    const c = BuilderCondition.fromDto(dto, universe);
+    const c = BuilderCondition.fromDto(dto, variables.list);
     expect(c.variable).toBe(false);
     expect(c.validate().isValid).toBe(false);
   });
+
   test("Condition is invalid if operator is not set", () => {
-    const universe = RuleBuilderTestUtils.createBuilderVariables_A_H();
+    const variables = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
+    const a = variables.items.a;
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "invalid variable name in dto",
-      variableId: "a",
+      variableId: a.varId,
       operator: "",
       value: 1,
     };
-    const c = BuilderCondition.fromDto(dto, universe);
+    expect(a.varId).toBe("as_a");
+    const c = BuilderCondition.fromDto(dto, variables.list);
     expect(c.variable).toBeInstanceOf(QuestionVariable);
     expect(c.validate().isValid).toBe(false);
     expect(c.value).toBe(false);
   });
   test("Condition is invalid if value (from dto) is not found in variable", () => {
-    const universe = RuleBuilderTestUtils.createBuilderVariables_A_H();
+    const { list, items } = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
+    expect(items.a.varId).toBe("as_a");
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "invalid variable name in dto",
-      variableId: "a",
+      variableId: items.a.varId,
       operator: "equal",
-      value: 7,
+      value: 42,
     };
-    const c = BuilderCondition.fromDto(dto, universe);
+    const c = BuilderCondition.fromDto(dto, list);
+    expect(c).toBeInstanceOf(BuilderCondition);
     expect(c.variable).toBeInstanceOf(QuestionVariable);
     expect(c.operator).toBe("equal");
     expect(c.operatorsSelectItems.length).toBe(BuilderCondition.NUMBER_OPERATORS.length);
@@ -167,15 +175,16 @@ describe("Builder Operator", () => {
     expect(c.validate().isValid).toBe(false);
   });
   test("toEngineConditionWorks", () => {
-    const universe = RuleBuilderTestUtils.createBuilderVariables_A_H();
+    const variables = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
+
     const dto: BuilderConditionDto = {
       kind: "condition",
       name: "invalid variable name in dto",
-      variableId: "a",
+      variableId: variables.items.a.varId,
       operator: "equal",
       value: 7,
     };
-    const c = BuilderCondition.fromDto(dto, universe);
+    const c = BuilderCondition.fromDto(dto, variables.list);
     expect(c.variable).toBeInstanceOf(QuestionVariable);
     expect(c.operator).toBe("equal");
     expect(c.operatorsSelectItems.length).toBe(BuilderCondition.NUMBER_OPERATORS.length);

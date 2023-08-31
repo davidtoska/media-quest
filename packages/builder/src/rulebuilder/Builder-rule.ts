@@ -9,14 +9,14 @@ import { BuilderObject } from "../BuilderObject";
 import { TagActionManager } from "./tag-action-manager";
 import { PageActionManager } from "./page-action-manager";
 import { JumpToActionManager } from "./jump-to-action-manager";
-import { Condition, PageQueCommand, PageQueRules } from "@media-quest/engine";
+import { Condition, PageID, PageQueCommand, PageQueRules } from "@media-quest/engine";
 
 export interface BuilderRuleDto {
   readonly type: ConditionGroupType;
   readonly name: string;
   readonly conditions: ReadonlyArray<BuilderConditionDto | BuilderConditionGroupDto>;
   readonly excludeTags: ReadonlyArray<string>;
-  readonly excludePages: ReadonlyArray<string>;
+  readonly excludePages: ReadonlyArray<PageID>;
   readonly jumpToPage: string | false;
 }
 export class BuilderRule extends BuilderObject<"builder-rule", BuilderRuleDto> {
@@ -132,18 +132,18 @@ export class BuilderRule extends BuilderObject<"builder-rule", BuilderRuleDto> {
     };
     return dto;
   }
-  toEngineRule(modulePrefix: string): PageQueRules {
+  toEngineRule(): PageQueRules {
     const conditions: Condition[] = [];
     this._conditions.forEach((c) => {
       if (c) {
         if (c instanceof BuilderCondition) {
-          const simpleCondition = c.toEngineCondition(modulePrefix);
+          const simpleCondition = c.toEngineCondition();
           if (simpleCondition) {
             conditions.push(simpleCondition);
           }
         }
         if (c instanceof BuilderConditionGroup) {
-          const complexCondition = c.toEngineConditionComplex(modulePrefix);
+          const complexCondition = c.toEngineConditionComplex();
           if (complexCondition) conditions.push(complexCondition);
         }
       }

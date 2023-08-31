@@ -1,3 +1,5 @@
+import { PagePrefix, VarID, SchemaPrefix } from "../prefix";
+
 const BuilderVariableType = {
   numericWithOptions: true,
   numeric: true,
@@ -23,7 +25,9 @@ export class QuestionVariable {
   readonly kind: "question-variable" = "question-variable";
   readonly dataType: BuilderVariableType = "numericWithOptions";
   constructor(
-    readonly varId: string,
+    // private schemaPrefix: SchemaPrefix,
+    // private pagePrefix: PagePrefix,
+    readonly varId: VarID,
     readonly label: string,
     readonly options: ReadonlyArray<BuilderVariableOption>,
     readonly pageNumber: number,
@@ -34,7 +38,7 @@ export class CustomVariable {
   readonly kind: "configuration-variable" = "configuration-variable";
   readonly dataType: BuilderVariableType = "numericWithOptions";
   constructor(
-    readonly varId: string,
+    readonly varId: VarID,
     readonly label: string,
     readonly options: ReadonlyArray<BuilderVariableOption>,
   ) {}

@@ -8,6 +8,6 @@ export { BuilderMainText, type BuilderMainTextDto } from "./BuilderMainText";
 export { type BuilderMainVideoDto } from "./BuilderMainVideoDto";
 export { type BuilderTagDto, BuilderTag, TagCollection } from "./BuilderTag";
 export { type AudioFile, type ImageFile, type VideoFile } from "./media-files";
-
+export * from "./prefix";
 // Public Api of rule-builder
 export * from "./rulebuilder";

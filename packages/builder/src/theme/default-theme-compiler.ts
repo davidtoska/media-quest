@@ -40,7 +40,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     const ruleInput = builderSchema.getRuleInput();
     const pageQueRules: Rule<PageQueCommand, never>[] = [];
     source.rules.forEach((rule) => {
-      const engineRule = BuilderRule.fromDto(rule, ruleInput).toEngineRule(source.prefix);
+      const engineRule = BuilderRule.fromDto(rule, ruleInput).toEngineRule();
       if (!Rule.isEmpty(engineRule)) {
         pageQueRules.push(engineRule);
       } else {
@@ -56,7 +56,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   compile(source: BuilderSchemaDto): SchemaDto {
     const pages = source.pages.map((p) => this.compilePage(p, source.prefix));
     const rules = this.compileRules(source);
-    console.log(pages.map((p) => p.tags));
+    // console.log(pages.map((p) => p.tags));
 
     const dto: SchemaDto = {
       backgroundColor: source.backgroundColor,
@@ -66,7 +66,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       pageSequences: [],
       pages,
       predefinedFacts: [],
-      prefix: source.prefix,
       rules,
       stateFromEvent: [
         {

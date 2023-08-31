@@ -10,12 +10,13 @@ import type { BuilderRuleDto } from "./rulebuilder";
 import { BuilderRule } from "./rulebuilder";
 import { DefaultThemeCompiler } from "./theme/default-theme-compiler";
 import { ImageFile } from "./media-files";
-import { SchemaDto, DUtil } from "@media-quest/engine";
+import { SchemaDto, DUtil, PageID, SchemaID } from "@media-quest/engine";
+import { PagePrefix, SchemaPrefix, SchemaPrefixValue } from "./prefix";
 const U = DUtil;
-// type SchemaHash = string & { __MD5__HASH: true };
+
 export interface BuilderSchemaDto {
-  readonly id: string;
-  readonly prefix: string;
+  readonly id: SchemaID;
+  readonly prefix: SchemaPrefixValue;
   readonly mainImage: ImageFile | false;
   readonly backgroundColor: string;
   readonly name: string;
@@ -33,6 +34,7 @@ export interface SchemaBuildOutput {
 }
 
 export class BuilderSchema {
+  private readonly _prefix: SchemaPrefix;
   baseHeight = 1300;
   baseWidth = 1024;
   backgroundColor = "#000000";
@@ -43,16 +45,22 @@ export class BuilderSchema {
     return [...this._rules];
   }
 
+  get prefix(): SchemaPrefixValue {
+    return this._prefix.value;
+  }
+
   private readonly _tagCollection: TagCollection = TagCollection.create();
   get tags(): ReadonlyArray<BuilderTag> {
     return [...this._tagCollection];
   }
-  public static create(id: string, name: string, prefix: string) {
-    return new BuilderSchema(id, name, prefix);
+  public static create(id: SchemaID, name: string, prefix: SchemaPrefixValue) {
+    const schemaPrefix = SchemaPrefix.castOrCreateRandom(prefix);
+    return new BuilderSchema(id, name, schemaPrefix);
   }
 
   public static fromJson(dto: BuilderSchemaDto): BuilderSchema {
-    const schema = new BuilderSchema(dto.id, dto.name, dto.prefix);
+    const schemaPrefix = SchemaPrefix.castOrCreateRandom(dto.prefix);
+    const schema = new BuilderSchema(dto.id, dto.name, schemaPrefix);
     const pages = dto.pages.map(BuilderPage.fromJson);
     schema._tagCollection.init(dto.tags);
     schema.backgroundColor = dto.backgroundColor;
@@ -87,13 +95,16 @@ export class BuilderSchema {
     return dto;
   }
   private constructor(
-    public readonly id: string,
+    public readonly id: SchemaID,
     public name: string,
-    public prefix: string,
-  ) {}
+    _prefix: SchemaPrefix,
+  ) {
+    this._prefix = _prefix;
+  }
 
   addPage(type: BuilderPageType, atIndex = -1): BuilderPage {
-    const newPage = BuilderPage.create(type, "");
+    const pagePrefix = PagePrefix.create();
+    const newPage = BuilderPage.create(type, pagePrefix.value);
     if (atIndex >= 0 && atIndex < this.pages.length) {
       this.pages.splice(atIndex, 0, newPage);
     } else {
@@ -188,20 +199,23 @@ export class BuilderSchema {
       return excludeByTagDto;
     });
     const jumpActions: JumpToPageAction[] = [];
-    const prefix = "";
+    const prefix = this.prefix;
     this.pages.forEach((page, index) => {
-      const pageVariables = page.getQuestionVariables(prefix, index);
+      const pageVariables = page.getQuestionVariables(this._prefix, index);
       qVars.push(...pageVariables);
       const mainText = page.mainText.text;
+      const pagePrefix = page.prefix;
       const jumpAction: JumpToPageAction = {
         kind: "jump-to-page",
         pageId: page.id,
+        pagePrefix,
         pageNumber: index,
         mainText: page.mainText.text,
       };
       const excludePageAction: ExcludeByPageAction = {
         kind: "exclude-by-pageId",
         pageId: page.id,
+        pagePrefix,
         pageNumber: index,
         mainText,
       };
@@ -219,25 +233,6 @@ export class BuilderSchema {
 
   addTag(builderTag: BuilderTag) {
     this._tagCollection.add(builderTag);
-  }
-
-  // getHash(): SchemaHash {
-  //     const md5 = MD5(this.toJson());
-  //     return
-  // }
-
-  // hasChanged(hash: SchemaHash): boolean {
-  //     return hash !== this.getHash();
-  // }
-
-  private getQuestionVariables(withModulePrefix = false): ReadonlyArray<QuestionVariable> {
-    const prefix = withModulePrefix ? this.prefix : "";
-    const all = this.pages
-      .map((page, index) => {
-        return page.getQuestionVariables(prefix, index);
-      })
-      .flat(1);
-    return all;
   }
 
   compile(): SchemaBuildOutput {

@@ -16,3 +16,4 @@ export * from "./Delement/DAuto-play";
 export * from "./Delement/css";
 
 export * from "./utils/DUtil";
+export * from "./utils/ID";
