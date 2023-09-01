@@ -2,7 +2,8 @@ import { BuilderCondition, type BuilderConditionDto } from "./Builder-condition"
 import { RuleBuilderTestUtils } from "../RuleBuilder-test-utils";
 import type { BuilderVariable, BuilderVariableOption } from "../RuleVariable";
 import { QuestionVariable } from "../RuleVariable";
-import { SchemaPrefix } from "../../prefix";
+
+import { SchemaPrefix } from "../../primitives/schema-prefix";
 
 let condition = BuilderCondition.create([]);
 

@@ -4,7 +4,9 @@ import { RuleInput } from "./RuleInput";
 import type { BuilderConditionGroupDto } from "./condition/Builder-condition-group";
 import { BuilderConditionDto } from "./condition/Builder-condition";
 import { Condition, PageID } from "@media-quest/engine";
-import { PagePrefix, VarID, SchemaPrefix } from "../prefix";
+import { PagePrefix } from "../primitives/page-prefix";
+import { VarID } from "../primitives/varID";
+import { SchemaPrefix } from "../primitives/schema-prefix";
 
 const { createPagesAndVars_A_H } = U;
 

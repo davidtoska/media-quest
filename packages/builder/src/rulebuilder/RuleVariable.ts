@@ -1,4 +1,6 @@
-import { PagePrefix, VarID, SchemaPrefix } from "../prefix";
+import { PagePrefix } from "../primitives/page-prefix";
+import { VarID } from "../primitives/varID";
+import { SchemaPrefix } from "../primitives/schema-prefix";
 
 const BuilderVariableType = {
   numericWithOptions: true,

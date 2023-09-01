@@ -5,7 +5,8 @@ import type { BuilderTagDto } from "./BuilderTag";
 import { BuilderTag } from "./BuilderTag";
 import type { BuilderObjectId } from "./BuilderObject";
 import { PageID, SchemaID } from "@media-quest/engine";
-import { PagePrefix, SchemaPrefix } from "./prefix";
+import { PagePrefix } from "./primitives/page-prefix";
+import { SchemaPrefix } from "./primitives/schema-prefix";
 
 const tag1: BuilderTagDto = BuilderTag.create("tag1", "This tag is defined in schemaDto1").toJson();
 
@@ -166,7 +167,7 @@ describe("Builder schema", () => {
   test("Can create Schema from dto", () => {
     const s = BuilderSchema.fromJson(schemaDto1);
     expect(s.id).toBe(schemaDto1.id);
-    expect(s.prefix).toBe(schemaDto1.prefix);
+    expect(s.prefix.value).toBe(schemaDto1.prefix);
     expect(s.baseHeight).toBe(schemaDto1.baseHeight);
     expect(s.baseWidth).toBe(schemaDto1.baseWidth);
     expect(s.backgroundColor).toBe(schemaDto1.backgroundColor);

@@ -1,4 +1,4 @@
-import { SchemaPrefix } from "./prefix";
+import { SchemaPrefix } from "./schema-prefix";
 
 export type PagePrefixValue = string & { __PAGE_PREFIX__: true };
 export const createRandomPrefix = <const P extends string>(length: number): P => {

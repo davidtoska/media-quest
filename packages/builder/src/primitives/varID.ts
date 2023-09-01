@@ -1,5 +1,6 @@
 import { PagePrefixValue } from "./page-prefix";
-import { SchemaPrefixValue } from "./prefix";
+
+import { SchemaPrefixValue } from "./schema-prefix";
 
 export type VarID = `${SchemaPrefixValue}_${PagePrefixValue}`;
 export const VarID = {

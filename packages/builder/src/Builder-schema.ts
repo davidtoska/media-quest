@@ -11,7 +11,8 @@ import { BuilderRule } from "./rulebuilder";
 import { DefaultThemeCompiler } from "./theme/default-theme-compiler";
 import { ImageFile } from "./media-files";
 import { SchemaDto, DUtil, PageID, SchemaID } from "@media-quest/engine";
-import { PagePrefix, SchemaPrefix, SchemaPrefixValue } from "./prefix";
+import { PagePrefix } from "./primitives/page-prefix";
+import { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
 const U = DUtil;
 
 export interface BuilderSchemaDto {
@@ -34,7 +35,7 @@ export interface SchemaBuildOutput {
 }
 
 export class BuilderSchema {
-  private readonly _prefix: SchemaPrefix;
+  readonly prefix: SchemaPrefix;
   baseHeight = 1300;
   baseWidth = 1024;
   backgroundColor = "#000000";
@@ -45,9 +46,9 @@ export class BuilderSchema {
     return [...this._rules];
   }
 
-  get prefix(): SchemaPrefixValue {
-    return this._prefix.value;
-  }
+  // get prefix(): SchemaPrefixValue {
+  //   return this._prefix.value;
+  // }
 
   private readonly _tagCollection: TagCollection = TagCollection.create();
   get tags(): ReadonlyArray<BuilderTag> {
@@ -90,16 +91,16 @@ export class BuilderSchema {
       rules,
       tags,
       mainImage: this.mainImage,
-      prefix: this.prefix,
+      prefix: this.prefix.value,
     };
     return dto;
   }
   private constructor(
     public readonly id: SchemaID,
     public name: string,
-    _prefix: SchemaPrefix,
+    prefix: SchemaPrefix,
   ) {
-    this._prefix = _prefix;
+    this.prefix = prefix;
   }
 
   addPage(type: BuilderPageType, atIndex = -1): BuilderPage {
@@ -199,9 +200,8 @@ export class BuilderSchema {
       return excludeByTagDto;
     });
     const jumpActions: JumpToPageAction[] = [];
-    const prefix = this.prefix;
     this.pages.forEach((page, index) => {
-      const pageVariables = page.getQuestionVariables(this._prefix, index);
+      const pageVariables = page.getQuestionVariables(this.prefix, index);
       qVars.push(...pageVariables);
       const mainText = page.mainText.text;
       const pagePrefix = page.prefix;

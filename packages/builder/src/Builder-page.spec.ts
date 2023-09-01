@@ -4,7 +4,8 @@ import type { BuilderQuestionDto } from "./Builder-question";
 import { BuilderQuestion } from "./Builder-question";
 import type { BuilderObjectId } from "./BuilderObject";
 import { DUtil, PageID } from "@media-quest/engine";
-import { PagePrefix, SchemaPrefix } from "./prefix";
+import { PagePrefix } from "./primitives/page-prefix";
+import { SchemaPrefix } from "./primitives/schema-prefix";
 
 const U = DUtil;
 const deleteIdsFromPage = (page: BuilderPageDto) => {

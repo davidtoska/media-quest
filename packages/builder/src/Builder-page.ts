@@ -9,7 +9,9 @@ import type { BuilderMainTextDto } from "./BuilderMainText";
 import { BuilderMainText } from "./BuilderMainText";
 import { BuilderVariableOption, QuestionVariable } from "./rulebuilder/RuleVariable";
 import { DUtil, PageID } from "@media-quest/engine";
-import { PagePrefix, PagePrefixValue, VarID, SchemaPrefix, SchemaPrefixValue } from "./prefix";
+import { PagePrefix, PagePrefixValue } from "./primitives/page-prefix";
+import { VarID } from "./primitives/varID";
+import { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
 
 const U = DUtil;
 export type BuilderPageType = "info-page" | "question" | "multi-select" | "form";

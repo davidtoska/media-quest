@@ -11,7 +11,7 @@ const isID = <const B extends string>(idName: B, id?: string): id is ID<B> => {
   return id.length >= MIN_LENGTH;
 };
 
-const createID = <const B extends string>(idName: B): ID<B> => {
+const createIDByName = <const B extends string>(idName: B): ID<B> => {
   const letters = "abcdefghijklmnopqrstuvyz";
   const all = letters + letters.toUpperCase();
   let result = "";
@@ -30,7 +30,7 @@ export const createTypedIdSingleton = <const B extends string>(idName: B) => {
   /**
    * Creates a new ID of the correct type
    */
-  const create = (): ID<B> => createID(idName);
+  const create = (): ID<B> => createIDByName(idName);
 
   /**
    * Checks if the id is of the correct type

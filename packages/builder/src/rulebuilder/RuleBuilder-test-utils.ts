@@ -7,7 +7,9 @@ import type { BuilderOperator } from "./condition/Builder-operator";
 import type { ExcludeByPageAction, ExcludeByTagAction, JumpToPageAction } from "./RuleAction";
 import { ExcludeByPageIdSelectItem, ExcludeByTagSelectItem } from "./multi-select-item";
 import { PageID } from "@media-quest/engine";
-import { PagePrefix, VarID, SchemaPrefix, PagePrefixValue } from "../prefix";
+import { PagePrefix, PagePrefixValue } from "../primitives/page-prefix";
+import { VarID } from "../primitives/varID";
+import { SchemaPrefix } from "../primitives/schema-prefix";
 
 const idPxx = () => {
   const id = PageID.create();
