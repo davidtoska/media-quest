@@ -375,7 +375,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     const factsCollected: Fact[] = [];
     const { id, value, label } = buttonDto;
 
-    const { div, text1 } = DefaultTheme.responseButtons;
+    // const { div, text1, dontKnow } = DefaultTheme.responseButtons;
     if (options.kind === "response-button") {
       const fact: Fact = {
         kind: "numeric-fact",
@@ -396,6 +396,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
         factsCollected,
       },
     };
+    const btnStyles = value === 9 ? DefaultTheme.responseButtons.dontKnow : DefaultTheme.responseButtons.normal;
+    console.log(btnStyles);
     const btn: DDivDto = {
       id,
       _tag: "div",
@@ -404,17 +406,17 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
           _tag: "p",
           id: U.randomString(30),
           text: label,
-          style: text1,
+          style: btnStyles.text1,
         },
       ],
       onStateChange: [
         {
           queryName: DStateProps._Queries.disableUserInputQuery.name,
-          whenFalse: [...ThemeUtils.enableClickCommands(id, div.cssEnabled)],
-          whenTrue: [...ThemeUtils.disableClickCommands(id, div.cssDisabled)],
+          whenFalse: [...ThemeUtils.enableClickCommands(id, btnStyles.btn.cssEnabled)],
+          whenTrue: [...ThemeUtils.disableClickCommands(id, btnStyles.btn.cssDisabled)],
         },
       ],
-      style: { ...div.css, ...div.cssEnabled },
+      style: { ...btnStyles.btn.css, ...btnStyles.btn.cssEnabled },
       onClick: [onClickHandler],
     };
     if (options.kind === "next-button") {

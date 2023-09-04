@@ -37,15 +37,21 @@ export interface IDefaultTheme {
   responseButtons: BuilderOptionTheme;
   nextButtonTheme: BuilderOptionTheme;
   // mainQuestionText: BuilderTextTheme;
-  dontKnowButtonTheme?: BuilderOptionTheme;
+  // dontKnowButtonTheme: BuilderOptionTheme;
   buttonThemes?: Array<BuilderOptionTheme>;
 }
 
 export interface BuilderOptionTheme {
   name: string;
-  div: CssTheme;
+  normal: ButtonTheme;
+  dontKnow: ButtonTheme;
+}
+
+interface ButtonTheme {
+  btn: CssTheme;
+  divider: PStyle;
   text1: PStyle;
-  text2?: CssTheme;
+  text2: PStyle;
 }
 
 namespace BuilderOptionTheme {
@@ -65,38 +71,80 @@ namespace BuilderOptionTheme {
   const FONT_WEIGHT: DStyle["fontWeight"] = 600;
   const FONT_SIZE: DCss.Px["value"] = 35;
 
-  export const blueButton = (): BuilderOptionTheme => ({
-    name: "blue-button-theme",
-    div: {
-      css: {
-        backgroundColor: BLUE,
-        borderColor: BLUE,
-        textColor: WHITE,
-        fontSize: { _unit: "px", value: FONT_SIZE },
-        borderWidth: { _unit: "px", value: BTN_BORDER_WIDTH },
-        borderStyle: BTN_BORDER_STYLE,
-        borderRadius: { value: BTN_BORDER_RADIUS, _unit: "px" },
-        padding: { _unit: "px", value: 40 },
-        h: BTN_HEIGHT,
-        w: BTN_WIDTH,
-        x: 10,
-        y: 8,
-        textAlign: "center",
+  export const blueButton = (): BuilderOptionTheme => {
+    const optionTheme: BuilderOptionTheme = {
+      name: "blue-button-theme",
+      normal: {
+        btn: {
+          css: {
+            backgroundColor: BLUE,
+            borderColor: BLUE,
+            textColor: WHITE,
+            fontSize: { _unit: "px", value: FONT_SIZE },
+            borderWidth: { _unit: "px", value: BTN_BORDER_WIDTH },
+            borderStyle: BTN_BORDER_STYLE,
+            borderRadius: { value: BTN_BORDER_RADIUS, _unit: "px" },
+            padding: { _unit: "px", value: 40 },
+            h: BTN_HEIGHT,
+            w: BTN_WIDTH,
+            x: 10,
+            y: 8,
+            textAlign: "center",
+          },
+          cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
+          cssEnabled: { opacity: 1, cursor: "pointer" },
+        },
+        divider: {},
+        text1: {
+          y: 50,
+          transform: "translate(0%, 50%)",
+          textColor: WHITE,
+          fontSize: { _unit: "px", value: FONT_SIZE },
+          w: 84,
+          x: 8,
+          fontWeight: FONT_WEIGHT,
+          textAlign: "center",
+        },
+        text2: {},
       },
-      cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
-      cssEnabled: { opacity: 1, cursor: "pointer" },
-    },
-    text1: {
-      y: 50,
-      transform: "translate(0%, 50%)",
-      textColor: WHITE,
-      fontSize: { _unit: "px", value: FONT_SIZE },
-      w: 84,
-      x: 8,
-      fontWeight: FONT_WEIGHT,
-      textAlign: "center",
-    },
-  });
+
+      dontKnow: {
+        btn: {
+          css: {
+            backgroundColor: WHITE,
+            borderColor: LIGHT_BLUE,
+            textColor: BLUE,
+            fontSize: { _unit: "px", value: FONT_SIZE },
+            borderWidth: { _unit: "px", value: BTN_BORDER_WIDTH },
+            borderStyle: BTN_BORDER_STYLE,
+            borderRadius: { value: BTN_BORDER_RADIUS, _unit: "px" },
+            padding: { _unit: "px", value: 40 },
+            h: BTN_HEIGHT,
+            w: BTN_SHORT_WIDTH,
+            x: 10,
+            y: 8,
+            textAlign: "center",
+          },
+          cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
+          cssEnabled: { opacity: 1, cursor: "pointer" },
+        },
+        text1: {
+          y: 50,
+          transform: "translate(0%, 50%)",
+          textColor: BLUE,
+          fontSize: { _unit: "px", value: FONT_SIZE },
+          w: 84,
+          x: 8,
+          fontWeight: FONT_WEIGHT,
+          textAlign: "center",
+        },
+        text2: {},
+        divider: {},
+      },
+    };
+
+    return optionTheme;
+  };
 }
 
 export const DefaultTheme: IDefaultTheme = {
