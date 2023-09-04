@@ -5,9 +5,11 @@ import { excludeByPageIdRuleWorks, excludeByTagWorks, jumpToRuleWorks } from "./
 import { IExampleSchema } from "./schema/IExample-schema";
 import { SchemaDto } from "@media-quest/engine";
 import { infopageWorks } from "./schema/infopage-works";
+import { gifModeWorks } from "./schema/gif-mode-works";
 console.log("DEV APP");
 
-const initialSchema = infopageWorks.schema;
+const initialSchema = gifModeWorks.schema;
+console.log(initialSchema);
 
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
 const engineRoot = document.createElement("div");
@@ -38,6 +40,7 @@ const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => vo
 };
 
 const menu = createMenu([
+  toMenuItem(gifModeWorks),
   toMenuItem(autoplayWorks),
   toMenuItem(infopageWorks),
   toMenuItem(excludeByPageIdRuleWorks),

@@ -397,7 +397,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       },
     };
     const btnStyles = value === 9 ? DefaultTheme.responseButtons.dontKnow : DefaultTheme.responseButtons.normal;
-    console.log(btnStyles);
     const btn: DDivDto = {
       id,
       _tag: "div",

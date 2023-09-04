@@ -1,28 +1,22 @@
-import { BuilderPage, BuilderSchema } from "@media-quest/builder";
+import { BuilderPage, BuilderSchema, PagePrefix, PagePrefixValue } from "@media-quest/builder";
 import { dummyAudioFiles, dummyImageFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
 const audio = dummyAudioFiles[0];
 const video = dummyVideoFiles[1];
 const image = dummyImageFiles[0];
 
-export const addPage = (
-  schema: BuilderSchema,
-  prefix: string,
-  text: string,
-  type: "question" | "info-page" = "question",
-) => new PageBuilder(schema, prefix, text, type);
+export const addPage = (schema: BuilderSchema, prefix: string, type: "question" | "info-page" = "question") =>
+  new PageBuilder(schema, prefix, type);
 
 class PageBuilder {
   private readonly page: BuilderPage;
   constructor(
     private readonly schema: BuilderSchema,
     prefix: string,
-    text: string,
-
     type: "question" | "info-page" = "question",
   ) {
     this.page = schema.addPage(type);
-    this.page.prefix = prefix;
-    this.page.mainText.text = text;
+    const prefixCasted = PagePrefix.fromStringOrThrow(prefix);
+    this.page.prefix = prefixCasted;
     if (type === "question") {
       this.page.defaultQuestion.addOption("Ja", 1);
       this.page.defaultQuestion.addOption("Nei", 0);
@@ -36,13 +30,13 @@ class PageBuilder {
     this.page.mainText.autoplay = autoplay;
     return this;
   }
-  addVideo(autoplay = false) {
+  addVideo(mode: "autoplay" | "optional" | "gif-mode" = "optional", preDelay = 1000) {
     this.page.mainMedia = {
       kind: "main-video",
       file: video,
       controls: false,
       volume: 1,
-      mode: autoplay ? "autoplay" : "optional",
+      mode,
       preDelay: 1000,
     };
     return this;
@@ -59,11 +53,6 @@ class PageBuilder {
     };
     return this;
   }
-  prefix(prefix: string) {
-    this.page.prefix = prefix;
-    return this;
-  }
-
   build() {
     return this.page;
   }
@@ -79,7 +68,8 @@ export const addQuestionPage109 = (
   questionPage.defaultQuestion.addOption("Ja", 1);
   questionPage.defaultQuestion.addOption("Nei", 0);
   questionPage.defaultQuestion.addOption("Vet ikke", 9);
-  questionPage.prefix = pagePrefix;
+  const prefix = PagePrefix.fromStringOrThrow(pagePrefix);
+  questionPage.prefix = prefix;
   if (options?.audio) {
     questionPage.mainText.audioFile = audio;
     questionPage.mainText.autoplay = options.autoplayAudio;
