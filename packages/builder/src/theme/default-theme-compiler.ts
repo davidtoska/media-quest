@@ -262,6 +262,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
 
   private compileVideo(video: BuilderMainVideoDto) {
     const t = this.theme.videoPlayer;
+    console.log(video.mode);
+    const mode = video.mode;
     const videoId = video.file.id;
     const playButtonId = "play-btn-for" + videoId;
     const pauseButtonId = "pause-btn-for" + videoId;
@@ -269,6 +271,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     const videoDto: DVideoDto = {
       _tag: "video",
       id: video.file.id,
+      loop: mode === "gif-mode",
       style: t.videoElement.css,
       url: video.file.downloadUrl,
     };
@@ -328,8 +331,10 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
         },
       ],
     };
-    elements.push(playBtn);
-    elements.push(pauseBtn);
+    if (mode !== "gif-mode") {
+      elements.push(playBtn);
+      elements.push(pauseBtn);
+    }
     return { videoDto, elements };
   }
   private compileQuestion(

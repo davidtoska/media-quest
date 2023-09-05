@@ -32,6 +32,7 @@ export interface DImgDto extends DElementBaseDto {
 export interface DVideoDto extends DElementBaseDto {
   readonly _tag: "video";
   readonly url: string;
+  readonly loop: boolean;
   // readonly mode: "gif" | "autoplay" | "on-demand";
   // readonly isMediaBlocking: boolean;
 }

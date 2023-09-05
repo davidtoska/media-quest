@@ -1,13 +1,12 @@
 {
   "name": "@media-quest/engine",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Rendering engine for media-quest schemas.",
   "main": "src/public-api.ts",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsup src/public-api.ts --sourcemap inline --format cjs,esm --dts",
-    "prepublishOnly": "npm run build",
     "tsc:check:engine": "tsc --watch --noEmit"
   }
 }

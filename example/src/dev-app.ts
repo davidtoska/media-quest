@@ -8,20 +8,20 @@ import { infopageWorks } from "./schema/infopage-works";
 import { gifModeWorks } from "./schema/gif-mode-works";
 console.log("DEV APP");
 
-const initialSchema = gifModeWorks.schema;
+const initialSchema: IExampleSchema = gifModeWorks;
 console.log(initialSchema);
 
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
 const engineRoot = document.createElement("div");
 const nameElement = document.createElement("h1");
-nameElement.innerText = "Dev app";
+nameElement.innerText = initialSchema.menuLabel;
 // nameElement.style.backgroundColor = "red";
 nameElement.style.textAlign = "center";
 engineRoot.style.margin = "60px auto";
 
 const createEngine = (schema: SchemaDto) => new A.SchemaEngine(engineRoot, 600, 1024, schema);
 // Client api
-let engine = createEngine(initialSchema);
+let engine = createEngine(initialSchema.schema);
 // console.log(JSON.stringify(devSchema), null, 2);
 engine.onCommandOrEvent = (_event_or_command) => {
   // console.log(_event_or_command);

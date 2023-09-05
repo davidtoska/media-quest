@@ -12,6 +12,6 @@ addPage(s, "p2", "info-page").withMainText("Gifmode should work").addVideo("gif-
 
 console.log(s.toJson());
 export const gifModeWorks: IExampleSchema = {
-  menuLabel: "autoplay",
+  menuLabel: "Gif mode",
   schema: s.compile().schema,
 };

@@ -109,8 +109,8 @@ export class DMediaManager implements IMediaManager {
       const dto = this.videoContainer.getCurrentDto();
 
       if (dto && dto.id === command.targetId) {
-        console.log(video);
-        this.videoContainer.play(dto.url);
+        // console.log(video);
+        this.videoContainer.play(dto);
       }
     }
     if (command.kind === "VIDEO_PAUSE_COMMAND") {
