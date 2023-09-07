@@ -11,6 +11,9 @@
     "tsc:watch": "tsc --watch --noEmit",
     "build:builder-lib": "cd packages/builder && npm run build",
     "build:engine": "cd packages/engine && npm run build",
+    "check:engine": "cd packages/engine && npm run tsc:check:engine",
+    "check:builder": "cd packages/builder && npm run tsc:check:builder",
+    "check": "npm run check:engine & npm run check:builder",
     "cloc": "npx cloc packages/",
     "test": "jest"
   },

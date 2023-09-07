@@ -5,9 +5,11 @@ import { PageHistory } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
 import { PageQueCommand } from "../commands/DCommand";
 import { PageID } from "../utils/ID";
+import { Page2Dto } from "../page2/Page2";
 
-const page = (id: number): PageDto => {
-  return { id: PageID.create(), elements: [] };
+const page = (id: number): Page2Dto => {
+  return Page2Dto.createDummy(id);
+  // return { id: PageID.create(), elements: [] };
 };
 const p1 = page(1);
 const p2 = page(2);
@@ -28,10 +30,10 @@ const seq1: PageSequenceDto = {
   rules: [],
 };
 const data = (
-  pages: PageDto[],
+  pages: Page2Dto[],
   pageSequences: PageSequenceDto[] = [],
   rules: Rule<PageQueCommand, never>[] = [],
-): DPlayerData => ({ pages, pageSequences, rules });
+): DPlayerData => ({ pages2: pages, pageSequences, rules });
 // const seq = (pages: PageDto[], rules: Rule[]) => {};
 beforeEach(() => {
   // data = { pages: [], rules: [], pageSequences: [] };
@@ -85,7 +87,8 @@ describe("DPlayer", () => {
 
   it("Save history", () => {
     const player = new DPlayer(data(all));
-    const curr = player.getNextPage() as PageDto;
+
+    const curr = player.getNextPage() as Page2Dto;
 
     const history: PageHistory = {
       pageId: curr.id,

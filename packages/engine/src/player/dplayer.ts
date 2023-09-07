@@ -1,11 +1,12 @@
 import { AnsweredQuestion, HistoryQue, PageHistory } from "./history-que";
 import { RuleEngine } from "../rules/rule-engine";
 import { NextQue } from "./next-que";
-import { PageDto, SchemaDto } from "../dto/SchemaDto";
+import { SchemaDto } from "../dto/SchemaDto";
 import { NavigationCommand, PageQueCommand } from "../commands/DCommand";
 import { DUtil } from "../utils/DUtil";
+import { Page2Dto } from "../page2/Page2";
 
-export type DPlayerData = Pick<SchemaDto, "pages" | "pageSequences" | "rules">;
+export type DPlayerData = Pick<SchemaDto, "pages2" | "pageSequences" | "rules">;
 export class DPlayer {
   private history = new HistoryQue();
   private ruleEngine = new RuleEngine<PageQueCommand, PageQueCommand>();
@@ -14,7 +15,8 @@ export class DPlayer {
 
   constructor(data: DPlayerData) {
     this.data = data;
-    this.nextQue.resetQue(data.pages);
+    const pages = data.pages2 ?? [];
+    this.nextQue.resetQue(pages);
   }
 
   saveHistory(pageHistory: PageHistory) {
@@ -69,10 +71,24 @@ export class DPlayer {
     }
   }
 
-  getNextPage(): PageDto | false {
-    // TODO HANDLE RULES!!
-    return this.nextQue.pop();
+  // getNextPage():
+  //   | { kind: "first-page"; readonly page: PageDto }
+  //   | { kind: "next-page"; readonly page: PageDto }
+  //   | { kind: "no-more-pages" } {
+  //   const next = this.nextQue.pop();
+  //   const a = this.nextQue.
+  // if (next) {
+  //   return { kind: "next-page", page: next };
+  // }
+  // return { kind: "no-more-pages" };
+  // }
+
+  getNextPage(): Page2Dto | false {
+    const next = this.nextQue.pop();
+    return next ?? false;
   }
+
+  // return this.nextQue.pop();
 
   private insertSequenceById(id: string) {
     const seq = this.data.pageSequences?.find((s) => s.id === id);

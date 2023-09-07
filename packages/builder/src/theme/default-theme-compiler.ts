@@ -2,14 +2,12 @@ import { AbstractThemeCompiler } from "./AbstractThemeCompiler";
 import type { BuilderSchemaDto } from "../Builder-schema";
 import { BuilderSchema } from "../Builder-schema";
 import type { BuilderPageDto } from "../Builder-page";
-import { DStateProps } from "./standard-props";
 import { ThemeUtils } from "./theme-utils";
 import { DefaultTheme, type IDefaultTheme } from "./IDefaultTheme";
 import type { BuilderMainImageDto } from "../BuilderMainImageDto";
 import type { BuilderMainVideoDto } from "../BuilderMainVideoDto";
 import {
   DAudioDto,
-  DAutoPlaySequence,
   DCommand,
   DDivDto,
   DElementDto,
@@ -23,11 +21,12 @@ import {
   Rule,
   SchemaDto,
 } from "@media-quest/engine";
+
 import { AudioFile } from "../media-files";
 import { BuilderRule } from "../rulebuilder";
 
 const U = DUtil;
-const generateElementId = () => U.randomString(32);
+
 export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   readonly name = "Ispe default theme.";
   private readonly TAG = "[ DEFAULT_THEME_COMPILER ]: ";
@@ -64,56 +63,10 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       baseWidth: source.baseWidth,
       id: source.id,
       pageSequences: [],
+      pages2: [],
       pages,
       predefinedFacts: [],
       rules,
-      stateFromEvent: [
-        {
-          onEvent: "VIDEO_ENDED_EVENT",
-          thenExecute: [
-            DStateProps.userPausedVideo.getSetFalseCommand(),
-            DStateProps.mediaBlockedByVideo.getSetFalseCommand(),
-            DStateProps.videoIsPlaying.getSetFalseCommand(),
-          ],
-        },
-        {
-          onEvent: "VIDEO_PAUSED_EVENT",
-          thenExecute: [
-            DStateProps.videoIsPlaying.getSetFalseCommand(),
-            DStateProps.mediaBlockedByVideo.getSetFalseCommand(),
-          ],
-        },
-        {
-          onEvent: "VIDEO_PLAY_EVENT",
-          thenExecute: [
-            DStateProps.videoIsPlaying.getSetTrueCommand(),
-            DStateProps.userPausedVideo.getSetFalseCommand(),
-          ],
-        },
-        {
-          onEvent: "AUDIO_PLAY_EVENT",
-          thenExecute: [
-            DStateProps.audioIsPlaying.getSetTrueCommand(),
-            DStateProps.mediaBlockedByAudio.getSetTrueCommand(),
-          ],
-        },
-        {
-          onEvent: "AUDIO_ENDED_EVENT",
-          thenExecute: [
-            DStateProps.audioIsPlaying.getSetFalseCommand(),
-            DStateProps.mediaBlockedByAudio.getSetFalseCommand(),
-          ],
-        },
-        {
-          onEvent: "AUDIO_PAUSED_EVENT",
-          thenExecute: [
-            DStateProps.audioIsPlaying.getSetFalseCommand(),
-            DStateProps.mediaBlockedByAudio.getSetFalseCommand(),
-          ],
-        },
-      ],
-      stateProps: DStateProps.allDefaultProperties.map((def) => def.propDefinition),
-      stateQueries: DStateProps.allDefaultQueries,
     };
     return dto;
   }
@@ -149,9 +102,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       });
       const textStyle = mainMedia ? DefaultTheme.mainText.withMedia.text.css : DefaultTheme.mainText.noMedia.text.css;
       const element: DElementDto = {
-        text: infoText,
+        innerText: infoText,
         _tag: "p",
-        id: generateElementId(),
         style: textStyle,
       };
       elements.push(element);
@@ -169,37 +121,31 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       videoResources.push(videoOutput.videoDto);
     }
     const mainVideoId = mainVideo ? mainVideo.id : undefined;
-    const autoPlaySequence: DAutoPlaySequence = {
+    const autoPlaySequence = {
       blockUserInput: true,
       id: "1",
       items: [],
-      startCommands: [
-        DStateProps.mediaBlockedBySequence.getSetTrueCommand(),
-        DStateProps.inputBlockingBySequence.getSetTrueCommand(),
-      ],
-      endCommands: [
-        DStateProps.mediaBlockedBySequence.getSetFalseCommand(),
-        DStateProps.inputBlockingBySequence.getSetFalseCommand(),
-      ],
+      startCommands: [],
+      endCommands: [],
     };
 
     if (mainVideo && page.mainMedia && page.mainMedia.kind === "main-video" && page.mainMedia.mode === "autoplay") {
-      autoPlaySequence.items.push({
-        kind: "autoplay-video",
-        videoId: mainVideo.id,
-      });
+      // autoPlaySequence.items.push({
+      //   kind: "autoplay-video",
+      //   videoId: mainVideo.id,
+      // });
     }
 
     if (mainTextAudio && page.mainText.autoplay) {
-      autoPlaySequence.items.push({
-        kind: "autoplay-audio",
-        audioId: mainTextAudio.id,
-      });
+      // autoPlaySequence.items.push({
+      //   kind: "autoplay-audio",
+      //   audioId: mainTextAudio.id,
+      // });
     }
 
     const pageDto: PageDto = {
       audio: audioResourcesDto,
-      autoPlaySequence: autoPlaySequence,
+      // autoPlaySequence: autoPlaySequence,
       backgroundColor: "red",
       elements,
       id,
@@ -243,13 +189,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
           payload: { volume: 1 },
         },
       ],
-      onStateChange: [
-        {
-          queryName: DStateProps._Queries.disableAudioIconQuery.name,
-          whenTrue: [...ThemeUtils.disableClickCommands(buttonId, t.withMedia.audio.cssDisabled)],
-          whenFalse: [...ThemeUtils.enableClickCommands(buttonId, t.withMedia.audio.cssEnabled)],
-        },
-      ],
     };
     const audioDto: DAudioDto = {
       _tag: "audio",
@@ -271,7 +210,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     const videoDto: DVideoDto = {
       _tag: "video",
       id: video.file.id,
-      loop: mode === "gif-mode",
       style: t.videoElement.css,
       url: video.file.downloadUrl,
     };
@@ -286,21 +224,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
           target: "VIDEO",
           targetId: videoId,
           payload: {},
-        },
-        // TODO Check if this video shall block other media first?
-        DStateProps.mediaBlockedByVideo.getSetTrueCommand(),
-        DStateProps.userPausedVideo.getSetFalseCommand(),
-      ],
-      onStateChange: [
-        {
-          queryName: DStateProps._Queries.disableVideoPlayQuery.name,
-          whenTrue: [...ThemeUtils.disableClickCommands(playButtonId, t.playButton.cssDisabled)],
-          whenFalse: [...ThemeUtils.enableClickCommands(playButtonId, t.playButton.cssEnabled)],
-        },
-        {
-          queryName: DStateProps._Queries.hideVideoPlayQuery.name,
-          whenTrue: [ThemeUtils.hideCommand(playButtonId)],
-          whenFalse: [ThemeUtils.showCommand(playButtonId)],
         },
       ],
     };
@@ -319,15 +242,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
           target: "VIDEO",
           targetId: videoId,
           payload: {},
-        },
-        DStateProps.mediaBlockedByVideo.getSetFalseCommand(),
-        DStateProps.userPausedVideo.getSetTrueCommand(),
-      ],
-      onStateChange: [
-        {
-          queryName: DStateProps._Queries.hideVideoPauseQuery.name,
-          whenTrue: [ThemeUtils.hideCommand(pauseButtonId)],
-          whenFalse: [ThemeUtils.showCommand(pauseButtonId)],
         },
       ],
     };
@@ -354,11 +268,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       : DefaultTheme.mainText.noMedia.text.css;
     const question: DTextDto = {
       _tag: "p",
-      text,
-      eventHandlers: [],
-      id: U.randomString(30),
+      innerText: text,
       onClick: [],
-      onStateChange: [],
       style: questionStyle,
     };
     const buttons = q.options.map((o) => {
@@ -403,21 +314,12 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     };
     const btnStyles = value === 9 ? DefaultTheme.responseButtons.dontKnow : DefaultTheme.responseButtons.normal;
     const btn: DDivDto = {
-      id,
       _tag: "div",
       children: [
         {
           _tag: "p",
-          id: U.randomString(30),
-          text: label,
+          innerText: label,
           style: btnStyles.text1,
-        },
-      ],
-      onStateChange: [
-        {
-          queryName: DStateProps._Queries.disableUserInputQuery.name,
-          whenFalse: [...ThemeUtils.enableClickCommands(id, btnStyles.btn.cssEnabled)],
-          whenTrue: [...ThemeUtils.disableClickCommands(id, btnStyles.btn.cssDisabled)],
         },
       ],
       style: { ...btnStyles.btn.css, ...btnStyles.btn.cssEnabled },

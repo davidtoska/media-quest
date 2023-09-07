@@ -1,19 +1,31 @@
 import { NextQue } from "./next-que";
-import { PageDto } from "../dto/SchemaDto";
 import { PageID } from "../utils/ID";
+import { Page2Dto } from "../page2/Page2";
 
 const tag1 = "tag1";
 const tag2 = "tag2";
 const tag3 = "tag3";
 
 let que = new NextQue();
-const createPage = () => {};
-const p1: PageDto = { id: PageID.create(), elements: [], tags: [tag1] };
-const p2: PageDto = { id: PageID.create(), elements: [], tags: [] };
-const p3: PageDto = { id: PageID.create(), elements: [], tags: [tag2] };
-const p4: PageDto = { id: PageID.create(), elements: [], tags: [] };
-const p5: PageDto = { id: PageID.create(), elements: [], tags: [tag3, tag2] };
-const p6: PageDto = { id: PageID.create(), elements: [], tags: [tag3] };
+const createPage = (tags: string[]): Page2Dto => {
+  const dto: Page2Dto = {
+    id: PageID.create(),
+    staticElements: [],
+    background: "white",
+    responseButtons: [],
+    mediaControls: [],
+    initialTasks: [],
+    tags,
+  };
+  return dto;
+};
+
+const p1 = createPage([tag1]);
+const p2 = createPage([]);
+const p3 = createPage([tag2]);
+const p4 = createPage([]);
+const p5 = createPage([tag3, tag2]);
+const p6 = createPage([tag3]);
 const all = [p1, p2, p3, p4, p5, p6];
 
 beforeEach(() => {

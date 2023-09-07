@@ -1,16 +1,10 @@
 import { SchemaDto } from "../dto/SchemaDto";
-import { DMediaManager } from "../services/DMedia-manager";
-import { DCommandBus } from "../commands/DCommandBus";
-import { EventBus } from "../events/event-bus";
 import { DPlayer } from "../player/dplayer";
-import { AnsweredQuestion } from "../player/history-que";
-import { DTimestamp } from "../common/DTimestamp";
-import { DPage } from "./DPage";
 import { ScaleService } from "./scale";
-import { ResourceProvider } from "../services/resource-provider";
-import { StateService } from "../state/state-service";
-import { DCommand, StateCommand } from "../commands/DCommand";
+import { DCommand } from "../commands/DCommand";
 import { DEvent } from "../events/DEvents";
+import { Page2 } from "../page2/Page2";
+import { TaskManager } from "../page2/task-manager";
 
 export interface EngineLogger {
   error(message: string): void;
@@ -20,32 +14,26 @@ export interface EngineLogger {
 }
 
 export interface SchemaResult {
-  readonly eventLog: ReadonlyArray<DEvent>;
-  readonly commandLog: ReadonlyArray<DCommand>;
+  readonly eventLog: ReadonlyArray<any>;
   readonly answers: ReadonlyArray<any>;
 }
 export interface ISchemaEngine {
   onComplete(handler: (result: SchemaResult) => void): void;
-  onCommandOrEvent(item: DEvent | DCommand): void;
+  // onCommandOrEvent(item: DEvent | DCommand): void;
   setSchema(schema: SchemaDto): void;
   onFatalError(handler: (error: { message: string }) => void): void;
 }
 
 export class SchemaEngine implements ISchemaEngine {
   private readonly TAG = "[ SCHEMA_ENGINE ] :";
-  private readonly commandBus = new DCommandBus();
-  private readonly eventBus = new EventBus();
-  private readonly mediaManager: DMediaManager;
   private readonly scale: ScaleService;
   private readonly hostElement: HTMLDivElement;
-  private readonly uiContainer: HTMLDivElement = document.createElement("div");
-  private readonly mediaContainer: HTMLDivElement = document.createElement("div");
-  private readonly resourceProvider: ResourceProvider;
-  private readonly stateService: StateService;
-  private readonly globalEventToStateHandlers = new Map<string, ReadonlyArray<StateCommand>>();
+  private readonly taskManager: TaskManager;
+  private readonly uiLayer: HTMLDivElement = document.createElement("div");
+  private readonly mediaLayer: HTMLDivElement = document.createElement("div");
   private player: DPlayer;
-  private currentPage: DPage | false = false;
-  private readonly subs: Array<() => void> = [];
+  private currentPage: Page2 | false = false;
+  private readonly tickerRef: number | false = false;
 
   constructor(
     hostEl: HTMLDivElement,
@@ -53,79 +41,34 @@ export class SchemaEngine implements ISchemaEngine {
     private readonly width: number,
     private readonly schema: SchemaDto,
   ) {
+    this.tickerRef = window.setInterval(() => {
+      if (this.currentPage) {
+        this.currentPage.tick();
+      }
+    }, 1200);
     this.hostElement = hostEl;
-    this.hostElement.appendChild(this.uiContainer);
-    this.hostElement.appendChild(this.mediaContainer);
-    const stateProps = this.schema.stateProps ?? [];
-    const stateQueries = this.schema.stateQueries ?? [];
-    this.stateService = new StateService(this.eventBus, this.commandBus, stateProps, stateQueries);
+    this.hostElement.appendChild(this.mediaLayer);
+    this.hostElement.appendChild(this.uiLayer);
     this.scale = new ScaleService({
       baseHeight: schema.baseHeight,
       baseWidth: schema.baseWidth,
       containerWidth: width,
       containerHeight: height,
     });
-    // this.commandBus.logCommands = true;
-    const globalEventHandlers = schema.stateFromEvent ?? [];
-
-    globalEventHandlers.forEach((h) => {
-      this.globalEventToStateHandlers.set(h.onEvent, h.thenExecute);
+    this.player = new DPlayer(this.schema);
+    this.taskManager = new TaskManager(this.mediaLayer, this.scale, (error) => {
+      console.log(error);
     });
 
-    const resources = SchemaDto.getResources(this.schema);
-    this.resourceProvider = new ResourceProvider({ videos: resources.videoList, audio: resources.audioList });
-    this.mediaManager = new DMediaManager(
-      this.mediaContainer,
-      this.commandBus,
-      this.eventBus,
-      this.resourceProvider,
-      this.scale,
-    );
-    this.player = new DPlayer(this.schema);
     this.styleSelf();
+    // this.nextPage = this.nextPage.bind(this);
+    this.handlePageCompleted = this.handlePageCompleted.bind(this);
     this.nextPage();
-    this.hookUpListeners();
   }
 
-  private hookUpListeners() {
-    const eventSubscription = this.eventBus.subscribe((ev) => {
-      this.onCommandOrEvent(ev);
-      const globalHandlers = this.globalEventToStateHandlers.get(ev.kind) ?? [];
-      globalHandlers.forEach((stateCommand) => {
-        this.commandBus.emit(stateCommand);
-      });
-    }, this.TAG + "HOOK_UP_LISTENERS");
-    const commandSubscription = this.commandBus.subscribe((command) => {
-      // switch (command.kind) {
-      //
-      // }
-      this.onCommandOrEvent(command);
-      if (command.kind === "PAGE_QUE_NEXT_PAGE_COMMAND") {
-        this.nextPage();
-      }
-
-      if (command.kind === "ENGINE_LEAVE_PAGE_COMMAND") {
-        console.log(this.TAG + "SEQUENCE STARTED -- TODO EVENT FOR THIS??");
-        console.log(command);
-        const pageId = command.payload.pageId;
-        const facts = command.payload.factsCollected;
-        const timestamp = DTimestamp.now();
-        const ans: AnsweredQuestion[] = facts.map((f) => ({
-          timestamp,
-          fact: f,
-        }));
-        this.player.saveHistory({
-          answeredQuestions: ans,
-          pageId,
-        });
-
-        this.nextPage();
-        // const history: PageHistory = { page: {}, answeredQuestions: [] };
-      }
-    }, this.TAG);
-
-    this.subs.push(commandSubscription);
-    this.subs.push(eventSubscription);
+  private handlePageCompleted() {
+    console.log("PAGE COMPLETED");
+    this.nextPage();
   }
 
   private styleSelf() {
@@ -140,61 +83,48 @@ export class SchemaEngine implements ISchemaEngine {
       div.style.position = "static";
     };
 
-    makeStatic(this.uiContainer);
-    makeStatic(this.mediaContainer);
+    makeStatic(this.uiLayer);
+    this.uiLayer.style.zIndex = "10";
+    this.mediaLayer.style.zIndex = "8";
+    makeStatic(this.mediaLayer);
   }
 
   private nextPage() {
-    // TODO SHOULD THIS BE PART OF THE SCHEMA?? THIS IS CLEANUP LOGIC
-    // this.commandBus.emit({ kind: "VIDEO_PAUSE_COMMAND", target: "VIDEO", targetId: "VIDEO", payload: {} });
-    // this.commandBus.emit({ kind: "AUDIO_PAUSE_COMMAND", target: "AUDIO", targetId: "AUDIO", payload: {} });
-    // const currPageId = this.currentPage ? this.currentPage.id : "NO_PAGE";
-    // console.groupCollapsed("NEXT_PAGE FROM: " + currPageId);
-    // console.log(this.TAG + " NEXT_PAGE STARTED AT: " + currPageId);
-    this.mediaManager.clearAllMedia();
     const nextPage = this.player.getNextPage();
-    // const state = this.stateService.getState();
-    // console.log(state);
-    // TODO CLEAN UP PAGE COMPONENTS this.page.CleanUp()
     if (this.currentPage) {
       this.currentPage.destroy();
-      this.uiContainer.innerHTML = "";
+
+      this.uiLayer.innerHTML = "";
     }
+
     if (!nextPage) {
+      // console.log("NO MORE PAGES");
       // TODO FIGURE OUT WHAQT TO DO AT END OF TEST!! Start over??
       this.player = new DPlayer(this.schema);
-      if (this.schema.pages.length > 0) {
+      if (this.player.pageCount > 0) {
         this.nextPage();
       }
       return false;
     }
-    const newPage = new DPage(nextPage, this.eventBus, this.commandBus, this.scale);
+
+    const newPage = new Page2(nextPage, this.taskManager, this.scale, () => {
+      this.handlePageCompleted();
+    });
+
+    // console.log("APPENDING PAGE");
 
     this.currentPage = newPage;
-    newPage.appendYourself(this.uiContainer);
+    // this.uiContainer.innerHTML = "";
 
-    this.mediaManager.setPage(nextPage);
-    const s1 = this.stateService.getState();
-    // console.log(s1);
-    // console.log("Next-page: " + newPage.id);
-    // console.groupEnd();
+    newPage.appendYourself(this.uiLayer);
     return true;
   }
 
   destroy() {
     if (this.currentPage) {
       this.currentPage.destroy();
-      this.uiContainer.innerHTML = "";
+      this.uiLayer.innerHTML = "";
     }
-    this.mediaManager.destroy();
-    this.stateService.destroy();
-    this.subs.forEach((sub) => {
-      sub();
-    });
-    const evStats = this.eventBus.getStats();
-    const cmdStats = this.commandBus.getStats();
-    console.assert(evStats.subscribersCount === 0, this.TAG + " Eventbus should have no subscribers ", evStats);
-    console.assert(cmdStats.subscribersCount === 0, this.TAG + "Commandbus should have no subscribers", cmdStats);
   }
   onComplete(handler: (result: SchemaResult) => void) {
     console.log(handler);

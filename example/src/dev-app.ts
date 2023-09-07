@@ -6,9 +6,10 @@ import { IExampleSchema } from "./schema/IExample-schema";
 import { SchemaDto } from "@media-quest/engine";
 import { infopageWorks } from "./schema/infopage-works";
 import { gifModeWorks } from "./schema/gif-mode-works";
+import { Page2Works } from "./schema/page2-works";
 console.log("DEV APP");
 
-const initialSchema: IExampleSchema = gifModeWorks;
+const initialSchema: IExampleSchema = Page2Works;
 console.log(initialSchema);
 
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
@@ -40,6 +41,7 @@ const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => vo
 };
 
 const menu = createMenu([
+  toMenuItem(Page2Works),
   toMenuItem(gifModeWorks),
   toMenuItem(autoplayWorks),
   toMenuItem(infopageWorks),

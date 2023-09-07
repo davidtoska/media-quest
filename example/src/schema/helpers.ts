@@ -39,7 +39,6 @@ class PageBuilder {
       mode,
       preDelay: 1000,
     };
-    console.log(this.page.mainMedia);
     return this;
   }
   public withMainText(text: string) {
