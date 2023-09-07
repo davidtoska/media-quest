@@ -1,6 +1,6 @@
 import { AnsweredQuestion, HistoryQue, PageHistory } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
-import { PageDto } from "../dto/SchemaDto";
+import { PageDto } from "../engine/SchemaDto";
 import { PageID } from "../utils/ID";
 
 const p = (id: number): PageDto => {

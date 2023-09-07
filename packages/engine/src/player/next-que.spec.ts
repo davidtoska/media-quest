@@ -12,8 +12,7 @@ const createPage = (tags: string[]): Page2Dto => {
     id: PageID.create(),
     staticElements: [],
     background: "white",
-    responseButtons: [],
-    mediaControls: [],
+    components: [],
     initialTasks: [],
     tags,
   };

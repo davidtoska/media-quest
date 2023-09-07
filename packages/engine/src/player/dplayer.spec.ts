@@ -1,5 +1,5 @@
 import { DPlayer, DPlayerData } from "./dplayer";
-import { PageDto, PageSequenceDto } from "../dto/SchemaDto";
+import { PageDto, PageSequenceDto } from "../engine/SchemaDto";
 import { Rule } from "../rules/rule";
 import { PageHistory } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";

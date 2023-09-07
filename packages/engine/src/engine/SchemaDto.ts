@@ -1,4 +1,4 @@
-import { DAudioDto, DElementDto, DVideoDto } from "./DElement.dto";
+import { DAudioDto, DElementDto, DVideoDto } from "../dto/DElement.dto";
 import { Rule } from "../rules/rule";
 import { Fact } from "../rules/fact";
 import { AudioCommand, PageQueCommand, VideoCommand } from "../commands/DCommand";

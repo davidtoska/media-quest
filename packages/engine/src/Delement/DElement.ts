@@ -1,6 +1,6 @@
 import { DStyle, PStyle } from "./DStyle";
 import { ScaleService } from "../engine/scale";
-import { ButtonClickAction } from "../dto/button-click-action";
+import { ButtonClickAction } from "./button-click-action";
 import { DCommand } from "../commands/DCommand";
 
 export interface DElementBaseDto {
@@ -50,9 +50,10 @@ export abstract class DElement<T extends HTMLElement> {
     }
 
     this.el.onclick = (ev) => {
-      if (onClick2) {
-        this.onclick(onClick2);
-      }
+      // if (onClick2) {
+      const action = onClick2 ?? false;
+      this.onclick(action);
+      // }
     };
     this.normalize();
 
@@ -66,23 +67,15 @@ export abstract class DElement<T extends HTMLElement> {
    *  This method shall be overridden by the pageClass.
    * @param actions
    */
-  onclick(action: ButtonClickAction) {
+  onclick(action: ButtonClickAction | false) {
     console.warn("onclick not implemented");
-  }
-
-  getClickActions(): ReadonlyArray<ButtonClickAction> {
-    const maybeClickAction = this.dto.onClick2;
-    if (Array.isArray(maybeClickAction)) {
-      return [...maybeClickAction];
-    }
-    return [];
   }
 
   setStyle(style: PStyle) {
     this.updateStyles(style);
   }
 
-  appendYourself(parent: HTMLElement) {
+  appendYourself(parent: { append: (el: HTMLElement) => void }) {
     parent.append(this.el);
     // console.log(parent);
   }

@@ -1,5 +1,5 @@
 export { SchemaEngine } from "./engine/SchemaEngine";
-export * from "./dto/SchemaDto";
+export * from "./engine/SchemaDto";
 export * from "./dto/DElement.dto";
 export * from "./commands/DCommand";
 export * from "./events/DEvents";
@@ -12,9 +12,9 @@ export * from "./Delement/css";
 
 export * from "./utils/DUtil";
 export * from "./utils/ID";
-export { PageComponent } from "./dto/page-component";
+export { PageComponent } from "./page2/page-component";
 export * from "./Delement/DImg";
 export * from "./Delement/DText";
 export * from "./Delement/Ddiv";
-export { ButtonClickAction } from "./dto/button-click-action";
+export { ButtonClickAction } from "./Delement/button-click-action";
 export { DElementBaseDto } from "./Delement/DElement";

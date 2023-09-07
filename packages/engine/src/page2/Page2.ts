@@ -5,8 +5,8 @@ import { createDElement } from "../engine/element-factory";
 import { ScaleService } from "../engine/scale";
 import { Task } from "./task";
 import { PStyle } from "../Delement/DStyle";
-import { DDivDto } from "../Delement/Ddiv";
-import { ButtonClickAction } from "../dto/button-click-action";
+import { ButtonClickAction } from "../Delement/button-click-action";
+import { PageComponent, PageComponentDto } from "./page-component";
 
 export interface VideoPlayerDto {
   playUrl: string;
@@ -17,9 +17,8 @@ export interface Page2Dto {
   readonly tags: string[];
   staticElements: Array<DElementDto>;
   background: string;
+  components: Array<PageComponentDto>;
   videoPlayer?: VideoPlayerDto;
-  responseButtons: Array<DDivDto>;
-  mediaControls: Array<DDivDto>;
   initialTasks: Array<Task>;
 }
 
@@ -31,32 +30,28 @@ export const Page2Dto = {
       staticElements: [],
       background: "white",
       // videoList: [],
-      responseButtons: [
+      components: [
         {
-          _tag: "div",
-          style: { x: 10, y: 0, w: 40, h: 20, backgroundColor: "red" },
-          children: [],
-          innerText: "Next btn " + id,
-          onClick2: { kind: "next-page" },
+          el: {
+            _tag: "div",
+            style: { x: 10, y: 0, w: 40, h: 20, backgroundColor: "red" },
+            children: [],
+            innerText: "Next btn " + id,
+            onClick2: { kind: "next-page" },
+          },
         },
       ],
-      mediaControls: [],
+
       initialTasks: [],
     };
   },
 };
 
-export interface IPage2 {
-  render(parent: HTMLElement): void;
-  destroy(): void;
-}
-
-export class Page2 implements IPage2 {
+export class Page2 {
   private readonly TAG = "[ DPage ]: ";
-  private elements: DElement<HTMLElement>[] = [];
+  private staticElements: DElement<HTMLElement>[] = [];
   private prevState = "";
-  private readonly mediaControls: DElement<any>[] = [];
-  private responseButtons: DElement<any>[] = [];
+  private components: PageComponent[] = [];
 
   constructor(
     private readonly dto: Page2Dto,
@@ -64,38 +59,30 @@ export class Page2 implements IPage2 {
     private readonly scaleService: ScaleService,
     private readonly onCompleted: () => void,
   ) {
-    this.mediaControls = dto.mediaControls.map((el) => {
-      const element = createDElement(el, scaleService);
-      this.elements.push(element);
-      element.onclick = (actions) => {
+    this.components = dto.components.map((el) => {
+      const component = new PageComponent(el, scaleService);
+      component.onClick = (actions) => {
         this.handleButtonAction(actions);
       };
-      return element;
-    });
+      this.components.push(component);
 
-    this.responseButtons = dto.responseButtons.map((el) => {
-      const element = createDElement(el, scaleService);
-      element.onclick = (actions) => {
-        this.handleButtonAction(actions);
-      };
-      this.elements.push(element);
-      return element;
+      return component;
     });
     dto.staticElements.forEach((el) => {
       const element = createDElement(el, scaleService);
-      this.elements.push(element);
+      this.staticElements.push(element);
     });
+
     if (dto.videoPlayer) {
       this.taskManager.loadVideo(dto.videoPlayer.playUrl);
     }
+
     if (dto.initialTasks.length) {
       this.taskManager.autoPlaySequence(dto.initialTasks);
-      console.log(this.taskManager);
     }
   }
 
   private handleButtonAction(a: ButtonClickAction) {
-    console.log("CLICKED");
     switch (a.kind) {
       case "next-page":
         this.onCompleted();
@@ -123,8 +110,12 @@ export class Page2 implements IPage2 {
   }
 
   appendYourself(parent: HTMLElement) {
-    this.elements.forEach((el) => {
+    this.staticElements.forEach((el) => {
       el.appendYourself(parent);
+    });
+
+    this.components.forEach((comp) => {
+      comp.appendToParent(parent);
     });
   }
 
@@ -135,28 +126,8 @@ export class Page2 implements IPage2 {
 
   tick() {
     const state = this.taskManager.getState();
-    const entries = Object.entries(state);
-    const divider = "xxx";
-    const curr = this.prevState;
-    const mapped = entries.map(([key, value], index) => {
-      return key + " -> " + value;
+    this.components.forEach((comp) => {
+      comp.setCurrentState(state);
     });
-    mapped.forEach((str) => {
-      if (curr.indexOf(str) === -1) {
-        console.log("NEW STATE " + str);
-      }
-    });
-    this.prevState = mapped.join(divider);
-    // console.log("TICK");
   }
-
-  log(): void {
-    // console.log(this.TAG + 'scale - ' + this.scale);
-  }
-
-  get id() {
-    return this.dto.id;
-  }
-
-  render(parent: HTMLElement): void {}
 }

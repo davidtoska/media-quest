@@ -1,7 +1,7 @@
 import { AnsweredQuestion, HistoryQue, PageHistory } from "./history-que";
 import { RuleEngine } from "../rules/rule-engine";
 import { NextQue } from "./next-que";
-import { SchemaDto } from "../dto/SchemaDto";
+import { SchemaDto } from "../engine/SchemaDto";
 import { NavigationCommand, PageQueCommand } from "../commands/DCommand";
 import { DUtil } from "../utils/DUtil";
 import { Page2Dto } from "../page2/Page2";

@@ -1,4 +1,4 @@
-import { SchemaDto } from "../dto/SchemaDto";
+import { SchemaDto } from "./SchemaDto";
 import { DPlayer } from "../player/dplayer";
 import { ScaleService } from "./scale";
 import { DCommand } from "../commands/DCommand";
