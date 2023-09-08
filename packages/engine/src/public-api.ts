@@ -1,6 +1,6 @@
 export * from "./engine/SchemaEngine";
 export * from "./engine/SchemaDto";
-export * from "./engine/DCommand";
+export * from "./engine/page-que-ruleengine-action";
 export * from "./rules/rule";
 export * from "./rules/fact";
 export * from "./rules/rule-engine";

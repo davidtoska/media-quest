@@ -3,7 +3,7 @@ import { PageSequenceDto } from "./SchemaDto";
 import { Rule } from "../rules/rule";
 // import { PageHistory } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
-import { PageQueCommand } from "./DCommand";
+import { RuleActionPageQue } from "./page-que-ruleengine-action";
 import { PageDto } from "../page/Page";
 import { PageResult } from "../page/page-result";
 
@@ -32,7 +32,7 @@ const seq1: PageSequenceDto = {
 const data = (
   pages: PageDto[],
   pageSequences: PageSequenceDto[] = [],
-  rules: Rule<PageQueCommand, never>[] = [],
+  rules: Rule<RuleActionPageQue, never>[] = [],
 ): DPlayerData => ({ pages: pages, pageSequences, rules });
 // const seq = (pages: PageDto[], rules: Rule[]) => {};
 beforeEach(() => {
@@ -58,31 +58,11 @@ describe("DPlayer", () => {
 
     expect(player.getNextPage()).toBe(p1);
     expect(player.getNextPage()).toBe(p2);
-    player.handleNavigationCommand({
-      kind: "PAGE_QUE_GO_TO_SEQUENCE_COMMAND",
-      target: "PAGE_QUE",
-      targetId: "PAGE_QUE",
-      payload: {
-        sequenceId: seq1.id,
-      },
-    });
+    player.insertSequence(seq1.id);
     expect(player.getNextPage()).toBe(Seq1.p10);
     expect(player.getNextPage()).toBe(Seq1.p11);
     expect(player.getNextPage()).toBe(Seq1.p12);
     expect(player.getNextPage()).toBe(p3);
-  });
-
-  it("Can jump forward to a pageId", () => {
-    const player = new DPlayer(data(all));
-
-    expect(player.getNextPage()).toBe(p1);
-    player.handleNavigationCommand({
-      kind: "PAGE_QUE_GO_TO_PAGE_COMMAND",
-      target: "PAGE_QUE",
-      targetId: "PAGE_QUE",
-      payload: { pageId: p4.id },
-    });
-    expect(player.getNextPage()).toBe(p4);
   });
 
   it("Save history", () => {

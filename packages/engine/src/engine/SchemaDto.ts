@@ -1,10 +1,10 @@
 import { Rule } from "../rules/rule";
 import { Fact } from "../rules/fact";
-import { PageQueCommand } from "./DCommand";
+import { RuleActionPageQue } from "./page-que-ruleengine-action";
 import { SchemaID } from "../utils/ID";
 import { PageDto } from "../page/Page";
 
-export type PageQueRules = Rule<PageQueCommand, never>;
+export type PageQueRules = Rule<RuleActionPageQue, never>;
 
 export interface PageSequenceDto {
   readonly id: string;

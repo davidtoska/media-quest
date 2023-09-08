@@ -2,24 +2,17 @@ import { RuleEngine } from "../rule-engine";
 import { Rule } from "../rule";
 import { Fact } from "../fact";
 import { Condition } from "../condition";
-import { PageQueCommand } from "../../engine/DCommand";
+import { RuleActionPageQue } from "../../engine/page-que-ruleengine-action";
 import { PageID } from "../../utils/ID";
 
-const excludeById = (ids: PageID[]): PageQueCommand => {
+const excludeById = (ids: PageID[]): RuleActionPageQue => {
   return {
-    kind: "PAGE_QUE_EXCLUDE_BY_PAGE_ID_COMMAND",
-    target: "PAGE_QUE",
-    targetId: "PAGE_QUE",
-    payload: { pageIds: ids },
+    kind: "excludeByPageId",
+    pageIds: ids,
   };
 };
 
-const excludeByTag = (id: string): PageQueCommand => ({
-  kind: "PAGE_QUE_EXCLUDE_BY_TAG_COMMAND",
-  target: "PAGE_QUE",
-  targetId: "PAGE_QUE",
-  payload: { tagIds: [id] },
-});
+const excludeByTag = (id: string): RuleActionPageQue => ({ kind: "excludeByTag", tagIds: [id] });
 
 let engine = new RuleEngine();
 // const x = 'x';

@@ -2,8 +2,7 @@ import { HistoryQue } from "./history-que";
 import { RuleEngine } from "../rules/rule-engine";
 import { NextQue } from "./next-que";
 import { SchemaDto } from "./SchemaDto";
-import { NavigationCommand, PageQueCommand } from "./DCommand";
-import { DUtil } from "../utils/DUtil";
+import { RuleActionPageQue } from "./page-que-ruleengine-action";
 import { PageDto } from "../page/Page";
 import { PageResult } from "../page/page-result";
 import { Fact } from "../rules/fact";
@@ -11,7 +10,7 @@ import { Fact } from "../rules/fact";
 export type DPlayerData = Pick<SchemaDto, "pages" | "pageSequences" | "rules">;
 export class DPlayer {
   private history = new HistoryQue();
-  private ruleEngine = new RuleEngine<PageQueCommand, never>();
+  private ruleEngine = new RuleEngine<RuleActionPageQue, never>();
   private nextQue = new NextQue();
   private data: DPlayerData;
 
@@ -31,14 +30,14 @@ export class DPlayer {
     actions.forEach((a) => {
       // console.log(a.payload);
       switch (a.kind) {
-        case "PAGE_QUE_JUMP_TO_PAGE_COMMAND":
-          this.nextQue.jumpToPageById(a.payload.pageId);
+        case "jumpToPage":
+          this.nextQue.jumpToPageById(a.pageId);
           break;
-        case "PAGE_QUE_EXCLUDE_BY_PAGE_ID_COMMAND":
-          this.nextQue.removeByPageId(a.payload.pageIds);
+        case "excludeByPageId":
+          this.nextQue.removeByPageId(a.pageIds);
           break;
-        case "PAGE_QUE_EXCLUDE_BY_TAG_COMMAND":
-          this.nextQue.removeByTag(a.payload.tagIds);
+        case "excludeByTag":
+          this.nextQue.removeByTag(a.tagIds);
           break;
         default:
           console.log("UNKNOWN ACTION", a);
@@ -52,24 +51,9 @@ export class DPlayer {
     return this.history.getFacts();
   }
 
-  private goToPageById(pageId: string) {
-    this.nextQue.jumpToPageById(pageId);
+  insertSequence(sequenceId: string) {
+    this.insertSequenceById(sequenceId);
   }
-
-  handleNavigationCommand(command: NavigationCommand) {
-    switch (command.kind) {
-      case "PAGE_QUE_GO_TO_PAGE_COMMAND":
-        this.goToPageById(command.payload.pageId);
-        break;
-      case "PAGE_QUE_GO_TO_SEQUENCE_COMMAND":
-        this.insertSequenceById(command.payload.sequenceId);
-        break;
-
-      default:
-        DUtil.neverCheck(command);
-    }
-  }
-
   // getNextPage():
   //   | { kind: "first-page"; readonly page: PageDto }
   //   | { kind: "next-page"; readonly page: PageDto }

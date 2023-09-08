@@ -15,7 +15,7 @@ import {
   DUtil,
   PageDto,
   PageComponentDto,
-  PageQueCommand,
+  RuleActionPageQue,
   PlayAudioTask,
   PlayVideoTask,
   Rule,
@@ -34,10 +34,10 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     super(DefaultTheme);
   }
 
-  private compileRules(source: BuilderSchemaDto): Rule<PageQueCommand, never>[] {
+  private compileRules(source: BuilderSchemaDto): Rule<RuleActionPageQue, never>[] {
     const builderSchema = BuilderSchema.fromJson(source);
     const ruleInput = builderSchema.getRuleInput();
-    const pageQueRules: Rule<PageQueCommand, never>[] = [];
+    const pageQueRules: Rule<RuleActionPageQue, never>[] = [];
     source.rules.forEach((rule) => {
       const engineRule = BuilderRule.fromDto(rule, ruleInput).toEngineRule();
       if (!Rule.isEmpty(engineRule)) {
