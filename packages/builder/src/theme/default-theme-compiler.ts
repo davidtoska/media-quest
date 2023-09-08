@@ -7,17 +7,17 @@ import { DefaultTheme, type IDefaultTheme } from "./IDefaultTheme";
 import type { BuilderMainImageDto } from "../BuilderMainImageDto";
 import type { BuilderMainVideoDto } from "../BuilderMainVideoDto";
 import {
-  DAudioDto,
-  DCommand,
+  ButtonClickAction,
   DDivDto,
   DElementDto,
   DImgDto,
   DTextDto,
   DUtil,
-  DVideoDto,
-  Fact,
   PageDto,
+  PageComponentDto,
   PageQueCommand,
+  PlayAudioTask,
+  PlayVideoTask,
   Rule,
   SchemaDto,
 } from "@media-quest/engine";
@@ -55,7 +55,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   compile(source: BuilderSchemaDto): SchemaDto {
     const pages = source.pages.map((p) => this.compilePage(p, source.prefix));
     const rules = this.compileRules(source);
-    // console.log(pages.map((p) => p.tags));
 
     const dto: SchemaDto = {
       backgroundColor: source.backgroundColor,
@@ -63,7 +62,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       baseWidth: source.baseWidth,
       id: source.id,
       pageSequences: [],
-      pages2: [],
       pages,
       predefinedFacts: [],
       rules,
@@ -71,185 +69,177 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     return dto;
   }
   private compilePage(page: BuilderPageDto, modulePrefix: string): PageDto {
-    // console.log(_moduleId);
-    // const textElement
     const tags = page.tags ?? [];
     const { nextButton, mainText, id, mainMedia, _type } = page;
-    const elements: DElementDto[] = [];
-    const audioResourcesDto: DAudioDto[] = [];
-    const videoResources: DVideoDto[] = [];
-    let mainVideo: DVideoDto | false = false;
-    let mainTextAudio: DAudioDto | false = false;
+    const staticElements: DElementDto[] = [];
+    let autoPlayAudioTasks: PlayAudioTask | false = false;
+    let autoPlayVideoTasks: PlayVideoTask | false = false;
+    const newPage: PageDto = {
+      background: "white",
+      components: [],
+      staticElements,
+      id,
+      initialTasks: [],
+      tags: [...tags],
+    };
 
     if (page.mainText.audioFile) {
-      const res = this.compileMainTextAudio(page.mainText.audioFile);
-      elements.push(...res.elements);
-      audioResourcesDto.push(res.audioDto);
-      mainTextAudio = res.audioDto;
+      const autoPlay = page.mainText.autoplay;
+      const res = this.compileMainTextAudio(page.mainText.audioFile, autoPlay);
+      autoPlayAudioTasks = res.autoPlayTask;
+      newPage.components.push(...res.components);
     }
 
     if (_type === "question") {
       const variableId = modulePrefix + "_" + page.prefix;
-      const { buttons, question } = this.compileQuestion(id, page, variableId);
+      const { components, question } = this.compileQuestion(id, page, variableId);
+      newPage.components.push(...components);
+      newPage.staticElements.push(question);
       // console.log(question);
-      elements.push(...buttons, question);
+      // elements.push(...buttons, question);
     }
 
     if (_type === "info-page") {
       const infoText = mainText.text;
-      const nextBtnElement: DElementDto = this.compileButton(id, nextButton, {
+      const nextButtonComponent = this.compileButton(nextButton, {
         kind: "next-button",
       });
+
       const textStyle = mainMedia ? DefaultTheme.mainText.withMedia.text.css : DefaultTheme.mainText.noMedia.text.css;
-      const element: DElementDto = {
+      const infoTextElement: DElementDto = {
         innerText: infoText,
         _tag: "p",
         style: textStyle,
       };
-      elements.push(element);
-      elements.push(nextBtnElement);
+      newPage.staticElements.push(infoTextElement);
+      newPage.components.push(nextButtonComponent);
     }
     if (mainMedia && mainMedia.kind === "main-image") {
       const mainImageElement = this.compileImage(mainMedia);
-      elements.push(mainImageElement);
+      newPage.staticElements.push(mainImageElement);
     }
 
     if (mainMedia && mainMedia.kind === "main-video") {
       const videoOutput = this.compileVideo(mainMedia);
-      mainVideo = videoOutput.videoDto;
-      elements.push(...videoOutput.elements);
-      videoResources.push(videoOutput.videoDto);
-    }
-    const mainVideoId = mainVideo ? mainVideo.id : undefined;
-    const autoPlaySequence = {
-      blockUserInput: true,
-      id: "1",
-      items: [],
-      startCommands: [],
-      endCommands: [],
-    };
-
-    if (mainVideo && page.mainMedia && page.mainMedia.kind === "main-video" && page.mainMedia.mode === "autoplay") {
-      // autoPlaySequence.items.push({
-      //   kind: "autoplay-video",
-      //   videoId: mainVideo.id,
-      // });
+      newPage.videoPlayer = videoOutput.videoPlayer;
+      newPage.components.push(...videoOutput.components);
+      autoPlayVideoTasks = videoOutput.autoPlayTask;
     }
 
-    if (mainTextAudio && page.mainText.autoplay) {
-      // autoPlaySequence.items.push({
-      //   kind: "autoplay-audio",
-      //   audioId: mainTextAudio.id,
-      // });
+    if (autoPlayVideoTasks) {
+      newPage.initialTasks.push(autoPlayVideoTasks);
     }
-
-    const pageDto: PageDto = {
-      audio: audioResourcesDto,
-      // autoPlaySequence: autoPlaySequence,
-      backgroundColor: "red",
-      elements,
-      id,
-      mainVideoId,
-      tags: [...tags],
-      video: videoResources,
-    };
-    return pageDto;
+    if (autoPlayAudioTasks) {
+      newPage.initialTasks.push(autoPlayAudioTasks);
+    }
+    return newPage;
   }
 
   private compileImage(image: BuilderMainImageDto) {
     const img: DImgDto = {
       _tag: "img",
-      id: image.file.id,
       style: this.theme.image.style,
       url: image.file.downloadUrl,
     };
     return img;
   }
 
-  private compileMainTextAudio(audioFile: AudioFile): {
-    audioDto: DAudioDto;
-    elements: DElementDto[];
+  private compileMainTextAudio(
+    audioFile: AudioFile,
+    autoPlay: boolean,
+  ): {
+    components: PageComponentDto[];
+    autoPlayTask: PlayAudioTask | false;
   } {
     const t = this.theme.mainText;
     const audioId = audioFile.id;
     const iconUrl =
       "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/public-assets%2Fvolume_up-24px.svg?alt=media&token=551bd0a6-a515-4f87-a245-da433f4833f9";
 
-    const buttonId = U.randomString(30);
     const playMainTextAudio: DImgDto = {
       _tag: "img",
-      id: buttonId,
       url: iconUrl,
       style: { ...t.withMedia.audio.css },
-      onClick: [
-        {
-          kind: "AUDIO_PLAY_COMMAND",
-          target: "AUDIO",
-          targetId: audioId,
-          payload: { volume: 1 },
-        },
-      ],
     };
-    const audioDto: DAudioDto = {
-      _tag: "audio",
-      // eventHandlers: [],
-      id: audioFile.id,
+
+    const task: PlayAudioTask = {
+      audioId,
+      blockAudio: false,
+      blockFormInput: false,
+      blockResponseButton: false,
+      blockVideo: false,
+      kind: "play-audio-task",
+      priority: "replace-all",
       url: audioFile.downloadUrl,
     };
-    return { audioDto, elements: [playMainTextAudio] };
+
+    let autoPlayTask: PlayAudioTask | false = false;
+    if (autoPlay) {
+      autoPlayTask = { ...task, priority: "follow-queue" };
+    }
+    // const autoplayTask =
+    const playBtn: PageComponentDto = {
+      el: playMainTextAudio,
+      onClick: { kind: "play-audio", task },
+    };
+
+    return { components: [playBtn], autoPlayTask };
   }
 
-  private compileVideo(video: BuilderMainVideoDto) {
+  private compileVideo(video: BuilderMainVideoDto): {
+    videoPlayer: PageDto["videoPlayer"];
+    components: PageComponentDto[];
+    autoPlayTask: PlayVideoTask | false;
+  } {
     const t = this.theme.videoPlayer;
-    console.log(video.mode);
     const mode = video.mode;
-    const videoId = video.file.id;
-    const playButtonId = "play-btn-for" + videoId;
-    const pauseButtonId = "pause-btn-for" + videoId;
-    const elements: DElementDto[] = [];
-    const videoDto: DVideoDto = {
-      _tag: "video",
-      id: video.file.id,
-      style: t.videoElement.css,
+    const components: PageComponentDto[] = [];
+
+    let autoPlayTask: PlayVideoTask | false = false;
+    const playButtonTask: PlayVideoTask = {
+      kind: "play-video-task",
       url: video.file.downloadUrl,
+      videoId: video.file.id,
+      blockAudio: false,
+      blockFormInput: false,
+      blockResponseButton: false,
+      loop: mode === "gif-mode",
+      blockVideo: false,
+      priority: "replace-all",
     };
-    const playBtn: DImgDto = {
-      id: playButtonId,
-      _tag: "img",
-      url: t.playButton.iconUrl,
-      style: { ...t.playButton.css, ...t.playButton.cssEnabled },
-      onClick: [
-        {
-          kind: "VIDEO_PLAY_COMMAND",
-          target: "VIDEO",
-          targetId: videoId,
-          payload: {},
-        },
-      ],
-    };
-    const pauseBtn: DImgDto = {
-      id: pauseButtonId,
-      _tag: "img",
-      style: {
-        ...t.pauseButton.css,
-        visibility: "hidden",
-        ...t.pauseButton.cssEnabled,
-      },
-      url: t.pauseButton.iconUrl,
-      onClick: [
-        {
-          kind: "VIDEO_PAUSE_COMMAND",
-          target: "VIDEO",
-          targetId: videoId,
-          payload: {},
-        },
-      ],
-    };
-    if (mode !== "gif-mode") {
-      elements.push(playBtn);
-      elements.push(pauseBtn);
+    if (video.mode === "autoplay") {
+      autoPlayTask = { ...playButtonTask, priority: "follow-queue" };
     }
-    return { videoDto, elements };
+    const videoPlayer: PageDto["videoPlayer"] = {
+      playUrl: video.file.downloadUrl,
+      style: { h: 45, w: 100, x: 0, y: 55 },
+    };
+    const playButton: PageComponentDto = {
+      el: {
+        _tag: "img",
+        url: t.playButton.iconUrl,
+        style: { ...t.playButton.css, ...t.playButton.cssEnabled },
+      },
+      onClick: { kind: "play-video", task: playButtonTask },
+    };
+    const pauseBtn: PageComponentDto = {
+      el: {
+        _tag: "img",
+        style: {
+          ...t.pauseButton.css,
+          visibility: "hidden",
+          ...t.pauseButton.cssEnabled,
+        },
+        url: t.pauseButton.iconUrl,
+      },
+      onClick: { kind: "pause-video" },
+    };
+
+    if (mode !== "gif-mode") {
+      components.push(playButton);
+      components.push(pauseBtn);
+    }
+    return { videoPlayer, components, autoPlayTask };
   }
   private compileQuestion(
     pageId: string,
@@ -257,7 +247,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     variableId: string,
   ): {
     question: DTextDto;
-    buttons: DDivDto[];
+    components: PageComponentDto[];
   } {
     // TODO REFACTORE DEFAULT QUESTION TO - (REMOVE USE TEXT1)
     // console.log(page);
@@ -269,49 +259,39 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     const question: DTextDto = {
       _tag: "p",
       innerText: text,
-      onClick: [],
       style: questionStyle,
     };
-    const buttons = q.options.map((o) => {
-      const btns = this.compileButton(pageId, o, {
+    const buttons: PageComponentDto[] = q.options.map((o) => {
+      const btns = this.compileButton(o, {
         kind: "response-button",
         questionId: variableId,
       });
       return btns;
     });
-    ThemeUtils.spaceEvenlyX(buttons);
-    return { question, buttons };
+    const rootElements = buttons.map((b) => b.el);
+    ThemeUtils.spaceEvenlyX(rootElements);
+    return { question, components: buttons };
   }
 
   private compileButton(
-    pageId: string,
     buttonDto: BuilderPageDto["nextButton"],
     options: { kind: "response-button"; questionId: string } | { kind: "next-button" },
-  ) {
-    const factsCollected: Fact[] = [];
+  ): PageComponentDto {
     const { id, value, label } = buttonDto;
+    const onclickAction: ButtonClickAction =
+      options.kind === "response-button"
+        ? {
+            kind: "submit-fact",
+            fact: {
+              kind: "numeric-fact",
+              label: label,
+              value: value,
+              referenceId: options.questionId,
+              referenceLabel: "QuestionId: " + options.questionId,
+            },
+          }
+        : { kind: "next-page" };
 
-    // const { div, text1, dontKnow } = DefaultTheme.responseButtons;
-    if (options.kind === "response-button") {
-      const fact: Fact = {
-        kind: "numeric-fact",
-        label: label,
-        value: value,
-        referenceId: options.questionId,
-        referenceLabel: "QuestionId: " + options.questionId,
-      };
-      factsCollected.push(fact);
-    }
-
-    const onClickHandler: DCommand = {
-      kind: "ENGINE_LEAVE_PAGE_COMMAND",
-      target: "ENGINE",
-      targetId: "ENGINE",
-      payload: {
-        pageId,
-        factsCollected,
-      },
-    };
     const btnStyles = value === 9 ? DefaultTheme.responseButtons.dontKnow : DefaultTheme.responseButtons.normal;
     const btn: DDivDto = {
       _tag: "div",
@@ -323,13 +303,17 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
         },
       ],
       style: { ...btnStyles.btn.css, ...btnStyles.btn.cssEnabled },
-      onClick: [onClickHandler],
     };
+
     if (options.kind === "next-button") {
       btn.style.x = 50;
       btn.style.y = 8;
       btn.style.transform = "translate(-50%, 0%)";
     }
-    return btn;
+    const component: PageComponentDto = {
+      el: btn,
+      onClick: onclickAction,
+    };
+    return component;
   }
 }

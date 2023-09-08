@@ -1,18 +1,12 @@
 import { DStyle, PStyle } from "./DStyle";
 import { ScaleService } from "../engine/scale";
-import { ButtonClickAction } from "./button-click-action";
-import { DCommand } from "../commands/DCommand";
 
 export interface DElementBaseDto {
-  readonly onClick?: ReadonlyArray<DCommand>;
-  readonly onClick2?: ButtonClickAction;
   readonly style: PStyle;
   readonly onMouseEnter?: PStyle;
   readonly onMouseLeave?: PStyle;
   readonly onMouseDown?: PStyle;
   readonly onMouseUp?: PStyle;
-  readonly onDisable?: PStyle;
-  readonly onEnable?: PStyle;
   readonly innerText?: string;
 }
 
@@ -36,7 +30,7 @@ export abstract class DElement<T extends HTMLElement> {
     this.normalize = this.normalize.bind(this);
     this.appendYourself = this.appendYourself.bind(this);
     this.updateStyles = this.updateStyles.bind(this);
-    const { onMouseEnter, onMouseLeave, onClick2 } = dto;
+    const { onMouseEnter, onMouseLeave } = dto;
 
     if (onMouseEnter) {
       this.el.onmouseenter = () => {
@@ -49,10 +43,9 @@ export abstract class DElement<T extends HTMLElement> {
       };
     }
 
-    this.el.onclick = (ev) => {
+    this.el.onclick = () => {
       // if (onClick2) {
-      const action = onClick2 ?? false;
-      this.onclick(action);
+      this.onclick();
       // }
     };
     this.normalize();
@@ -67,8 +60,8 @@ export abstract class DElement<T extends HTMLElement> {
    *  This method shall be overridden by the pageClass.
    * @param actions
    */
-  onclick(action: ButtonClickAction | false) {
-    console.warn("onclick not implemented");
+  onclick() {
+    // console.warn("onclick not implemented");
   }
 
   setStyle(style: PStyle) {

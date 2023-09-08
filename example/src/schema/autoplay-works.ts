@@ -11,7 +11,7 @@ s.backgroundColor = "white";
 const p1 = addQuestionPage109(s, "Q1:\n (audio-auto-play=false)", "q1", {
   audio: true,
   autoplayAudio: false,
-  video: false,
+  video: true,
   autoplayVideo: false,
 });
 

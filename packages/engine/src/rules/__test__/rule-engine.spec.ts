@@ -2,7 +2,7 @@ import { RuleEngine } from "../rule-engine";
 import { Rule } from "../rule";
 import { Fact } from "../fact";
 import { Condition } from "../condition";
-import { PageQueCommand } from "../../commands/DCommand";
+import { PageQueCommand } from "../../engine/DCommand";
 import { PageID } from "../../utils/ID";
 
 const excludeById = (ids: PageID[]): PageQueCommand => {

@@ -1,8 +1,8 @@
 import { IExampleSchema } from "./IExample-schema";
 import { DDivDto, DTextDto, PageComponent, PageID, SchemaID } from "../../../packages/engine";
 import { dummyAudioFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
-import { PlayAudioTask, PlayVideoTask, Task } from "../../../packages/engine/src/page2/task";
-import { PageComponentDto } from "../../../packages/engine/src/page2/page-component";
+import { PlayAudioTask, PlayVideoTask, Task } from "../../../packages/engine/src/page/task";
+import { PageComponentDto } from "../../../packages/engine/src/page/page-component";
 
 const playVideoTask0 = (priority: PlayVideoTask["priority"], mode: "gif" | "normal" = "normal"): PlayVideoTask => ({
   kind: "play-video-task",
@@ -59,10 +59,6 @@ const playVideoBtn = (task: PlayVideoTask) => {
     style: { x: 0, y: 35, w: 10, h: 10, fontSize: { _unit: "px", value: 40 }, backgroundColor: "gray" },
     children: [],
     innerText: "Play video",
-    onClick2: {
-      kind: "play-video",
-      task,
-    },
   };
   const component: PageComponentDto = {
     el: btn,
@@ -119,7 +115,7 @@ export const Page2Works: IExampleSchema = {
     baseWidth: 1024,
     backgroundColor: "white",
 
-    pages2: [
+    pages: [
       {
         id: PageID.create(),
         background: "white",
@@ -181,7 +177,6 @@ export const Page2Works: IExampleSchema = {
         initialTasks: [],
       },
     ],
-    pages: [],
     rules: [],
   },
 };

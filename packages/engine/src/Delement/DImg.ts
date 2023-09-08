@@ -4,7 +4,7 @@ import { DTimestamp } from "../common/DTimestamp";
 
 export interface DImgDto extends DElementBaseDto {
   readonly _tag: "img";
-  readonly id: string;
+  // readonly id: string;
   readonly url: string;
 }
 

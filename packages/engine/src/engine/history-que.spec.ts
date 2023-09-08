@@ -1,10 +1,10 @@
 import { AnsweredQuestion, HistoryQue, PageHistory } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
-import { PageDto } from "../engine/SchemaDto";
 import { PageID } from "../utils/ID";
+import { PageDto } from "../page/Page";
 
 const p = (id: number): PageDto => {
-  return { id: PageID.create(), elements: [] };
+  return { id: PageID.create(), components: [], initialTasks: [], staticElements: [], background: "", tags: [] };
 };
 
 const answer = (id: number, value: number): AnsweredQuestion => ({

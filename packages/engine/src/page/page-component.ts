@@ -1,10 +1,10 @@
 import { PStyle } from "../Delement/DStyle";
-import { DElementDto } from "../dto/DElement.dto";
 import { ScaleService } from "../engine/scale";
 import { DElement } from "../Delement/DElement";
-import { createDElement } from "../engine/element-factory";
+import { createDElement } from "../Delement/element-factory";
 import { ButtonClickAction } from "../Delement/button-click-action";
-import { TaskState } from "./task-manager";
+import { DElementDto } from "../Delement/DElement.dto";
+import { TaskState } from "./task-state";
 
 export interface PageComponentDto {
   readonly onClick?: ButtonClickAction;
@@ -30,15 +30,17 @@ export class PageComponent {
     readonly scale: ScaleService,
   ) {
     this.el = createDElement(dto.el, scale);
-    this.el.onclick = (ev) => {
+    this.el.onclick = () => {
       if (dto.onClick) {
         this.onClick(dto.onClick);
+      } else {
+        console.warn(this.TAG + "onClick not implemented");
       }
     };
   }
 
   onClick(action: ButtonClickAction) {
-    console.warn("onclick not implemented");
+    console.warn(this.TAG + "onclick not implemented");
   }
 
   setCurrentState(state: TaskState) {

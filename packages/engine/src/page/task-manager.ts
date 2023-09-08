@@ -2,56 +2,8 @@ import { DTimestamp } from "../common/DTimestamp";
 import { Task } from "./task";
 import { DStyle, PStyle } from "../Delement/DStyle";
 import { ScaleService } from "../engine/scale";
+import { TaskState } from "./task-state";
 
-export type TaskState = {
-  audioIsPlaying: boolean;
-  isGifMode: boolean;
-  videoIsPlaying: boolean;
-  blockFormInput: boolean;
-  blockResponseButton: boolean;
-  blockAudio: boolean;
-  blockVideo: boolean;
-};
-
-export const TaskState = {
-  eq: (a: TaskState, b: TaskState) => {
-    return (
-      a.audioIsPlaying === b.audioIsPlaying &&
-      a.isGifMode === b.isGifMode &&
-      a.videoIsPlaying === b.videoIsPlaying &&
-      a.blockFormInput === b.blockFormInput &&
-      a.blockResponseButton === b.blockResponseButton &&
-      a.blockAudio === b.blockAudio &&
-      a.blockVideo === b.blockVideo
-    );
-  },
-
-  getDiff: (a: TaskState, b: TaskState): Partial<TaskState> => {
-    const diff: Partial<TaskState> = {};
-    if (a.audioIsPlaying !== b.audioIsPlaying) {
-      diff.audioIsPlaying = b.audioIsPlaying;
-    }
-    if (a.isGifMode !== b.isGifMode) {
-      diff.isGifMode = b.isGifMode;
-    }
-    if (a.videoIsPlaying !== b.videoIsPlaying) {
-      diff.videoIsPlaying = b.videoIsPlaying;
-    }
-    if (a.blockFormInput !== b.blockFormInput) {
-      diff.blockFormInput = b.blockFormInput;
-    }
-    if (a.blockResponseButton !== b.blockResponseButton) {
-      diff.blockResponseButton = b.blockResponseButton;
-    }
-    if (a.blockAudio !== b.blockAudio) {
-      diff.blockAudio = b.blockAudio;
-    }
-    if (a.blockVideo !== b.blockVideo) {
-      diff.blockVideo = b.blockVideo;
-    }
-    return diff;
-  },
-};
 export class TaskManager {
   private readonly TAG = "[TaskManager]: ";
   private readonly videoElement = document.createElement("video");
@@ -175,6 +127,11 @@ export class TaskManager {
       this.audioElement.play();
     }
     return true;
+  }
+
+  setVideoStyles(styles: PStyle) {
+    this.videoStyles = styles;
+    DStyle.applyStyles(this.videoElement, this.videoStyles, this.scale.scale);
   }
 
   autoPlaySequence(tasks: Task[]) {

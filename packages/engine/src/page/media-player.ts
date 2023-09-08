@@ -4,15 +4,12 @@ type MediaPlayerEvent =
   | { kind: "video-ended"; url: string }
   | { kind: "audio-ended"; url: string }
   | { kind: "error"; message: string };
+
 export interface IMediaPlayer {
   playVideo(url: string, loop: boolean): void;
-
   playAudio(url: string, loop: boolean): void;
-
   pauseVideo(): void;
-
   pauseAudio(): void;
-
   clear(): void;
   hideVideo(): void;
   loadVideo(url: string): void;

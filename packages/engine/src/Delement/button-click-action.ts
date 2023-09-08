@@ -1,4 +1,4 @@
-import { PlayAudioTask, PlayVideoTask } from "../page2/task";
+import { PlayAudioTask, PlayVideoTask } from "../page/task";
 import { Fact } from "../rules/fact";
 
 export type ButtonClickAction =

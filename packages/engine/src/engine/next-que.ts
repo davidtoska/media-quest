@@ -1,12 +1,12 @@
-import { Page2Dto } from "../page2/Page2";
+import { PageDto } from "../page/Page";
 
 export class NextQue {
   private originalOrder: ReadonlyArray<string> = [];
-  private allPages: Page2Dto[] = [];
+  private allPages: PageDto[] = [];
   private excludedTags = new Set<string>();
   private excludedByPageId = new Set<string>();
-  private remaining: Page2Dto[] = [];
-  constructor(pages: Page2Dto[] = []) {
+  private remaining: PageDto[] = [];
+  constructor(pages: PageDto[] = []) {
     this.resetQue(pages);
   }
 
@@ -14,7 +14,7 @@ export class NextQue {
    * Will reset que with the new pages.
    * @param pages
    */
-  resetQue(pages: Page2Dto[]) {
+  resetQue(pages: PageDto[]) {
     this.allPages = [...pages];
     this.remaining = [...pages];
     this.excludedTags = new Set();
@@ -22,13 +22,13 @@ export class NextQue {
     this.originalOrder = this.allPages.map((p) => p.id);
   }
 
-  pop(): Page2Dto | false {
+  pop(): PageDto | false {
     const next = this.remaining.shift();
     // TODO CLONE??
     return next ?? false;
   }
 
-  peek(): Page2Dto | false {
+  peek(): PageDto | false {
     const next = this.remaining[0];
     return next ?? false;
   }
@@ -57,7 +57,7 @@ export class NextQue {
    * Will not be included
    * @param pages
    */
-  insertAsNextByForce(pages: Page2Dto[]) {
+  insertAsNextByForce(pages: PageDto[]) {
     this.remaining.unshift(...pages);
   }
 

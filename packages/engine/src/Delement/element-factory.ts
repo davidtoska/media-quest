@@ -1,9 +1,9 @@
-import { DElement } from "../Delement/DElement";
-import { DDiv, DDivDto } from "../Delement/Ddiv";
-import { DImg } from "../Delement/DImg";
-import { DText } from "../Delement/DText";
-import { DElementDto } from "../dto/DElement.dto";
-import { ScaleService } from "./scale";
+import { DElement } from "./DElement";
+import { DDiv, DDivDto } from "./Ddiv";
+import { DImg } from "./DImg";
+import { DText } from "./DText";
+import { ScaleService } from "../engine/scale";
+import { DElementDto } from "./DElement.dto";
 
 export const createDElement = (dto: DElementDto, scale: ScaleService): DElement<any> => {
   switch (dto._tag) {

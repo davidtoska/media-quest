@@ -1,14 +1,13 @@
 import { DPlayer, DPlayerData } from "./dplayer";
-import { PageDto, PageSequenceDto } from "../engine/SchemaDto";
+import { PageSequenceDto } from "./SchemaDto";
 import { Rule } from "../rules/rule";
 import { PageHistory } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
-import { PageQueCommand } from "../commands/DCommand";
-import { PageID } from "../utils/ID";
-import { Page2Dto } from "../page2/Page2";
+import { PageQueCommand } from "./DCommand";
+import { PageDto } from "../page/Page";
 
-const page = (id: number): Page2Dto => {
-  return Page2Dto.createDummy(id);
+const page = (id: number): PageDto => {
+  return PageDto.createDummy(id);
   // return { id: PageID.create(), elements: [] };
 };
 const p1 = page(1);
@@ -30,10 +29,10 @@ const seq1: PageSequenceDto = {
   rules: [],
 };
 const data = (
-  pages: Page2Dto[],
+  pages: PageDto[],
   pageSequences: PageSequenceDto[] = [],
   rules: Rule<PageQueCommand, never>[] = [],
-): DPlayerData => ({ pages2: pages, pageSequences, rules });
+): DPlayerData => ({ pages: pages, pageSequences, rules });
 // const seq = (pages: PageDto[], rules: Rule[]) => {};
 beforeEach(() => {
   // data = { pages: [], rules: [], pageSequences: [] };
@@ -88,7 +87,7 @@ describe("DPlayer", () => {
   it("Save history", () => {
     const player = new DPlayer(data(all));
 
-    const curr = player.getNextPage() as Page2Dto;
+    const curr = player.getNextPage() as PageDto;
 
     const history: PageHistory = {
       pageId: curr.id,

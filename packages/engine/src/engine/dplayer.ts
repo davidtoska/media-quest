@@ -1,12 +1,12 @@
 import { AnsweredQuestion, HistoryQue, PageHistory } from "./history-que";
 import { RuleEngine } from "../rules/rule-engine";
 import { NextQue } from "./next-que";
-import { SchemaDto } from "../engine/SchemaDto";
-import { NavigationCommand, PageQueCommand } from "../commands/DCommand";
+import { SchemaDto } from "./SchemaDto";
+import { NavigationCommand, PageQueCommand } from "./DCommand";
 import { DUtil } from "../utils/DUtil";
-import { Page2Dto } from "../page2/Page2";
+import { PageDto } from "../page/Page";
 
-export type DPlayerData = Pick<SchemaDto, "pages2" | "pageSequences" | "rules">;
+export type DPlayerData = Pick<SchemaDto, "pages" | "pageSequences" | "rules">;
 export class DPlayer {
   private history = new HistoryQue();
   private ruleEngine = new RuleEngine<PageQueCommand, PageQueCommand>();
@@ -15,7 +15,7 @@ export class DPlayer {
 
   constructor(data: DPlayerData) {
     this.data = data;
-    const pages = data.pages2 ?? [];
+    const pages = data.pages ?? [];
     this.nextQue.resetQue(pages);
   }
 
@@ -83,7 +83,7 @@ export class DPlayer {
   // return { kind: "no-more-pages" };
   // }
 
-  getNextPage(): Page2Dto | false {
+  getNextPage(): PageDto | false {
     const next = this.nextQue.pop();
     return next ?? false;
   }

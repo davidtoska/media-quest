@@ -1,18 +1,22 @@
 import { DElement } from "../Delement/DElement";
 import { TaskManager } from "./task-manager";
-import { DElementDto } from "../dto/DElement.dto";
-import { createDElement } from "../engine/element-factory";
+import { createDElement } from "../Delement/element-factory";
 import { ScaleService } from "../engine/scale";
 import { Task } from "./task";
 import { PStyle } from "../Delement/DStyle";
 import { ButtonClickAction } from "../Delement/button-click-action";
 import { PageComponent, PageComponentDto } from "./page-component";
+import { DElementDto } from "../Delement/DElement.dto";
+import { Fact } from "../rules/fact";
+import { DTimestamp } from "../common/DTimestamp";
+import Diff = DTimestamp.Diff;
 
 export interface VideoPlayerDto {
   playUrl: string;
   style?: PStyle;
 }
-export interface Page2Dto {
+
+export interface PageDto {
   readonly id: string;
   readonly tags: string[];
   staticElements: Array<DElementDto>;
@@ -22,8 +26,8 @@ export interface Page2Dto {
   initialTasks: Array<Task>;
 }
 
-export const Page2Dto = {
-  createDummy: (id: number): Page2Dto => {
+export const PageDto = {
+  createDummy: (id: number): PageDto => {
     return {
       id: "id" + id,
       tags: [],
@@ -37,7 +41,6 @@ export const Page2Dto = {
             style: { x: 10, y: 0, w: 40, h: 20, backgroundColor: "red" },
             children: [],
             innerText: "Next btn " + id,
-            onClick2: { kind: "next-page" },
           },
         },
       ],
@@ -47,21 +50,33 @@ export const Page2Dto = {
   },
 };
 
-export class Page2 {
+export interface PageResult {
+  readonly pageId: string;
+  readonly pagePrefix?: string;
+  readonly pageEntered: DTimestamp;
+  readonly pageExited: DTimestamp;
+  readonly pageTime: Diff;
+  readonly collectedFacts: Fact[];
+}
+
+export class Page {
   private readonly TAG = "[ DPage ]: ";
   private staticElements: DElement<HTMLElement>[] = [];
-  private prevState = "";
   private components: PageComponent[] = [];
+  private pageEntered: DTimestamp = DTimestamp.now();
 
   constructor(
-    private readonly dto: Page2Dto,
+    private readonly dto: PageDto,
     private readonly taskManager: TaskManager,
     private readonly scaleService: ScaleService,
-    private readonly onCompleted: () => void,
+    private readonly onCompleted: (result: PageResult) => void,
   ) {
+    console.log(this.TAG + "CREATE PAGE " + dto.id);
     this.components = dto.components.map((el) => {
       const component = new PageComponent(el, scaleService);
+
       component.onClick = (actions) => {
+        console.log("ONCLICK", actions);
         this.handleButtonAction(actions);
       };
       this.components.push(component);
@@ -75,6 +90,9 @@ export class Page2 {
 
     if (dto.videoPlayer) {
       this.taskManager.loadVideo(dto.videoPlayer.playUrl);
+      if (dto.videoPlayer.style) {
+        this.taskManager.setVideoStyles(dto.videoPlayer.style);
+      }
     }
 
     if (dto.initialTasks.length) {
@@ -82,10 +100,22 @@ export class Page2 {
     }
   }
 
+  private createPageResult(facts: Fact[]): PageResult {
+    const pageExited = DTimestamp.now();
+    const pageTime = DTimestamp.diff(this.pageEntered, pageExited);
+    return {
+      pageId: this.dto.id,
+      pageEntered: this.pageEntered,
+      pageExited,
+      pageTime,
+      collectedFacts: facts,
+    };
+  }
   private handleButtonAction(a: ButtonClickAction) {
     switch (a.kind) {
       case "next-page":
-        this.onCompleted();
+        const nextPageResult = this.createPageResult([]);
+        this.onCompleted(nextPageResult);
         break;
       case "play-video":
         this.taskManager.execute(a.task);
@@ -100,8 +130,13 @@ export class Page2 {
         this.taskManager.pauseAudio();
         break;
       case "submit-fact":
+        const submitFactResult = this.createPageResult([a.fact]);
+        this.onCompleted(submitFactResult);
         break;
       case "submit-form":
+        // TODO IMPLEMENT Collection of form-data // LOOP OVER ALL INPUTS
+        const submitFormResult = this.createPageResult([]);
+        this.onCompleted(submitFormResult);
         break;
       default:
         const _exhaustiveCheck: never = a;

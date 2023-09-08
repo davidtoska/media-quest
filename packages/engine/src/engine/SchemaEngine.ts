@@ -1,16 +1,15 @@
 import { SchemaDto } from "./SchemaDto";
-import { DPlayer } from "../player/dplayer";
+import { DPlayer } from "./dplayer";
 import { ScaleService } from "./scale";
-import { DCommand } from "../commands/DCommand";
-import { DEvent } from "../events/DEvents";
-import { Page2 } from "../page2/Page2";
-import { TaskManager } from "../page2/task-manager";
+// import { DEvent } from "../events/DEvents";
+import { Page, PageResult } from "../page/Page";
+import { TaskManager } from "../page/task-manager";
+import { AnsweredQuestion, PageHistory } from "./history-que";
 
 export interface EngineLogger {
   error(message: string): void;
   warn(message: string): void;
-  appEvent(event: DEvent): void;
-  appCommand(command: DCommand): void;
+  // appEvent(event: DEvent): void;
 }
 
 export interface SchemaResult {
@@ -32,7 +31,7 @@ export class SchemaEngine implements ISchemaEngine {
   private readonly uiLayer: HTMLDivElement = document.createElement("div");
   private readonly mediaLayer: HTMLDivElement = document.createElement("div");
   private player: DPlayer;
-  private currentPage: Page2 | false = false;
+  private currentPage: Page | false = false;
   private readonly tickerRef: number | false = false;
 
   constructor(
@@ -59,15 +58,23 @@ export class SchemaEngine implements ISchemaEngine {
     this.taskManager = new TaskManager(this.mediaLayer, this.scale, (error) => {
       console.log(error);
     });
-
     this.styleSelf();
     // this.nextPage = this.nextPage.bind(this);
     this.handlePageCompleted = this.handlePageCompleted.bind(this);
     this.nextPage();
   }
 
-  private handlePageCompleted() {
-    console.log("PAGE COMPLETED");
+  private handlePageCompleted(result: PageResult) {
+    console.log(result);
+    const answeredQuestions = result.collectedFacts.map((f) => {
+      const answer: AnsweredQuestion = {
+        timestamp: result.pageExited,
+        fact: f,
+      };
+      return answer;
+    });
+    this.player.saveHistory({ pageId: result.pageId, answeredQuestions });
+    // console.log("PAGE COMPLETED");
     this.nextPage();
   }
 
@@ -107,8 +114,8 @@ export class SchemaEngine implements ISchemaEngine {
       return false;
     }
 
-    const newPage = new Page2(nextPage, this.taskManager, this.scale, () => {
-      this.handlePageCompleted();
+    const newPage = new Page(nextPage, this.taskManager, this.scale, (result) => {
+      this.handlePageCompleted(result);
     });
 
     // console.log("APPENDING PAGE");
@@ -134,7 +141,7 @@ export class SchemaEngine implements ISchemaEngine {
     console.log(handler);
   }
 
-  onCommandOrEvent(_event_or_command: DEvent | DCommand) {}
+  onCommandOrEvent(_event_or_command: any) {}
 
   setSchema(schema: SchemaDto): void {
     console.log(schema);

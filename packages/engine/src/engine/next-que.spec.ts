@@ -1,14 +1,14 @@
 import { NextQue } from "./next-que";
 import { PageID } from "../utils/ID";
-import { Page2Dto } from "../page2/Page2";
+import { PageDto } from "../page/Page";
 
 const tag1 = "tag1";
 const tag2 = "tag2";
 const tag3 = "tag3";
 
 let que = new NextQue();
-const createPage = (tags: string[]): Page2Dto => {
-  const dto: Page2Dto = {
+const createPage = (tags: string[]): PageDto => {
+  const dto: PageDto = {
     id: PageID.create(),
     staticElements: [],
     background: "white",
