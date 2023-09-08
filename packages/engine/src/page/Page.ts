@@ -9,7 +9,8 @@ import { PageComponent, PageComponentDto } from "./page-component";
 import { DElementDto } from "../Delement/DElement.dto";
 import { Fact } from "../rules/fact";
 import { DTimestamp } from "../common/DTimestamp";
-import Diff = DTimestamp.Diff;
+import { PageResult } from "./page-result";
+import { TaskState, TaskStateDiff } from "./task-state";
 
 export interface VideoPlayerDto {
   playUrl: string;
@@ -50,20 +51,12 @@ export const PageDto = {
   },
 };
 
-export interface PageResult {
-  readonly pageId: string;
-  readonly pagePrefix?: string;
-  readonly pageEntered: DTimestamp;
-  readonly pageExited: DTimestamp;
-  readonly pageTime: Diff;
-  readonly collectedFacts: Fact[];
-}
-
 export class Page {
   private readonly TAG = "[ DPage ]: ";
   private staticElements: DElement<HTMLElement>[] = [];
   private components: PageComponent[] = [];
   private pageEntered: DTimestamp = DTimestamp.now();
+  private previousState: TaskState | false = false;
 
   constructor(
     private readonly dto: PageDto,
@@ -71,12 +64,9 @@ export class Page {
     private readonly scaleService: ScaleService,
     private readonly onCompleted: (result: PageResult) => void,
   ) {
-    console.log(this.TAG + "CREATE PAGE " + dto.id);
     this.components = dto.components.map((el) => {
       const component = new PageComponent(el, scaleService);
-
       component.onClick = (actions) => {
-        console.log("ONCLICK", actions);
         this.handleButtonAction(actions);
       };
       this.components.push(component);
@@ -160,9 +150,11 @@ export class Page {
   }
 
   tick() {
-    const state = this.taskManager.getState();
+    const prev = this.previousState;
+    const curr = this.taskManager.getState();
+    const diff = TaskState.getDiff(curr, prev);
     this.components.forEach((comp) => {
-      comp.setCurrentState(state);
+      comp.updateState(diff);
     });
   }
 }

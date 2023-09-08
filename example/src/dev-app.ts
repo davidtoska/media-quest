@@ -40,6 +40,10 @@ const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => vo
   };
 };
 
+console.log(gifModeWorks.schema.pages[1].components);
+console.log(gifModeWorks.schema.pages[0].initialTasks);
+console.log(gifModeWorks.schema.pages[1].initialTasks);
+console.log(gifModeWorks.schema.pages[2]?.initialTasks);
 const menu = createMenu([
   toMenuItem(Page2Works),
   toMenuItem(gifModeWorks),

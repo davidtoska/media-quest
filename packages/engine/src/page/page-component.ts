@@ -4,7 +4,7 @@ import { DElement } from "../Delement/DElement";
 import { createDElement } from "../Delement/element-factory";
 import { ButtonClickAction } from "../Delement/button-click-action";
 import { DElementDto } from "../Delement/DElement.dto";
-import { TaskState } from "./task-state";
+import { TaskState, TaskStateDiff } from "./task-state";
 
 export interface PageComponentDto {
   readonly onClick?: ButtonClickAction;
@@ -13,18 +13,24 @@ export interface PageComponentDto {
   readonly whenVideoPaused?: PStyle;
   readonly whenAudioPlaying?: PStyle;
   readonly whenAudioPaused?: PStyle;
-  readonly whenMediaBlocked?: PStyle;
-  readonly whenMediaUnblocked?: PStyle;
+  readonly whenAudioBlocked?: PStyle;
+  readonly whenVideoBlocked?: PStyle;
+  readonly whenAudioUnblocked?: PStyle;
+  readonly whenVideoUnblocked?: PStyle;
   readonly whenResponseBlocked?: PStyle;
   readonly whenResponseUnblocked?: PStyle;
   readonly whenFormInputBlocked?: PStyle;
   readonly whenFormInputUnblocked?: PStyle;
 }
 
+const isFalse = (bool?: boolean): bool is false => bool === false;
+const isTrue = (bool?: boolean): bool is true => bool === true;
+
 export class PageComponent {
   private readonly TAG = "[ PageComponent ]: ";
   private el: DElement<HTMLElement>;
   private prevState: TaskState | false = false;
+
   constructor(
     readonly dto: PageComponentDto,
     readonly scale: ScaleService,
@@ -43,22 +49,29 @@ export class PageComponent {
     console.warn(this.TAG + "onclick not implemented");
   }
 
-  setCurrentState(state: TaskState) {
-    // console.log(state);
+  updateState(state: TaskStateDiff) {
+    this.handleStateChanges(state);
+  }
+
+  setState(state: TaskState) {
     const prev = this.prevState;
-    if (prev === false) {
-      this.prevState = state;
-      this.handleStateChanges(state);
-    } else {
-      const diff = TaskState.getDiff(prev, state);
-      this.prevState = state;
-      if (Object.keys(diff).length > 0) {
-        this.handleStateChanges(diff);
-      }
+    const diff = TaskState.getDiff(state, prev);
+    this.prevState = state;
+    if (Object.keys(diff).length > 0) {
+      this.handleStateChanges(diff);
     }
   }
 
-  private handleStateChanges(diff: Partial<TaskState>) {
+  private handleStateChanges(diff: TaskStateDiff) {
+    const {
+      videoIsPlaying,
+      audioIsPlaying,
+      blockAudio,
+      blockVideo,
+      blockResponseButton,
+      blockFormInput,
+      isGifMode,
+    } = diff;
     const {
       whenAudioPaused,
       whenVideoPaused,
@@ -66,15 +79,31 @@ export class PageComponent {
       whenFormInputBlocked,
       whenResponseBlocked,
       whenVideoPlay,
-      whenMediaBlocked,
-      whenMediaUnblocked,
+      whenAudioBlocked,
+      whenVideoBlocked,
+      whenAudioUnblocked,
+      whenVideoUnblocked,
       whenResponseUnblocked,
       whenFormInputUnblocked,
     } = this.dto;
-    if (diff.audioIsPlaying && whenAudioPlaying) {
+    if (isTrue(audioIsPlaying) && whenAudioPlaying) {
       this.el.setStyle(whenAudioPlaying);
     }
-    // console.log(diff);
+    if (isFalse(audioIsPlaying) && whenAudioPaused) {
+      this.el.setStyle(whenAudioPaused);
+    }
+    if (isTrue(videoIsPlaying) && whenVideoPlay) {
+      this.el.setStyle(whenVideoPlay);
+    }
+    if (isFalse(videoIsPlaying) && whenVideoPaused) {
+      this.el.setStyle(whenVideoPaused);
+    }
+    // if (isTrue(blockAudio) && whenAudioBlocked) {
+    //     this.el.setStyle(whenAudioBlocked);
+    // }
+    // if (isTrue(blockVideo) && whenVideoBlocked) {
+    //     this.el.setStyle(whenVideoBlocked);
+    // }
   }
 
   appendToParent(parent: { append: (el: HTMLElement) => void }) {

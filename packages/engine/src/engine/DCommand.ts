@@ -4,7 +4,7 @@ type CommandTarget = "PAGE_QUE";
 type CommandKind = `${Uppercase<CommandTarget>}_${Uppercase<string>}_COMMAND`;
 
 export type NavigationCommand =
-  | CommandDto<"PAGE_QUE_NEXT_PAGE_COMMAND", "PAGE_QUE", {}>
+  // | CommandDto<"PAGE_QUE_NEXT_PAGE_COMMAND", "PAGE_QUE", {}>
   | CommandDto<"PAGE_QUE_GO_TO_SEQUENCE_COMMAND", "PAGE_QUE", { sequenceId: string }>
   | CommandDto<"PAGE_QUE_GO_TO_PAGE_COMMAND", "PAGE_QUE", { pageId: string }>;
 

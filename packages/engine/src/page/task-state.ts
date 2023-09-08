@@ -7,6 +7,8 @@ export type TaskState = {
   blockAudio: boolean;
   blockVideo: boolean;
 };
+
+export type TaskStateDiff = Partial<TaskState> & { __diffed__: true };
 export const TaskState = {
   eq: (a: TaskState, b: TaskState) => {
     return (
@@ -20,28 +22,33 @@ export const TaskState = {
     );
   },
 
-  getDiff: (a: TaskState, b: TaskState): Partial<TaskState> => {
-    const diff: Partial<TaskState> = {};
-    if (a.audioIsPlaying !== b.audioIsPlaying) {
-      diff.audioIsPlaying = b.audioIsPlaying;
+  getDiff: (curr: TaskState, prev: TaskState | false): TaskStateDiff => {
+    if (prev === false) {
+      return curr as TaskStateDiff;
     }
-    if (a.isGifMode !== b.isGifMode) {
-      diff.isGifMode = b.isGifMode;
+
+    const diff = {} as TaskStateDiff;
+
+    if (curr.audioIsPlaying !== prev.audioIsPlaying) {
+      diff.audioIsPlaying = curr.audioIsPlaying;
     }
-    if (a.videoIsPlaying !== b.videoIsPlaying) {
-      diff.videoIsPlaying = b.videoIsPlaying;
+    if (curr.isGifMode !== prev.isGifMode) {
+      diff.isGifMode = curr.isGifMode;
     }
-    if (a.blockFormInput !== b.blockFormInput) {
-      diff.blockFormInput = b.blockFormInput;
+    if (curr.videoIsPlaying !== prev.videoIsPlaying) {
+      diff.videoIsPlaying = curr.videoIsPlaying;
     }
-    if (a.blockResponseButton !== b.blockResponseButton) {
-      diff.blockResponseButton = b.blockResponseButton;
+    if (curr.blockFormInput !== prev.blockFormInput) {
+      diff.blockFormInput = curr.blockFormInput;
     }
-    if (a.blockAudio !== b.blockAudio) {
-      diff.blockAudio = b.blockAudio;
+    if (curr.blockResponseButton !== prev.blockResponseButton) {
+      diff.blockResponseButton = curr.blockResponseButton;
     }
-    if (a.blockVideo !== b.blockVideo) {
-      diff.blockVideo = b.blockVideo;
+    if (curr.blockAudio !== prev.blockAudio) {
+      diff.blockAudio = curr.blockAudio;
+    }
+    if (curr.blockVideo !== prev.blockVideo) {
+      diff.blockVideo = curr.blockVideo;
     }
     return diff;
   },

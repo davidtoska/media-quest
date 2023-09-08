@@ -105,7 +105,9 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
         kind: "next-button",
       });
 
-      const textStyle = mainMedia ? DefaultTheme.mainText.withMedia.text.css : DefaultTheme.mainText.noMedia.text.css;
+      const textStyle = mainMedia
+        ? DefaultTheme.mainText.withMedia.text.css
+        : DefaultTheme.mainText.noMedia.text.css;
       const infoTextElement: DElementDto = {
         innerText: infoText,
         _tag: "p",
@@ -210,6 +212,10 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     if (video.mode === "autoplay") {
       autoPlayTask = { ...playButtonTask, priority: "follow-queue" };
     }
+    if (video.mode === "gif-mode") {
+      autoPlayTask = { ...playButtonTask, priority: "follow-queue", loop: true };
+    }
+
     const videoPlayer: PageDto["videoPlayer"] = {
       playUrl: video.file.downloadUrl,
       style: { h: 45, w: 100, x: 0, y: 55 },
@@ -221,6 +227,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
         style: { ...t.playButton.css, ...t.playButton.cssEnabled },
       },
       onClick: { kind: "play-video", task: playButtonTask },
+      whenVideoPlay: { visibility: "hidden" },
+      whenVideoPaused: { visibility: "visible" },
     };
     const pauseBtn: PageComponentDto = {
       el: {
@@ -233,6 +241,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
         url: t.pauseButton.iconUrl,
       },
       onClick: { kind: "pause-video" },
+      whenVideoPlay: { visibility: "visible" },
+      whenVideoPaused: { visibility: "hidden" },
     };
 
     if (mode !== "gif-mode") {
@@ -292,7 +302,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
           }
         : { kind: "next-page" };
 
-    const btnStyles = value === 9 ? DefaultTheme.responseButtons.dontKnow : DefaultTheme.responseButtons.normal;
+    const btnStyles =
+      value === 9 ? DefaultTheme.responseButtons.dontKnow : DefaultTheme.responseButtons.normal;
     const btn: DDivDto = {
       _tag: "div",
       children: [

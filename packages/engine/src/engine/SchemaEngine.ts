@@ -2,9 +2,10 @@ import { SchemaDto } from "./SchemaDto";
 import { DPlayer } from "./dplayer";
 import { ScaleService } from "./scale";
 // import { DEvent } from "../events/DEvents";
-import { Page, PageResult } from "../page/Page";
+import { Page } from "../page/Page";
 import { TaskManager } from "../page/task-manager";
-import { AnsweredQuestion, PageHistory } from "./history-que";
+// import { AnsweredQuestion, PageHistory } from "./history-que";
+import { PageResult } from "../page/page-result";
 
 export interface EngineLogger {
   error(message: string): void;
@@ -44,7 +45,7 @@ export class SchemaEngine implements ISchemaEngine {
       if (this.currentPage) {
         this.currentPage.tick();
       }
-    }, 1200);
+    }, 100);
     this.hostElement = hostEl;
     this.hostElement.appendChild(this.mediaLayer);
     this.hostElement.appendChild(this.uiLayer);
@@ -59,22 +60,12 @@ export class SchemaEngine implements ISchemaEngine {
       console.log(error);
     });
     this.styleSelf();
-    // this.nextPage = this.nextPage.bind(this);
     this.handlePageCompleted = this.handlePageCompleted.bind(this);
     this.nextPage();
   }
 
   private handlePageCompleted(result: PageResult) {
-    console.log(result);
-    const answeredQuestions = result.collectedFacts.map((f) => {
-      const answer: AnsweredQuestion = {
-        timestamp: result.pageExited,
-        fact: f,
-      };
-      return answer;
-    });
-    this.player.saveHistory({ pageId: result.pageId, answeredQuestions });
-    // console.log("PAGE COMPLETED");
+    this.player.saveHistory(result);
     this.nextPage();
   }
 

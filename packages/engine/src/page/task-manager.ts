@@ -8,6 +8,7 @@ export class TaskManager {
   private readonly TAG = "[TaskManager]: ";
   private readonly videoElement = document.createElement("video");
   private readonly audioElement = document.createElement("audio");
+  private readonly showConsoleLogs = false;
   private videoStyles: PStyle = {
     h: 40,
     w: 80,
@@ -19,7 +20,7 @@ export class TaskManager {
   private delayRef: number | false = false;
 
   clear() {
-    console.log(this.TAG + "CLEAR");
+    if (this.showConsoleLogs) console.log(this.TAG + "CLEAR");
     if (typeof this.delayRef === "number") {
       window.clearTimeout(this.delayRef);
     }
@@ -36,13 +37,21 @@ export class TaskManager {
   getState(): TaskState {
     const c = this.runningTask;
     const isGifMode = this.videoElement.loop;
-    const audioIsPlaying = c && c.task.kind === "play-audio-task";
-    const videoIsPlaying = c && c.task.kind === "play-video-task";
+    const audioIsPlaying = c && c.task.kind === "play-audio-task" && !this.audioElement.paused;
+    const videoIsPlaying = c && c.task.kind === "play-video-task" && !this.videoElement.paused;
     const blockResponseButton = c && c.task.blockResponseButton;
     const blockAudio = c && c.task.blockAudio;
     const blockVideo = c && c.task.blockVideo;
     const blockFormInput = c && c.task.blockFormInput;
-    return { audioIsPlaying, isGifMode, videoIsPlaying, blockFormInput, blockResponseButton, blockAudio, blockVideo };
+    return {
+      audioIsPlaying,
+      isGifMode,
+      videoIsPlaying,
+      blockFormInput,
+      blockResponseButton,
+      blockAudio,
+      blockVideo,
+    };
   }
 
   constructor(
@@ -55,30 +64,35 @@ export class TaskManager {
     this.mediaLayer.appendChild(this.audioElement);
     DStyle.normalize(this.videoElement);
     DStyle.applyStyles(this.videoElement, this.videoStyles, this.scale.scale);
+
     this.videoElement.onended = () => {
-      console.log("VIDEO ENDED");
       const next = this.getNextTask();
       if (next) {
         this.execute(next);
+      } else {
+        this.runningTask = false;
       }
     };
-    this.videoElement.onerror = () => {
+    this.videoElement.onerror = (e) => {
+      if (e instanceof Event) {
+        console.log(e.target);
+        console.log("IS EVENT");
+      }
       console.log("VIDEO ERROR WHY ?? ");
+      onError("Error playing video." + this.videoElement.src);
     };
     this.audioElement.onended = () => {
-      console.log("AUDIO ENDED");
       const next = this.getNextTask();
       if (next) {
         this.execute(next);
-        console.log("NEXT TASK" + next.kind);
       } else {
-        console.log("NO NEXT TASK");
+        this.runningTask = false;
       }
     };
   }
 
   execute(task: Task): boolean {
-    console.log("EXECUTE TASK" + task.kind);
+    // console.log("EXECUTE TASK" + task.kind);
     const curr = this.runningTask;
 
     // Check if we should remove the current task.
@@ -136,7 +150,6 @@ export class TaskManager {
 
   autoPlaySequence(tasks: Task[]) {
     this.taskList = [...tasks];
-    console.log("AUTO PLAY SEQUENCE" + this.taskList.length);
     const next = this.getNextTask();
     if (next) {
       this.execute(next);
@@ -144,15 +157,17 @@ export class TaskManager {
   }
 
   loadVideo(url: string) {
-    console.log("LOAD VIDEO " + !!url + " ");
+    // console.log("LOAD VIDEO " + !!url + " ");
     if (this.videoElement.src !== url) {
       this.videoElement.src = url;
     }
     this.showVideo();
   }
+
   private showVideo() {
     this.videoElement.style.display = "block";
   }
+
   private hideVideo() {
     this.videoElement.style.display = "none";
   }
@@ -180,8 +195,8 @@ export class TaskManager {
   }
 
   private getNextTask(): Task | false {
-    console.log("Getting next task.");
-    console.log(this.taskList);
+    // console.log("Getting next task.");
+    // console.log(this.taskList);
     const first = this.taskList.shift();
     return first ?? false;
   }

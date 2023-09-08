@@ -1,10 +1,11 @@
 import { DPlayer, DPlayerData } from "./dplayer";
 import { PageSequenceDto } from "./SchemaDto";
 import { Rule } from "../rules/rule";
-import { PageHistory } from "./history-que";
+// import { PageHistory } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
 import { PageQueCommand } from "./DCommand";
 import { PageDto } from "../page/Page";
+import { PageResult } from "../page/page-result";
 
 const page = (id: number): PageDto => {
   return PageDto.createDummy(id);
@@ -89,22 +90,22 @@ describe("DPlayer", () => {
 
     const curr = player.getNextPage() as PageDto;
 
-    const history: PageHistory = {
+    const result: PageResult = {
       pageId: curr.id,
-      answeredQuestions: [
+      pageEntered: DTimestamp.now(),
+      pageExited: DTimestamp.now(),
+      pageTime: DTimestamp.diff(DTimestamp.now(), DTimestamp.now()),
+      collectedFacts: [
         {
-          timestamp: DTimestamp.now(),
-          fact: {
-            referenceId: "as",
-            referenceLabel: "as-label",
-            kind: "numeric-fact",
-            label: "litt",
-            value: 2,
-          },
+          referenceId: "as",
+          referenceLabel: "as-label",
+          kind: "numeric-fact",
+          label: "litt",
+          value: 2,
         },
       ],
     };
-    player.saveHistory(history);
+    player.saveHistory(result);
     expect(player.getNextPage()).toBe(p2);
     expect(player.getResults().length).toBe(1);
   });

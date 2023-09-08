@@ -1,26 +1,39 @@
-import { AnsweredQuestion, HistoryQue, PageHistory } from "./history-que";
+import { HistoryQue } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
 import { PageID } from "../utils/ID";
 import { PageDto } from "../page/Page";
+import { PageResult } from "../page/page-result";
 
 const p = (id: number): PageDto => {
   return { id: PageID.create(), components: [], initialTasks: [], staticElements: [], background: "", tags: [] };
 };
 
-const answer = (id: number, value: number): AnsweredQuestion => ({
-  timestamp: DTimestamp.now(),
-  fact: {
-    referenceId: "" + id,
-    referenceLabel: "label-for-" + id,
-    value,
-    label: "value-label " + value,
-    kind: "numeric-fact",
-  },
-});
-const h = (page: PageDto, answeredQuestions: AnsweredQuestion[]): PageHistory => ({
-  pageId: page.id,
-  answeredQuestions,
-});
+const pageResult = (id: number, value: number): PageResult => {
+  const pageEntered = DTimestamp.now();
+  const pageExited = DTimestamp.addMills(pageEntered, 1000);
+  const pageTime = DTimestamp.diff(pageEntered, pageExited);
+
+  const result: PageResult = {
+    pageId: "_dummyId" + id,
+    pageEntered,
+    pageExited,
+    pageTime,
+    collectedFacts: [
+      {
+        referenceId: "" + id,
+        referenceLabel: "label-for-" + id,
+        value,
+        label: "value-label " + value,
+        kind: "numeric-fact",
+      },
+    ],
+  };
+  return result;
+};
+// const h = (page: PageDto, answeredQuestions: AnsweredQuestion[]): PageResult => ({
+//   pageId: page.id,
+//   answeredQuestions,
+// });
 const p1 = p(1);
 const p2 = p(2);
 const p3 = p(3);
@@ -40,7 +53,7 @@ describe("HistoryQue", () => {
   });
 
   it("Can add history, and get facts back", () => {
-    history.addToHistory(h(p1, [answer(1, 2)]));
+    history.addToHistory(pageResult(1, 2));
     expect(history.getFacts().length).toBe(1);
   });
 });

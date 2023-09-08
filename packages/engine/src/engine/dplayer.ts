@@ -1,15 +1,17 @@
-import { AnsweredQuestion, HistoryQue, PageHistory } from "./history-que";
+import { HistoryQue } from "./history-que";
 import { RuleEngine } from "../rules/rule-engine";
 import { NextQue } from "./next-que";
 import { SchemaDto } from "./SchemaDto";
 import { NavigationCommand, PageQueCommand } from "./DCommand";
 import { DUtil } from "../utils/DUtil";
 import { PageDto } from "../page/Page";
+import { PageResult } from "../page/page-result";
+import { Fact } from "../rules/fact";
 
 export type DPlayerData = Pick<SchemaDto, "pages" | "pageSequences" | "rules">;
 export class DPlayer {
   private history = new HistoryQue();
-  private ruleEngine = new RuleEngine<PageQueCommand, PageQueCommand>();
+  private ruleEngine = new RuleEngine<PageQueCommand, never>();
   private nextQue = new NextQue();
   private data: DPlayerData;
 
@@ -19,15 +21,15 @@ export class DPlayer {
     this.nextQue.resetQue(pages);
   }
 
-  saveHistory(pageHistory: PageHistory) {
-    console.log("SAVE HISTORY", pageHistory);
+  saveHistory(pageHistory: PageResult) {
+    // console.log("SAVE HISTORY", pageHistory);
     this.history.addToHistory(pageHistory);
     const facts = this.history.getFacts();
     const result = this.ruleEngine.solveAll(this.data.rules, facts);
     const matchingRules = result.matching;
     const actions = matchingRules.map((r) => r.actionList).flat(1);
     actions.forEach((a) => {
-      console.log(a.payload);
+      // console.log(a.payload);
       switch (a.kind) {
         case "PAGE_QUE_JUMP_TO_PAGE_COMMAND":
           this.nextQue.jumpToPageById(a.payload.pageId);
@@ -43,11 +45,11 @@ export class DPlayer {
           const check: never = a;
       }
     });
-    console.log(actions);
+    // console.log(actions);
   }
 
-  getResults(): AnsweredQuestion[] {
-    return this.history.getAnswers();
+  getResults(): Fact[] {
+    return this.history.getFacts();
   }
 
   private goToPageById(pageId: string) {
@@ -56,9 +58,6 @@ export class DPlayer {
 
   handleNavigationCommand(command: NavigationCommand) {
     switch (command.kind) {
-      case "PAGE_QUE_NEXT_PAGE_COMMAND":
-        // NO NEED TO DO ANYTHING
-        break;
       case "PAGE_QUE_GO_TO_PAGE_COMMAND":
         this.goToPageById(command.payload.pageId);
         break;
@@ -87,8 +86,6 @@ export class DPlayer {
     const next = this.nextQue.pop();
     return next ?? false;
   }
-
-  // return this.nextQue.pop();
 
   private insertSequenceById(id: string) {
     const seq = this.data.pageSequences?.find((s) => s.id === id);
