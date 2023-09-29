@@ -9,7 +9,7 @@ import { gifModeWorks } from "./schema/gif-mode-works";
 import { Page2Works } from "./schema/page2-works";
 console.log("DEV APP");
 
-const initialSchema: IExampleSchema = autoplayWorks;
+const initialSchema: IExampleSchema = gifModeWorks;
 console.log(initialSchema);
 
 new EventSource("/esbuild").addEventListener("change", () => location.reload());

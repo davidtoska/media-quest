@@ -94,6 +94,8 @@ export class TaskManager {
   execute(task: Task): boolean {
     // console.log("EXECUTE TASK" + task.kind);
     const curr = this.runningTask;
+    // TODO Background-task should be handeled as its own kind or something.
+    let isBackgroundTask = false;
 
     // Check if we should remove the current task.
     if (curr && Task.shallRemoveCurrent(task) && Task.notEq(curr.task, task)) {
@@ -119,6 +121,7 @@ export class TaskManager {
       this.loadVideo(task.url);
       if (task.loop) {
         this.videoElement.loop = true;
+        isBackgroundTask = true;
       } else {
         this.videoElement.loop = false;
       }
@@ -140,6 +143,28 @@ export class TaskManager {
       }
       this.audioElement.play();
     }
+
+    if (task.kind === "delay-task") {
+      if (typeof this.delayRef === "number") {
+        window.clearTimeout(this.delayRef);
+      }
+      this.delayRef = window.setTimeout(() => {
+        const next = this.getNextTask();
+        if (next) {
+          this.execute(next);
+        } else {
+          this.runningTask = false;
+        }
+      }, task.duration);
+    }
+
+    if (isBackgroundTask) {
+      const startNextTask = this.getNextTask();
+      if (startNextTask) {
+        this.execute(startNextTask);
+      }
+    }
+
     return true;
   }
 
@@ -153,6 +178,9 @@ export class TaskManager {
     const next = this.getNextTask();
     if (next) {
       this.execute(next);
+      if (next.kind === "play-video-task" && next.loop) {
+        this.videoElement.loop = true;
+      }
     }
   }
 
@@ -162,6 +190,16 @@ export class TaskManager {
       this.videoElement.src = url;
     }
     this.showVideo();
+  }
+
+  private playVideoElement() {
+    this.videoElement
+      .play()
+      .then(() => {})
+      .catch((e) => {
+        console.log(e);
+        this.onError("Error playing video.");
+      });
   }
 
   private showVideo() {

@@ -156,5 +156,7 @@ export class Page {
     this.components.forEach((comp) => {
       comp.updateState(diff);
     });
+    // UPDATE PREVIOUS-STATE FOR NEXT TICK!!
+    // this.previousState = curr;
   }
 }

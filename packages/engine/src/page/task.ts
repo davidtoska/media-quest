@@ -60,10 +60,13 @@ const eq = (a: Task, b: Task) => {
 const deleteTaskList = (task: Task) => {
   return task.priority === "replace-all" || task.priority === "replace-queue";
 };
+
 const shallRemoveCurrent = (task: Task) => {
   return task.priority === "replace-current" || task.priority === "replace-all";
 };
+
 const notEq = (a: Task, b: Task) => !eq(a, b);
+
 const is = (task: Task | undefined | false | null | {}): task is Task => {
   if (!task) {
     return false;

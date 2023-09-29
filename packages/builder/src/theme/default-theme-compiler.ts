@@ -20,6 +20,7 @@ import {
   PlayVideoTask,
   Rule,
   SchemaDto,
+  DelayTask,
 } from "@media-quest/engine";
 
 import { AudioFile } from "../media-files";
@@ -72,8 +73,8 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     const tags = page.tags ?? [];
     const { nextButton, mainText, id, mainMedia, _type } = page;
     const staticElements: DElementDto[] = [];
-    let autoPlayAudioTasks: PlayAudioTask | false = false;
-    let autoPlayVideoTasks: PlayVideoTask | false = false;
+    let initialAudioTasks: Array<PlayAudioTask | DelayTask> = [];
+    let initialVideoTaskList: Array<PlayVideoTask | DelayTask> = [];
     const newPage: PageDto = {
       background: "white",
       components: [],
@@ -85,8 +86,9 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
 
     if (page.mainText.audioFile) {
       const autoPlay = page.mainText.autoplay;
-      const res = this.compileMainTextAudio(page.mainText.audioFile, autoPlay);
-      autoPlayAudioTasks = res.autoPlayTask;
+      const autoPlayDelay = page.mainText.autoplayDelay;
+      const res = this.compileMainTextAudio(page.mainText.audioFile, autoPlay, autoPlayDelay);
+      initialAudioTasks = [...res.initialTasks];
       newPage.components.push(...res.components);
     }
 
@@ -125,16 +127,14 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       const videoOutput = this.compileVideo(mainMedia);
       newPage.videoPlayer = videoOutput.videoPlayer;
       newPage.components.push(...videoOutput.components);
-      autoPlayVideoTasks = videoOutput.autoPlayTask;
+      initialVideoTaskList = [...videoOutput.autoPlayTasks];
     }
 
-    if (autoPlayVideoTasks) {
-      newPage.initialTasks.push(autoPlayVideoTasks);
-    }
-    if (autoPlayAudioTasks) {
-      newPage.initialTasks.push(autoPlayAudioTasks);
-    }
-    return newPage;
+    // ADDING INITIAL TASKS IN CORRECT ORDER
+    newPage.initialTasks.push(...initialVideoTaskList);
+    newPage.initialTasks.push(...initialAudioTasks);
+    const clone = JSON.parse(JSON.stringify(newPage));
+    return clone;
   }
 
   private compileImage(image: BuilderMainImageDto) {
@@ -149,9 +149,10 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   private compileMainTextAudio(
     audioFile: AudioFile,
     autoPlay: boolean,
+    autoPlayDelay: number,
   ): {
     components: PageComponentDto[];
-    autoPlayTask: PlayAudioTask | false;
+    initialTasks: Array<PlayAudioTask | DelayTask>;
   } {
     const t = this.theme.mainText;
     const audioId = audioFile.id;
@@ -175,9 +176,22 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       url: audioFile.downloadUrl,
     };
 
-    let autoPlayTask: PlayAudioTask | false = false;
+    let initialAudioTasks: Array<PlayAudioTask | DelayTask> = [];
     if (autoPlay) {
-      autoPlayTask = { ...task, priority: "follow-queue" };
+      const playAudioTask: PlayAudioTask = { ...task, priority: "follow-queue" };
+      initialAudioTasks = [playAudioTask];
+      if (autoPlayDelay > 0) {
+        const delayTask: DelayTask = {
+          kind: "delay-task",
+          priority: "follow-queue",
+          duration: autoPlayDelay,
+          blockVideo: false,
+          blockAudio: false,
+          blockResponseButton: false,
+          blockFormInput: false,
+        };
+        initialAudioTasks = [delayTask, playAudioTask];
+      }
     }
     // const autoplayTask =
     const playBtn: PageComponentDto = {
@@ -185,19 +199,23 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       onClick: { kind: "play-audio", task },
     };
 
-    return { components: [playBtn], autoPlayTask };
+    return { components: [playBtn], initialTasks: [...initialAudioTasks] };
   }
 
   private compileVideo(video: BuilderMainVideoDto): {
     videoPlayer: PageDto["videoPlayer"];
     components: PageComponentDto[];
-    autoPlayTask: PlayVideoTask | false;
+    autoPlayTasks: Array<PlayVideoTask | DelayTask>;
   } {
     const t = this.theme.videoPlayer;
     const mode = video.mode;
     const components: PageComponentDto[] = [];
 
-    let autoPlayTask: PlayVideoTask | false = false;
+    let autoPlayTasks: Array<PlayVideoTask | DelayTask> = [];
+
+    let autoplayVideoTask: PlayVideoTask | false = false;
+    let autoplayDelayTask: DelayTask | false = false;
+
     const playButtonTask: PlayVideoTask = {
       kind: "play-video-task",
       url: video.file.downloadUrl,
@@ -209,11 +227,22 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       blockVideo: false,
       priority: "replace-all",
     };
-    if (video.mode === "autoplay") {
-      autoPlayTask = { ...playButtonTask, priority: "follow-queue" };
-    }
-    if (video.mode === "gif-mode") {
-      autoPlayTask = { ...playButtonTask, priority: "follow-queue", loop: true };
+
+    if (video.mode === "autoplay" || video.mode === "gif-mode") {
+      autoplayVideoTask = { ...playButtonTask, priority: "follow-queue" };
+      autoPlayTasks = [autoplayVideoTask];
+      if (video.preDelay > 0) {
+        autoplayDelayTask = {
+          kind: "delay-task",
+          priority: "follow-queue",
+          duration: video.preDelay,
+          blockVideo: false,
+          blockAudio: false,
+          blockResponseButton: false,
+          blockFormInput: false,
+        };
+        autoPlayTasks = [autoplayDelayTask, autoplayVideoTask];
+      }
     }
 
     const videoPlayer: PageDto["videoPlayer"] = {
@@ -249,7 +278,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       components.push(playButton);
       components.push(pauseBtn);
     }
-    return { videoPlayer, components, autoPlayTask };
+    return { videoPlayer, components, autoPlayTasks: [...autoPlayTasks] };
   }
   private compileQuestion(
     pageId: string,

@@ -239,6 +239,7 @@ export class BuilderSchema {
     const moduleDto = this.toJson();
     const imp = new DefaultThemeCompiler();
     const schema = imp.compile(moduleDto);
+    // console.log(schema.pages);
 
     return { codebook: {}, schema, schemaConfig: {} };
   }
