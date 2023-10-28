@@ -10,6 +10,7 @@ let que = new NextQue();
 const createPage = (tags: string[]): PageDto => {
   const dto: PageDto = {
     id: PageID.create(),
+    prefix: "prefix",
     staticElements: [],
     background: "white",
     components: [],

@@ -27,8 +27,10 @@ export class TaskManager {
 
     this.pauseVideo();
     this.pauseAudio();
-    this.videoElement.src = "";
-    this.audioElement.src = "";
+    this.videoElement.removeAttribute("src");
+    this.videoElement.load();
+    this.audioElement.removeAttribute("src");
+    this.audioElement.load();
     this.taskList = [];
     this.runningTask = false;
     this.hideVideo();
@@ -74,12 +76,9 @@ export class TaskManager {
       }
     };
     this.videoElement.onerror = (e) => {
-      if (e instanceof Event) {
-        console.log(e.target);
-        console.log("IS EVENT");
+      if (this.videoElement.src !== "") {
+        onError("Error playing video: " + this.videoElement.src);
       }
-      console.log("VIDEO ERROR WHY ?? ");
-      onError("Error playing video." + this.videoElement.src);
     };
     this.audioElement.onended = () => {
       const next = this.getNextTask();
@@ -233,7 +232,7 @@ export class TaskManager {
   }
 
   private getNextTask(): Task | false {
-    // console.log("Getting next task.");
+    console.log("Getting next task.");
     // console.log(this.taskList);
     const first = this.taskList.shift();
     return first ?? false;

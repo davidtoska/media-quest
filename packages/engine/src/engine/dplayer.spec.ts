@@ -1,7 +1,6 @@
 import { DPlayer, DPlayerData } from "./dplayer";
 import { PageSequenceDto } from "./SchemaDto";
 import { Rule } from "../rules/rule";
-// import { PageHistory } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
 import { RuleActionPageQue } from "./page-que-ruleengine-action";
 import { PageDto } from "../page/Page";
@@ -72,8 +71,8 @@ describe("DPlayer", () => {
 
     const result: PageResult = {
       pageId: curr.id,
-      pageEntered: DTimestamp.now(),
-      pageExited: DTimestamp.now(),
+      pagePrefix: curr.id,
+      eventLog: [],
       pageTime: DTimestamp.diff(DTimestamp.now(), DTimestamp.now()),
       collectedFacts: [
         {
@@ -87,6 +86,6 @@ describe("DPlayer", () => {
     };
     player.saveHistory(result);
     expect(player.getNextPage()).toBe(p2);
-    expect(player.getResults().length).toBe(1);
+    expect(player.getResults().answerFacts.length).toBe(1);
   });
 });

@@ -1,27 +1,35 @@
 import { SchemaDto } from "./SchemaDto";
 import { DPlayer } from "./dplayer";
 import { ScaleService } from "./scale";
-// import { DEvent } from "../events/DEvents";
 import { Page } from "../page/Page";
 import { TaskManager } from "../page/task-manager";
-// import { AnsweredQuestion, PageHistory } from "./history-que";
 import { PageResult } from "../page/page-result";
-
+import { Fact } from "../rules/fact";
+import { MqEvent } from "../events/mq-events";
 export interface EngineLogger {
+  info(message: string): void;
   error(message: string): void;
   warn(message: string): void;
-  // appEvent(event: DEvent): void;
 }
 
+const voidLogger: EngineLogger = {
+  info: (message: string) => {},
+  error: (message: string) => {},
+  warn: (message: string) => {},
+};
+
 export interface SchemaResult {
-  readonly eventLog: ReadonlyArray<any>;
-  readonly answers: ReadonlyArray<any>;
+  readonly schemaId: string;
+  readonly pagesLeft: number;
+  readonly predefinedFacts: ReadonlyArray<Fact>;
+  readonly eventLog: ReadonlyArray<MqEvent>;
+  readonly answers: ReadonlyArray<Fact>;
 }
+
 export interface ISchemaEngine {
-  onComplete(handler: (result: SchemaResult) => void): void;
-  // onCommandOrEvent(item: DEvent | DCommand): void;
-  setSchema(schema: SchemaDto): void;
+  onProgress(handler: (result: SchemaResult) => void): void;
   onFatalError(handler: (error: { message: string }) => void): void;
+  setLogger(logger: EngineLogger): void;
 }
 
 export class SchemaEngine implements ISchemaEngine {
@@ -29,12 +37,12 @@ export class SchemaEngine implements ISchemaEngine {
   private readonly scale: ScaleService;
   private readonly hostElement: HTMLDivElement;
   private readonly taskManager: TaskManager;
+  private logger: EngineLogger = voidLogger;
   private readonly uiLayer: HTMLDivElement = document.createElement("div");
   private readonly mediaLayer: HTMLDivElement = document.createElement("div");
   private player: DPlayer;
   private currentPage: Page | false = false;
   private readonly tickerRef: number | false = false;
-
   constructor(
     hostEl: HTMLDivElement,
     private readonly height: number,
@@ -55,17 +63,35 @@ export class SchemaEngine implements ISchemaEngine {
       containerWidth: width,
       containerHeight: height,
     });
+    this.logger.info(this.TAG + "Scale: " + JSON.stringify(this.scale));
     this.player = new DPlayer(this.schema);
     this.taskManager = new TaskManager(this.mediaLayer, this.scale, (error) => {
       console.log(error);
     });
+
     this.styleSelf();
     this.handlePageCompleted = this.handlePageCompleted.bind(this);
     this.nextPage();
   }
 
   private handlePageCompleted(result: PageResult) {
+    // 1 Save data from last page
     this.player.saveHistory(result);
+
+    // 2 Emit progress
+    const currentResults = this.player.getResults();
+    const a: SchemaResult = {
+      schemaId: this.schema.id,
+      pagesLeft: currentResults.pagesLeft,
+      predefinedFacts: currentResults.predefinedFacts,
+      eventLog: currentResults.eventLog,
+      answers: currentResults.answerFacts,
+    };
+    if (this._onProgress) {
+      this._onProgress(a);
+    }
+
+    // 3. Next page
     this.nextPage();
   }
 
@@ -91,15 +117,13 @@ export class SchemaEngine implements ISchemaEngine {
     const nextPage = this.player.getNextPage();
     if (this.currentPage) {
       this.currentPage.destroy();
-
       this.uiLayer.innerHTML = "";
     }
 
     if (!nextPage) {
-      // console.log("NO MORE PAGES");
       // TODO FIGURE OUT WHAQT TO DO AT END OF TEST!! Start over??
       this.player = new DPlayer(this.schema);
-      if (this.player.pageCount > 0) {
+      if (this.player.pagesLeft > 0) {
         this.nextPage();
       }
       return false;
@@ -108,12 +132,7 @@ export class SchemaEngine implements ISchemaEngine {
     const newPage = new Page(nextPage, this.taskManager, this.scale, (result) => {
       this.handlePageCompleted(result);
     });
-
-    // console.log("APPENDING PAGE");
-
     this.currentPage = newPage;
-    // this.uiContainer.innerHTML = "";
-
     newPage.appendYourself(this.uiLayer);
     return true;
   }
@@ -124,17 +143,17 @@ export class SchemaEngine implements ISchemaEngine {
       this.uiLayer.innerHTML = "";
     }
   }
-  onComplete(handler: (result: SchemaResult) => void) {
-    console.log(handler);
+
+  private _onProgress: ((result: SchemaResult) => void) | false = false;
+  onProgress(handler: (result: SchemaResult) => void) {
+    this._onProgress = handler;
   }
 
+  private _onFatalError: ((error: { message: string }) => void) | false = false;
   onFatalError(handler: (error: { message: string }) => void): void {
-    console.log(handler);
+    this._onFatalError = handler;
   }
-
-  onCommandOrEvent(_event_or_command: any) {}
-
-  setSchema(schema: SchemaDto): void {
-    console.log(schema);
+  setLogger(logger: EngineLogger) {
+    this.logger = logger;
   }
 }

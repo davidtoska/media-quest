@@ -9,3 +9,27 @@ export type ButtonClickAction =
   | { kind: "submit-fact"; fact: Fact }
   | { kind: "next-page" }
   | { kind: "submit-form" };
+
+export const ButtonClickAction = {
+  describe: (a: ButtonClickAction): string => {
+    switch (a.kind) {
+      case "next-page":
+        return "go to next page";
+      case "play-video":
+        return "VideoId = " + a.task.videoId;
+      case "play-audio":
+        return "AudioId = " + a.task.audioId;
+      case "pause-video":
+        return "";
+      case "pause-audio":
+        return "";
+      case "submit-fact":
+        return a.fact.label + " = " + a.fact.value;
+      case "submit-form":
+        return "";
+      default:
+        const _exhaustiveCheck: never = a;
+        return "";
+    }
+  },
+};

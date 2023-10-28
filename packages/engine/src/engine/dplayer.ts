@@ -6,27 +6,41 @@ import { RuleActionPageQue } from "./page-que-ruleengine-action";
 import { PageDto } from "../page/Page";
 import { PageResult } from "../page/page-result";
 import { Fact } from "../rules/fact";
+import { MqEvent } from "../events/mq-events";
 
-export type DPlayerData = Pick<SchemaDto, "pages" | "pageSequences" | "rules">;
+export type DPlayerData = Pick<SchemaDto, "pages" | "pageSequences" | "rules" | "predefinedFacts">;
 export class DPlayer {
+  private readonly eventLog: Array<MqEvent> = [];
   private history = new HistoryQue();
   private ruleEngine = new RuleEngine<RuleActionPageQue, never>();
   private nextQue = new NextQue();
   private data: DPlayerData;
+  private readonly predefinedFacts: ReadonlyArray<Fact>;
 
   constructor(data: DPlayerData) {
     this.data = data;
     const pages = data.pages ?? [];
+    this.predefinedFacts = data.predefinedFacts ? [...data.predefinedFacts] : [];
     this.nextQue.resetQue(pages);
+  }
+
+  saveEvent(event: MqEvent) {
+    this.eventLog.push(event);
   }
 
   saveHistory(pageHistory: PageResult) {
     // console.log("SAVE HISTORY", pageHistory);
     this.history.addToHistory(pageHistory);
-    const facts = this.history.getFacts();
+    this.eventLog.push(...pageHistory.eventLog);
+    // Evaluate rules
+    const userGeneratedFact = this.history.getFacts();
+    const predefinedFacts = this.predefinedFacts;
+    const facts = [...userGeneratedFact, ...predefinedFacts];
     const result = this.ruleEngine.solveAll(this.data.rules, facts);
+
     const matchingRules = result.matching;
     const actions = matchingRules.map((r) => r.actionList).flat(1);
+    // Execute actions
     actions.forEach((a) => {
       // console.log(a.payload);
       switch (a.kind) {
@@ -44,27 +58,19 @@ export class DPlayer {
           const check: never = a;
       }
     });
-    // console.log(actions);
   }
 
-  getResults(): Fact[] {
-    return this.history.getFacts();
+  getResults() {
+    const pagesLeft = this.nextQue.size;
+    const answerFacts = this.history.getFacts();
+    const predefinedFacts = this.predefinedFacts;
+    const eventLog = [...this.eventLog];
+    return { answerFacts, predefinedFacts, eventLog, pagesLeft };
   }
 
   insertSequence(sequenceId: string) {
     this.insertSequenceById(sequenceId);
   }
-  // getNextPage():
-  //   | { kind: "first-page"; readonly page: PageDto }
-  //   | { kind: "next-page"; readonly page: PageDto }
-  //   | { kind: "no-more-pages" } {
-  //   const next = this.nextQue.pop();
-  //   const a = this.nextQue.
-  // if (next) {
-  //   return { kind: "next-page", page: next };
-  // }
-  // return { kind: "no-more-pages" };
-  // }
 
   getNextPage(): PageDto | false {
     const next = this.nextQue.pop();
@@ -82,9 +88,16 @@ export class DPlayer {
   }
 
   /**
-   * Total number of pages.
+   * Total number of pages left in que
    */
-  get pageCount(): number {
+  get pagesLeft(): number {
     return this.nextQue.pageCount;
+  }
+
+  /**
+   * Total number of pages in test
+   */
+  get totalPageCount(): number {
+    return this.data.pages.length;
   }
 }

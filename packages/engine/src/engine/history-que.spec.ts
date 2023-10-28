@@ -5,7 +5,15 @@ import { PageDto } from "../page/Page";
 import { PageResult } from "../page/page-result";
 
 const p = (id: number): PageDto => {
-  return { id: PageID.create(), components: [], initialTasks: [], staticElements: [], background: "", tags: [] };
+  return {
+    id: PageID.create(),
+    prefix: "prefix" + id,
+    components: [],
+    initialTasks: [],
+    staticElements: [],
+    background: "",
+    tags: [],
+  };
 };
 
 const pageResult = (id: number, value: number): PageResult => {
@@ -15,8 +23,8 @@ const pageResult = (id: number, value: number): PageResult => {
 
   const result: PageResult = {
     pageId: "_dummyId" + id,
-    pageEntered,
-    pageExited,
+    pagePrefix: "prefix" + id,
+    eventLog: [],
     pageTime,
     collectedFacts: [
       {

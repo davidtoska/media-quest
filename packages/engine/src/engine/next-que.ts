@@ -84,9 +84,17 @@ export class NextQue {
   get isEmpty(): boolean {
     return this.remaining.length === 0;
   }
+
+  /**
+   * Total number of pages left in que
+   */
   get size(): number {
     return this.remaining.length;
   }
+
+  /**
+   * Total number of pages in test
+   */
   get pageCount(): number {
     return this.originalOrder.length;
   }

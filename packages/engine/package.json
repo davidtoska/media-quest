@@ -1,6 +1,6 @@
 {
   "name": "@media-quest/engine",
-  "version": "0.0.15",
+  "version": "0.0.17",
   "description": "Rendering engine for media-quest schemas.",
   "main": "src/public-api.ts",
   "license": "MIT",

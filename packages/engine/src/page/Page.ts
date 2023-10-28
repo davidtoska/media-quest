@@ -11,6 +11,12 @@ import { Fact } from "../rules/fact";
 import { DTimestamp } from "../common/DTimestamp";
 import { PageResult } from "./page-result";
 import { TaskState, TaskStateDiff } from "./task-state";
+import {
+  MqEvent,
+  MqEventPageEnter,
+  MqEventPageLeave,
+  MqEventUserClicked,
+} from "../events/mq-events";
 
 export interface VideoPlayerDto {
   playUrl: string;
@@ -19,6 +25,7 @@ export interface VideoPlayerDto {
 
 export interface PageDto {
   readonly id: string;
+  readonly prefix: string;
   readonly tags: string[];
   staticElements: Array<DElementDto>;
   background: string;
@@ -31,6 +38,7 @@ export const PageDto = {
   createDummy: (id: number): PageDto => {
     return {
       id: "id" + id,
+      prefix: "prefix" + id,
       tags: [],
       staticElements: [],
       background: "white",
@@ -57,6 +65,7 @@ export class Page {
   private components: PageComponent[] = [];
   private pageEntered: DTimestamp = DTimestamp.now();
   private previousState: TaskState | false = false;
+  private eventLog = new Array<MqEvent>();
 
   constructor(
     private readonly dto: PageDto,
@@ -66,8 +75,8 @@ export class Page {
   ) {
     this.components = dto.components.map((el) => {
       const component = new PageComponent(el, scaleService);
-      component.onClick = (actions) => {
-        this.handleButtonAction(actions);
+      component.onClick = (action) => {
+        this.handleButtonAction(action);
       };
       this.components.push(component);
 
@@ -93,15 +102,26 @@ export class Page {
   private createPageResult(facts: Fact[]): PageResult {
     const pageExited = DTimestamp.now();
     const pageTime = DTimestamp.diff(this.pageEntered, pageExited);
+    const pageExit = MqEvent.pageLeave(this.dto.id, this.dto.prefix);
+    this.eventLog.push(pageExit);
+    const eventLog = [...this.eventLog];
     return {
+      pagePrefix: this.dto.prefix,
       pageId: this.dto.id,
-      pageEntered: this.pageEntered,
-      pageExited,
+      eventLog,
       pageTime,
       collectedFacts: facts,
     };
   }
   private handleButtonAction(a: ButtonClickAction) {
+    const event = MqEvent.userClicked({
+      pageId: this.dto.id,
+      pagePrefix: this.dto.prefix,
+      action: a.kind,
+      descriptions: ButtonClickAction.describe(a),
+    });
+    this.eventLog.push(event);
+
     switch (a.kind) {
       case "next-page":
         const nextPageResult = this.createPageResult([]);
@@ -135,6 +155,9 @@ export class Page {
   }
 
   appendYourself(parent: HTMLElement) {
+    const pageEnterEvent = MqEvent.pageEnter(this.dto.id, this.dto.prefix);
+    this.pageEntered = DTimestamp.now();
+    this.eventLog.push(pageEnterEvent);
     this.staticElements.forEach((el) => {
       el.appendYourself(parent);
     });
@@ -145,7 +168,6 @@ export class Page {
   }
 
   destroy() {
-    // console.log("DESTROY PAGE ");
     this.taskManager.clear();
   }
 
@@ -156,7 +178,5 @@ export class Page {
     this.components.forEach((comp) => {
       comp.updateState(diff);
     });
-    // UPDATE PREVIOUS-STATE FOR NEXT TICK!!
-    // this.previousState = curr;
   }
 }

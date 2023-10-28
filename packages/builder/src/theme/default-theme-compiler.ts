@@ -26,8 +26,6 @@ import {
 import { AudioFile } from "../media-files";
 import { BuilderRule } from "../rulebuilder";
 
-const U = DUtil;
-
 export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   readonly name = "Ispe default theme.";
   private readonly TAG = "[ DEFAULT_THEME_COMPILER ]: ";
@@ -44,10 +42,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       if (!Rule.isEmpty(engineRule)) {
         pageQueRules.push(engineRule);
       } else {
-        console.groupCollapsed(this.TAG, "Throws away empty rule.");
-        console.log(rule);
-        console.log(ruleInput);
-        console.groupEnd();
+        console.log(this.TAG, "Throws away empty rule. " + rule.type + " " + rule.name);
       }
     });
     return pageQueRules;
@@ -71,7 +66,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   }
   private compilePage(page: BuilderPageDto, modulePrefix: string): PageDto {
     const tags = page.tags ?? [];
-    const { nextButton, mainText, id, mainMedia, _type } = page;
+    const { nextButton, mainText, id, mainMedia, _type, prefix } = page;
     const staticElements: DElementDto[] = [];
     let initialAudioTasks: Array<PlayAudioTask | DelayTask> = [];
     let initialVideoTaskList: Array<PlayVideoTask | DelayTask> = [];
@@ -80,6 +75,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       components: [],
       staticElements,
       id,
+      prefix,
       initialTasks: [],
       tags: [...tags],
     };
