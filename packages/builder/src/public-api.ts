@@ -1,6 +1,10 @@
 export { type BuilderOptionDto, BuilderOption } from "./Builder-option";
 export { type BuilderPageDto, type BuilderPageType, BuilderPage } from "./Builder-page";
-export { type BuilderQuestionDto, BuilderQuestion, type BuilderQuestionType } from "./Builder-question";
+export {
+  type BuilderQuestionDto,
+  BuilderQuestion,
+  type BuilderQuestionType,
+} from "./Builder-question";
 export { BuilderSchema, type BuilderSchemaDto } from "./Builder-schema";
 export { BuilderText, type BuilderTextDto } from "./Builder-text";
 export { type BuilderMainImageDto } from "./BuilderMainImageDto";
@@ -12,4 +16,7 @@ export { type AudioFile, type ImageFile, type VideoFile } from "./media-files";
 export * from "./rulebuilder";
 export { PagePrefix, PagePrefixValue } from "./primitives/page-prefix";
 export { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
+export * from "./schema-config";
+export * from "./mq-variable";
+export * from "./codebook";
 export { VarID } from "./primitives/varID";

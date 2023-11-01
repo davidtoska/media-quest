@@ -12,7 +12,7 @@
     "rootDir": ".",
     "outDir": "dist"
   },
-  "include": ["example/src/*/**.ts", "packages"],
+  "include": ["example/src/*/**.ts", "packages/*"],
   "references": [
     {
       "path": "./packages/builder"

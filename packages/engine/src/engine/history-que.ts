@@ -11,11 +11,6 @@ export class HistoryQue {
     return answers;
   }
 
-  // get(): Array<AnsweredQuestion> {
-  //   const answers = this.history.map((h) => h.answeredQuestions).flat(1);
-  //   return answers;
-  // }
-
   addToHistory(result: PageResult) {
     this.history.push(result);
   }

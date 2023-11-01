@@ -65,6 +65,7 @@ export class DPlayer {
     const answerFacts = this.history.getFacts();
     const predefinedFacts = this.predefinedFacts;
     const eventLog = [...this.eventLog];
+    console.log(answerFacts);
     return { answerFacts, predefinedFacts, eventLog, pagesLeft };
   }
 

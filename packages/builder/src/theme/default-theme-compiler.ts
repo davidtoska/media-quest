@@ -12,7 +12,6 @@ import {
   DElementDto,
   DImgDto,
   DTextDto,
-  DUtil,
   PageDto,
   PageComponentDto,
   RuleActionPageQue,
@@ -64,6 +63,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     };
     return dto;
   }
+
   private compilePage(page: BuilderPageDto, modulePrefix: string): PageDto {
     const tags = page.tags ?? [];
     const { nextButton, mainText, id, mainMedia, _type, prefix } = page;
@@ -300,6 +300,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       const btns = this.compileButton(o, {
         kind: "response-button",
         questionId: variableId,
+        questionText: text,
       });
       return btns;
     });
@@ -310,7 +311,9 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
 
   private compileButton(
     buttonDto: BuilderPageDto["nextButton"],
-    options: { kind: "response-button"; questionId: string } | { kind: "next-button" },
+    options:
+      | { kind: "response-button"; questionId: string; questionText: string }
+      | { kind: "next-button" },
   ): PageComponentDto {
     const { id, value, label } = buttonDto;
     const onclickAction: ButtonClickAction =
@@ -322,7 +325,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
               label: label,
               value: value,
               referenceId: options.questionId,
-              referenceLabel: "QuestionId: " + options.questionId,
+              referenceLabel: options.questionText,
             },
           }
         : { kind: "next-page" };

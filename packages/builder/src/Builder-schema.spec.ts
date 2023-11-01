@@ -121,6 +121,7 @@ const schemaDto1: BuilderSchemaDto = {
       autoplaySequence: [],
     },
   ],
+  predefinedVariables: [],
   rules: [],
   prefix: SchemaPrefix.fromValueOrThrow("d1").value,
 };

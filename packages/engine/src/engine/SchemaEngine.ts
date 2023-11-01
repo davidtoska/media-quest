@@ -4,8 +4,7 @@ import { ScaleService } from "./scale";
 import { Page } from "../page/Page";
 import { TaskManager } from "../page/task-manager";
 import { PageResult } from "../page/page-result";
-import { Fact } from "../rules/fact";
-import { MqEvent } from "../events/mq-events";
+import { SchemaResult } from "./SchemaResult";
 export interface EngineLogger {
   info(message: string): void;
   error(message: string): void;
@@ -17,14 +16,6 @@ const voidLogger: EngineLogger = {
   error: (message: string) => {},
   warn: (message: string) => {},
 };
-
-export interface SchemaResult {
-  readonly schemaId: string;
-  readonly pagesLeft: number;
-  readonly predefinedFacts: ReadonlyArray<Fact>;
-  readonly eventLog: ReadonlyArray<MqEvent>;
-  readonly answers: ReadonlyArray<Fact>;
-}
 
 export interface ISchemaEngine {
   onProgress(handler: (result: SchemaResult) => void): void;
