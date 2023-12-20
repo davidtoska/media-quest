@@ -1,20 +1,17 @@
 export interface MqVariable {
-  readonly kind:
-    | "numeric-variable"
-    | "numeric-range-variable"
-    | "string-variable"
-    | "duration-variable"
-    | "timestamp-variable";
+  readonly kind: "numeric-variable" | "numeric-range-variable" | "string-variable";
 
   label: string;
   varId: string;
 
-  // Values
+  // Values - The actual value of the variable.
   stringValue?: string;
   numericValue?: number;
-  timestampValue?: string;
   minValue?: number;
   maxValue?: number;
+  defaultValue?: number | string;
+  defaultMinValue?: number;
+  defaultMaxValue?: number;
 
   // Context
   origin: "question" | "form-field" | "predefined" | "custom" | "mq-event" | "event-calculated";
@@ -26,16 +23,14 @@ export interface MqVariable {
   pagePosition?: number;
 
   // Validations
-  unit?: "ms" | "s" | "m" | "h" | "d";
   min?: number;
   max?: number;
-
   stepSize?: number;
   minLength?: number;
   maxLength?: number;
   rangeFloor?: number;
   rangeCeiling?: number;
-  defaultValue?: number | string;
+
   options?: Array<{ label: string; value: number }>;
 }
 
