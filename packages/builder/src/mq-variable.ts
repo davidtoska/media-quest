@@ -8,19 +8,28 @@ export interface MqVariable {
   stringValue?: string;
   numericValue?: number;
   minValue?: number;
+  initialValue?: number;
   maxValue?: number;
   defaultValue?: number | string;
   defaultMinValue?: number;
   defaultMaxValue?: number;
 
   // Context
-  origin: "question" | "form-field" | "predefined" | "custom" | "mq-event" | "event-calculated";
+  origin:
+    | "question"
+    | "form-field"
+    | "predefined"
+    | "event"
+    | "calculated"
+    | "sum-score"
+    | "predefined-or-question";
+
   pageId?: string;
   eventSource?: string;
   pagePrefix?: string;
   modulePrefix?: string;
   moduleID?: string;
-  pagePosition?: number;
+  pageNumber?: number;
 
   // Validations
   min?: number;
