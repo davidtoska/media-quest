@@ -1,15 +1,15 @@
 import { createMenu } from "./createMenu";
-import * as A from "@media-quest/engine";
 import { autoplayWorks } from "./schema/autoplay-works";
 import { excludeByPageIdRuleWorks, excludeByTagWorks, jumpToRuleWorks } from "./schema/rules-work";
 import { IExampleSchema } from "./schema/IExample-schema";
-import { SchemaDto } from "@media-quest/engine";
 import { infopageWorks } from "./schema/infopage-works";
 import { gifModeWorks } from "./schema/gif-mode-works";
+import { Page2Works } from "./schema/page2-works";
+import { SchemaDto, SchemaEngine } from "../../packages/engine";
 console.log("DEV APP");
 
-const initialSchema: IExampleSchema = gifModeWorks;
-console.log(initialSchema);
+const initialSchema: IExampleSchema = excludeByTagWorks;
+// console.log(initialSchema);
 
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
 const engineRoot = document.createElement("div");
@@ -19,13 +19,23 @@ nameElement.innerText = initialSchema.menuLabel;
 nameElement.style.textAlign = "center";
 engineRoot.style.margin = "60px auto";
 
-const createEngine = (schema: SchemaDto) => new A.SchemaEngine(engineRoot, 600, 1024, schema);
+const createEngine = (schema: SchemaDto) => {
+  const engine = new SchemaEngine(engineRoot, 600, 1024, schema);
+  engine.onProgress((result) => {
+    console.log(result);
+    console.log("EVENTS: " + result.eventLog.length);
+    console.log("Answers: " + result.answers.length);
+  });
+  return engine;
+};
+
 // Client api
 let engine = createEngine(initialSchema.schema);
-// console.log(JSON.stringify(devSchema), null, 2);
-engine.onCommandOrEvent = (_event_or_command) => {
-  // console.log(_event_or_command);
-};
+// engine.onProgress((result) => {
+//   console.log(result);
+//   console.log("EVENTS: " + result.eventLog.length);
+//   console.log("Answers: " + result.answers.length);
+// });
 const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => void } => {
   const label = example.menuLabel;
   return {
@@ -39,7 +49,12 @@ const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => vo
   };
 };
 
+console.log(gifModeWorks.schema.pages[1].components);
+console.log(gifModeWorks.schema.pages[0].initialTasks);
+console.log(gifModeWorks.schema.pages[1].initialTasks);
+console.log(gifModeWorks.schema.pages[2]?.initialTasks);
 const menu = createMenu([
+  toMenuItem(Page2Works),
   toMenuItem(gifModeWorks),
   toMenuItem(autoplayWorks),
   toMenuItem(infopageWorks),

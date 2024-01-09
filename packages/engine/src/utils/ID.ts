@@ -4,6 +4,8 @@ const ID_LENGTH = 32;
 // The minimum length of an ID
 const MIN_LENGTH = 10;
 
+// const SPLITTER = "_";
+
 export type ID<B extends string> = string & { __ID__: B };
 
 const isID = <const B extends string>(idName: B, id?: string): id is ID<B> => {

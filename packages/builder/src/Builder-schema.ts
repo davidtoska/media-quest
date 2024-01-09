@@ -13,6 +13,9 @@ import { ImageFile } from "./media-files";
 import { SchemaDto, DUtil, PageID, SchemaID } from "@media-quest/engine";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
+import { Codebook, CodeBook } from "./codebook";
+import { PredefinedVariable } from "./mq-variable";
+import { SchemaConfig } from "./schema-config";
 const U = DUtil;
 
 export interface BuilderSchemaDto {
@@ -24,14 +27,15 @@ export interface BuilderSchemaDto {
   readonly pages: BuilderPageDto[];
   readonly baseHeight: number;
   readonly baseWidth: number;
+  readonly predefinedVariables?: Array<PredefinedVariable>;
   readonly rules: ReadonlyArray<BuilderRuleDto>;
   readonly tags: ReadonlyArray<BuilderTagDto>;
 }
 
 export interface SchemaBuildOutput {
   schema: SchemaDto;
-  codebook: Record<string, string>;
-  schemaConfig: Record<string, string>;
+  codebook: Codebook;
+  schemaConfig: SchemaConfig;
 }
 
 export class BuilderSchema {
@@ -41,6 +45,7 @@ export class BuilderSchema {
   backgroundColor = "#000000";
   pages: BuilderPage[] = [];
   mainImage: ImageFile | false = false;
+  predefinedVariables: PredefinedVariable[] = [];
   private _rules: BuilderRule[] = [];
   get rules(): ReadonlyArray<BuilderRule> {
     return [...this._rules];
@@ -68,6 +73,7 @@ export class BuilderSchema {
     schema.baseHeight = dto.baseHeight;
     schema.baseWidth = dto.baseWidth;
     schema.pages = pages;
+    schema.predefinedVariables = dto.predefinedVariables ?? [];
     schema.backgroundColor = dto.backgroundColor;
     schema.mainImage = dto.mainImage ?? false;
     const rulesDto = dto.rules ?? [];
@@ -90,6 +96,7 @@ export class BuilderSchema {
       pages,
       rules,
       tags,
+      predefinedVariables: this.predefinedVariables,
       mainImage: this.mainImage,
       prefix: this.prefix.value,
     };
@@ -238,8 +245,10 @@ export class BuilderSchema {
   compile(): SchemaBuildOutput {
     const moduleDto = this.toJson();
     const imp = new DefaultThemeCompiler();
+    const codebook = CodeBook.fromSchema(moduleDto);
     const schema = imp.compile(moduleDto);
-
-    return { codebook: {}, schema, schemaConfig: {} };
+    const schemaConfig = SchemaConfig.fromSchema(moduleDto);
+    const output: SchemaBuildOutput = { codebook, schema, schemaConfig };
+    return output;
   }
 }

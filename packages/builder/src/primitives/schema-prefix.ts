@@ -20,7 +20,9 @@ export class SchemaPrefix {
     return new SchemaPrefix(value);
   };
   public static castOrCreateRandom = (value: string): SchemaPrefix => {
-    const v = SchemaPrefix.isValid(value) ? value : createRandomPrefix<SchemaPrefixValue>(SchemaPrefix.randomLen);
+    const v = SchemaPrefix.isValid(value)
+      ? value
+      : createRandomPrefix<SchemaPrefixValue>(SchemaPrefix.randomLen);
     return new SchemaPrefix(v);
   };
 
@@ -30,8 +32,6 @@ export class SchemaPrefix {
     if (prefix.length > SchemaPrefix.MAX_LENGTH) return false;
     return true;
   };
-
-  toJSON() {}
 
   get value(): SchemaPrefixValue {
     return this._value;

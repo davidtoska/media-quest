@@ -1,60 +1,7 @@
-import { DCommand, ElementCommand } from "@media-quest/engine";
 import { DStyle } from "@media-quest/engine";
 import { DElementDto } from "@media-quest/engine";
 
 export namespace ThemeUtils {
-  export const disableClickCommands = (elementId: string, styleChanges: Partial<DStyle>): ElementCommand[] => {
-    return [
-      {
-        kind: "ELEMENT_DISABLE_CLICK_COMMAND",
-        target: "ELEMENT",
-        targetId: elementId,
-        payload: {},
-      },
-      {
-        kind: "ELEMENT_STYLE_COMMAND",
-        target: "ELEMENT",
-        targetId: elementId,
-        payload: { changes: styleChanges },
-      },
-    ];
-  };
-
-  export const enableClickCommands = (elementId: string, styleChanges: Partial<DStyle>): ElementCommand[] => {
-    return [
-      {
-        kind: "ELEMENT_ENABLE_CLICK_COMMAND",
-        target: "ELEMENT",
-        targetId: elementId,
-        payload: {},
-      },
-      {
-        kind: "ELEMENT_STYLE_COMMAND",
-        target: "ELEMENT",
-        targetId: elementId,
-        payload: { changes: styleChanges },
-      },
-    ];
-  };
-  export const hideCommand = (elementId: string): ElementCommand => {
-    const hideCommand: DCommand = {
-      kind: "ELEMENT_STYLE_COMMAND",
-      target: "ELEMENT",
-      targetId: elementId,
-      payload: { changes: { visibility: "hidden" } },
-    };
-    return hideCommand;
-  };
-  export const showCommand = (elementId: string): ElementCommand => {
-    const showCommand: DCommand = {
-      kind: "ELEMENT_STYLE_COMMAND",
-      target: "ELEMENT",
-      targetId: elementId,
-      payload: { changes: { visibility: "visible" } },
-    };
-    return showCommand;
-  };
-
   export const spaceEvenlyX = <T extends Pick<DElementDto, "style">>(
     items: ReadonlyArray<T>,
     options: { startAt: number; endAt: number; defaultItemWidth: number } = {

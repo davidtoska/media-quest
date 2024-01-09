@@ -4,8 +4,11 @@ const audio = dummyAudioFiles[0];
 const video = dummyVideoFiles[1];
 const image = dummyImageFiles[0];
 
-export const addPage = (schema: BuilderSchema, prefix: string, type: "question" | "info-page" = "question") =>
-  new PageBuilder(schema, prefix, type);
+export const addPage = (
+  schema: BuilderSchema,
+  prefix: string,
+  type: "question" | "info-page" = "question",
+) => new PageBuilder(schema, prefix, type);
 
 class PageBuilder {
   private readonly page: BuilderPage;
@@ -25,21 +28,22 @@ class PageBuilder {
       this.page.nextButton.label = "Neste";
     }
   }
-  addAudio(autoplay = false) {
+  addAudio(autoplay = false, delay = 1000) {
     this.page.mainText.audioFile = audio;
     this.page.mainText.autoplay = autoplay;
+    this.page.mainText.autoplayDelay = delay;
     return this;
   }
-  addVideo(mode: "autoplay" | "optional" | "gif-mode" = "optional", preDelay = 1000) {
+
+  addVideo(mode: "autoplay" | "optional" | "gif-mode" = "optional", autoPlayDelay = 0) {
     this.page.mainMedia = {
       kind: "main-video",
       file: video,
       controls: false,
       volume: 1,
       mode,
-      preDelay: 1000,
+      preDelay: autoPlayDelay,
     };
-    console.log(this.page.mainMedia);
     return this;
   }
   public withMainText(text: string) {
@@ -62,7 +66,14 @@ export const addQuestionPage109 = (
   schema: BuilderSchema,
   question: string,
   pagePrefix: string,
-  options?: { audio: boolean; autoplayAudio: boolean; video: boolean; autoplayVideo: boolean },
+  options?: {
+    audio: boolean;
+    autoplayAudio: boolean;
+    audioDelay: number;
+    video: boolean;
+    autoplayVideo: boolean;
+    videoDelay: number;
+  },
 ) => {
   const questionPage = schema.addPage("question");
   questionPage.mainText.text = question;
@@ -74,6 +85,7 @@ export const addQuestionPage109 = (
   if (options?.audio) {
     questionPage.mainText.audioFile = audio;
     questionPage.mainText.autoplay = options.autoplayAudio;
+    questionPage.mainText.autoplayDelay = options.audioDelay;
   }
   if (options?.video) {
     questionPage.mainMedia = {
@@ -82,7 +94,7 @@ export const addQuestionPage109 = (
       controls: false,
       volume: 1,
       mode: options.autoplayVideo ? "autoplay" : "optional",
-      preDelay: 2000,
+      preDelay: options.videoDelay,
     };
   }
   return questionPage;

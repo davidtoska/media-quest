@@ -11,7 +11,7 @@ import { BuilderVariableOption, QuestionVariable } from "./rulebuilder/RuleVaria
 import { DUtil, PageID } from "@media-quest/engine";
 import { PagePrefix, PagePrefixValue } from "./primitives/page-prefix";
 import { VarID } from "./primitives/varID";
-import { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
+import { SchemaPrefix } from "./primitives/schema-prefix";
 
 const U = DUtil;
 export type BuilderPageType = "info-page" | "question" | "multi-select" | "form";
@@ -165,7 +165,10 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     this.updateRows();
   }
 
-  getQuestionVariables(modulePrefix: SchemaPrefix, pageNumber: number): ReadonlyArray<QuestionVariable> {
+  getQuestionVariables(
+    modulePrefix: SchemaPrefix,
+    pageNumber: number,
+  ): ReadonlyArray<QuestionVariable> {
     const variables: QuestionVariable[] = [];
 
     if (this._pageType === "question") {
