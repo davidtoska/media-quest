@@ -3,38 +3,52 @@ import { RuleBuilderTestUtils as U } from "./RuleBuilder-test-utils";
 import { RuleInput } from "./RuleInput";
 import type { BuilderConditionGroupDto } from "./condition/Builder-condition-group";
 import { BuilderConditionDto } from "./condition/Builder-condition";
-import { Condition } from "@media-quest/engine";
+import { Condition, PageID } from "@media-quest/engine";
+import { PagePrefix } from "../primitives/page-prefix";
+import { VarID } from "../primitives/varID";
+import { SchemaPrefix } from "../primitives/schema-prefix";
 
-const { createBuilderVariables_A_H } = U;
-let questionVariables = createBuilderVariables_A_H();
-const createDto = (): {
+const { createPagesAndVars_A_H } = U;
+
+const sxx = SchemaPrefix.fromValueOrThrow("sxx");
+let varsAndPages_A_H = createPagesAndVars_A_H(sxx);
+
+const varId = (sxx: SchemaPrefix, pxx: string): VarID => {
+  const pagePrefix = PagePrefix.fromStringOrThrow(pxx);
+  return VarID.create(sxx.value, pagePrefix);
+};
+const createDto = (
+  modulePrefix: SchemaPrefix,
+): {
   ruleInput: RuleInput;
   builderRuleDto: BuilderRuleDto;
 } => {
-  const v1 = U.createRuleVariable("v1", 1);
-  const v2 = U.createRuleVariable("v2", 2);
-  const v3 = U.createRuleVariable("v3", 3);
-  const v4 = U.createRuleVariable("v4", 4);
-  const vg1 = U.createRuleVariable("vg1", 5);
-  const vg2 = U.createRuleVariable("vg2", 6);
-  const vg3 = U.createRuleVariable("vg3", 7);
-  const vg4 = U.createRuleVariable("vg4", 8);
+  const v1 = U.createRuleVariable(varId(modulePrefix, "v1"), 1);
+  const v2 = U.createRuleVariable(varId(modulePrefix, "v2"), 2);
+  const v3 = U.createRuleVariable(varId(modulePrefix, "v3"), 3);
+  const v4 = U.createRuleVariable(varId(modulePrefix, "v4"), 4);
+  const vg1 = U.createRuleVariable(varId(modulePrefix, "vg1"), 5);
+  const vg2 = U.createRuleVariable(varId(modulePrefix, "vg2"), 6);
+  const vg3 = U.createRuleVariable(varId(modulePrefix, "vg3"), 7);
+  const vg4 = U.createRuleVariable(varId(modulePrefix, "vg4"), 8);
   const variableList = [v1, v2, v3, v4, vg1, vg2, vg3, vg4];
   const tagAction1 = U.excludeByTagAction("tag1");
   const tagAction2 = U.excludeByTagAction("tag2");
   const tagAction3 = U.excludeByTagAction("tag3");
   const tagAction4 = U.excludeByTagAction("tag4");
-  const pageAction1 = U.excludeByPageIdAction(v1.varId, v1.pageNumber);
-  const pageAction2 = U.excludeByPageIdAction(v2.varId, v2.pageNumber);
-  const pageAction3 = U.excludeByPageIdAction(v3.varId, v3.pageNumber);
-  const pageAction4 = U.excludeByPageIdAction(v4.varId, v4.pageNumber);
-  const jumpToPageAction1 = U.jumpToPageAction(v1.varId, v1.pageNumber);
-  const jumpToPageAction2 = U.jumpToPageAction(v2.varId, v2.pageNumber);
-  const jumpToPageAction3 = U.jumpToPageAction(v3.varId, v3.pageNumber);
-  const jumpToPageAction4 = U.jumpToPageAction(v4.varId, v1.pageNumber);
+  const pageId1 = PageID.create();
+  const pageId2 = PageID.create();
+  const pageId3 = PageID.create();
+  const pageId4 = PageID.create();
+  const pageAction1 = U.excludeByPageIdAction(pageId1, v1.pageNumber);
+  const pageAction2 = U.excludeByPageIdAction(pageId2, v2.pageNumber);
+  const pageAction3 = U.excludeByPageIdAction(pageId3, v3.pageNumber);
+  const pageAction4 = U.excludeByPageIdAction(pageId4, v4.pageNumber);
+  const jumpToPageAction1 = U.jumpToPageAction(pageId1, v1.pageNumber);
+  const jumpToPageAction2 = U.jumpToPageAction(pageId2, v2.pageNumber);
+  const jumpToPageAction3 = U.jumpToPageAction(pageId3, v3.pageNumber);
+  const jumpToPageAction4 = U.jumpToPageAction(pageId4, v1.pageNumber);
 
-  // const pageAction =
-  // const excludeByTagList = [];
   const ruleInput = new RuleInput(
     variableList,
     [],
@@ -60,7 +74,7 @@ const createDto = (): {
   const builderRuleDto1: BuilderRuleDto = {
     type: "any",
     jumpToPage: false,
-    excludePages: [v1.varId, v3.varId],
+    excludePages: [pageId1, pageId3],
     excludeTags: [tagAction1.tag, tagAction2.tag],
     name: "kitchen-sink",
     conditions: [c1, c2, group3, c3, c4],
@@ -78,9 +92,17 @@ let dto: BuilderRuleDto = {
 };
 
 const excludeByTagActionList = U.excludeByTagActionList();
-const pageActions = questionVariables.map((q) => U.excludeByPageIdAction(q.varId, q.pageNumber));
-
-let ruleInput = new RuleInput(questionVariables, [], [...pageActions], excludeByTagActionList, []);
+// const pageActions = questionVariables.list.map((q) => U.excludeByPageIdAction(q.pageId, q.pageNumber));
+// const pageActions = questionVariables.map((q) => U.excludeByPageIdAction(, q.pageNumber));
+// const pageActions = varsAndPages_A_H.pageIds((p) => U.excludeByPageIdAction(p.pageId, p.pageNumber));
+let ruleInput = new RuleInput(
+  varsAndPages_A_H.list,
+  [],
+  [...varsAndPages_A_H.pageIdList.map((id, index) => U.excludeByPageIdAction(id, index))],
+  excludeByTagActionList,
+  [],
+);
+// let ruleInput = new RuleInput(questionVariables.list, [], [], excludeByTagActionList, []);
 
 let rule: BuilderRule = BuilderRule.fromDto(dto, ruleInput);
 
@@ -187,7 +209,8 @@ describe("Builder Rule", () => {
   });
 
   test("fromJSON -> toJSON -> are equal.", () => {
-    const data = createDto();
+    const schemaPrefix = SchemaPrefix.fromValueOrThrow("ax");
+    const data = createDto(schemaPrefix);
 
     const localRule = BuilderRule.fromDto(data.builderRuleDto, data.ruleInput);
 
@@ -212,8 +235,11 @@ describe("Builder Rule", () => {
     expect(ruleInput.excludeByTagActions.length).toStrictEqual(10);
   });
 
+  // TODO FIX THIS TEST.
   test("toEngineRuleWorks: ", () => {
-    const input = createDto().ruleInput;
+    const schemaPrefix = SchemaPrefix.fromValueOrThrow("ax");
+    const dto = createDto(schemaPrefix);
+    const input = dto.ruleInput;
     const v1 = input.questionVars[0];
     const v2 = input.questionVars[1];
     const tag1 = input.excludeByTagActions[0];
@@ -247,26 +273,30 @@ describe("Builder Rule", () => {
       type: "all",
     };
 
-    const dtoWithOneCondition: BuilderRuleDto = {
+    expect(c1.variableId).toBe(schemaPrefix.value + "_v1");
+
+    const dtoWithThreeCondition: BuilderRuleDto = {
       type: "all",
       name: "dto-with-one-condition",
       excludePages: [pageAction1.pageId],
       excludeTags: [tag1.tag],
-      jumpToPage: v1.varId,
+      jumpToPage: pageAction1.pageId,
       conditions: [c1, conditionGroupALL, conditionGroupANY],
     };
 
     const actionCount =
-      dtoWithOneCondition.excludeTags.length +
-      dtoWithOneCondition.excludePages.length +
-      (dtoWithOneCondition.jumpToPage ? 1 : 0);
+      dtoWithThreeCondition.excludeTags.length +
+      dtoWithThreeCondition.excludePages.length +
+      (dtoWithThreeCondition.jumpToPage ? 1 : 0);
 
-    const rule = BuilderRule.fromDto(dtoWithOneCondition, input);
+    const rule = BuilderRule.fromDto(dtoWithThreeCondition, input);
+
     const engineRule = rule.toEngineRule();
 
     // console.log(rule);
     expect(engineRule.all.length).toBe(3);
     expect(engineRule.some.length).toBe(0);
+    // expect(engineRule.all[0]).toBe(0);
 
     const simple1 = engineRule.all.find(
       (c) => c.kind === "numeric-condition" && c.referenceId === c1.variableId,
@@ -286,6 +316,7 @@ describe("Builder Rule", () => {
     expect(complexChild1.value).toBe(c2.value);
     expect(complexChild1.referenceLabel).toBe(v2.label);
     expect(complexChild1.operator === "eq").toBeTruthy();
+    // expect(engineRule.onSuccess).toBe(1);
     expect(engineRule.onSuccess.length).toBe(actionCount);
   });
 });

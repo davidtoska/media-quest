@@ -1,18 +1,15 @@
 {
   "name": "@media-quest/builder",
-  "version": "0.0.7",
+  "version": "0.0.21",
   "description": "Builder library for Media-quest schemas",
-  "main": "dist/public-api.js",
-  "module": "dist/public-api.mjs",
-  "types": "dist/public-api.d.ts",
+  "main": "src/public-api.ts",
   "license": "MIT",
   "scripts": {
-    "check": "tsc --watch --noEmit",
+    "tsc:check:builder": "tsc --watch --noEmit",
     "clean": "rimraf dist",
-    "build": "npm run clean && tsup src/public-api.ts --sourcemap inline --format cjs,esm --dts",
-    "prepublishOnly": "npm run build"
+    "buildXXX": "npm run clean && tsup src/public-api.ts --sourcemap inline --format cjs,esm --dts"
   },
   "dependencies": {
-    "@media-quest/engine": "0.0.7"
+    "@media-quest/engine": "0.0.21"
   }
 }

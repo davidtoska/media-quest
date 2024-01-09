@@ -122,11 +122,11 @@ export class JumpToPageSelectItem extends SingleSelectItem<JumpToPageAction> {
   }
 
   protected getSearchString(): string {
-    return this.data.pageId + this.data.mainText;
+    return this.data.pagePrefix + this.data.mainText;
   }
 
   protected getSelectLabel(): string {
-    return this.data.pageId + " (" + this.data.pageNumber + ")";
+    return this.data.pagePrefix + " (" + this.data.pageNumber + ")";
   }
 
   protected getTooltip(): string {

@@ -1,6 +1,6 @@
 import type { BuilderQuestionDto, BuilderQuestionType } from "./Builder-question";
 import { BuilderQuestion } from "./Builder-question";
-import { BuilderObject, BuilderObjectId } from "./BuilderObject";
+import { BuilderObject } from "./BuilderObject";
 import type { BuilderOptionDto } from "./Builder-option";
 import { BuilderOption } from "./Builder-option";
 import type { BuilderMainVideoDto } from "./BuilderMainVideoDto";
@@ -8,14 +8,17 @@ import type { BuilderMainImageDto } from "./BuilderMainImageDto";
 import type { BuilderMainTextDto } from "./BuilderMainText";
 import { BuilderMainText } from "./BuilderMainText";
 import { BuilderVariableOption, QuestionVariable } from "./rulebuilder/RuleVariable";
-import { DUtil } from "@media-quest/engine";
+import { DUtil, PageID } from "@media-quest/engine";
+import { PagePrefix, PagePrefixValue } from "./primitives/page-prefix";
+import { VarID } from "./primitives/varID";
+import { SchemaPrefix } from "./primitives/schema-prefix";
 
 const U = DUtil;
 export type BuilderPageType = "info-page" | "question" | "multi-select" | "form";
 
 export interface BuilderPageDto {
-  readonly id: BuilderObjectId.PageID;
-  prefix: string;
+  readonly id: PageID;
+  readonly prefix: PagePrefixValue;
   _type: BuilderPageType;
   mainText: BuilderMainTextDto;
   nextButton: BuilderOptionDto;
@@ -28,9 +31,9 @@ export interface BuilderPageDto {
 
 export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
   readonly objectType: "builder-page" = "builder-page";
-  readonly id: BuilderObjectId.PageID;
+  readonly id: PageID;
   private _pageType: BuilderPageType;
-  private _prefix = "";
+  private _prefix: PagePrefix;
   private _questions: Array<BuilderQuestion> = [];
   private readonly _tags: Set<string>;
   private _backgroundColor = "#FFFFFF";
@@ -39,8 +42,8 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
   mainText: BuilderMainText;
   nextButton = BuilderOption.create(-1, "Neste");
 
-  public static create(type: BuilderPageType, _prefix: string) {
-    const id = BuilderObjectId.pageId();
+  public static create(type: BuilderPageType, _prefix: PagePrefixValue) {
+    const id = PageID.create();
     const mainTextDto: BuilderMainTextDto = {
       text: "",
       audioFile: false,
@@ -49,6 +52,7 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     };
     const nextButtonDto = BuilderOption.create(-1, "page-next-button-text").toJson();
     const defaultQuestionDto = BuilderQuestion.create("select-one").toJson();
+
     const dto: BuilderPageDto = {
       _type: type,
       autoplaySequence: [],
@@ -56,7 +60,7 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
       id,
       nextButton: nextButtonDto,
       mainText: mainTextDto,
-      prefix: "",
+      prefix: _prefix,
       questions: [],
       tags: [],
     };
@@ -73,7 +77,8 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     super(dto);
     this.id = dto.id;
     this._pageType = dto._type;
-    this._prefix = dto.prefix;
+    const prefixInstance = PagePrefix.castOrCreateRandom(dto.prefix);
+    this._prefix = prefixInstance;
     this.mainText = BuilderMainText.fromJson(dto.mainText);
     this.nextButton = BuilderOption.fromJson(dto.nextButton);
     this.defaultQuestion = BuilderQuestion.fromJson(dto.defaultQuestion);
@@ -160,19 +165,22 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     this.updateRows();
   }
 
-  getQuestionVariables(modulePrefix: string, pageNumber: number): ReadonlyArray<QuestionVariable> {
+  getQuestionVariables(
+    modulePrefix: SchemaPrefix,
+    pageNumber: number,
+  ): ReadonlyArray<QuestionVariable> {
     const variables: QuestionVariable[] = [];
 
     if (this._pageType === "question") {
       const pagePrefix = this.prefix;
-      const id = modulePrefix ? modulePrefix + "_" + pagePrefix : pagePrefix;
+      const varId = VarID.create(modulePrefix.value, pagePrefix);
       const label = this.mainText.text;
       const op = this.defaultQuestion.options.map((o) => {
         const label = o.label;
         const value = o.value;
         return new BuilderVariableOption(label, value);
       });
-      const singleVar = new QuestionVariable(id, label, op, pageNumber);
+      const singleVar = new QuestionVariable(varId, label, op, pageNumber);
       variables.push(singleVar);
     }
     return variables;
@@ -186,11 +194,11 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
   }
 
   get prefix() {
-    return this._prefix;
+    return this._prefix.value;
   }
 
-  set prefix(value: string) {
-    this._prefix = value;
+  set prefix(value: PagePrefixValue) {
+    this._prefix.value = value;
   }
 
   toJson(): BuilderPageDto {
@@ -205,7 +213,7 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
       nextButton,
       id: this.id,
       tags: [...this.tags],
-      prefix: this._prefix,
+      prefix: this._prefix.value,
       defaultQuestion: this.defaultQuestion.toJson(),
       questions,
     };
@@ -221,7 +229,7 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     const mainTextClone = JSON.parse(JSON.stringify(this.mainText));
     // const pagesClone = this
     const questionsClone = this.questions.map((q) => q.clone());
-    const newId = BuilderObjectId.pageId();
+    const newId = PageID.create();
     const clone: BuilderPageDto = {
       ...dto,
       id: newId,

@@ -5,13 +5,15 @@
     "moduleResolution": "node",
     "declaration": true,
     "strict": true,
-//    "incremental": true,
+  //  "incremental": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "rootDir": "./src",
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true,
     "outDir": "./dist",
-//    "composite": true
+   "composite": true
   },
   "include": ["src"]
 }

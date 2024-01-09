@@ -1,10 +1,12 @@
-import { BuilderSchema, BuilderTag } from "@media-quest/builder";
+import { BuilderSchema, BuilderTag, SchemaPrefix } from "@media-quest/builder";
 import { IExampleSchema } from "./IExample-schema";
 import { addQuestionPage109 } from "./helpers";
+import { SchemaID } from "../../../packages/engine";
 
 const createExcludeByPageId = () => {
-  const modulePrefix = "ex_pid";
-  const s = BuilderSchema.create("rw12345", "Rules-work-schema", modulePrefix);
+  const SchemaId = SchemaID.create();
+  const modulePrefix = SchemaPrefix.fromValueOrThrow("ex_pid");
+  const s = BuilderSchema.create(SchemaId, "Rules-work-schema", modulePrefix.value);
   s.backgroundColor = "white";
   const p1 = addQuestionPage109(s, "Q1:\n  Ja -> Exclude q2.", "q1");
   const p2 = addQuestionPage109(s, "Q2", "q2");
@@ -26,8 +28,9 @@ const createExcludeByPageId = () => {
   return s;
 };
 const jumpToPage = () => {
-  const modulePrefix = "rw";
-  const s = BuilderSchema.create("rw12345", "Rules-work-schema", modulePrefix);
+  const SchemaId = SchemaID.create();
+  const modulePrefix = SchemaPrefix.fromValueOrThrow("rw");
+  const s = BuilderSchema.create(SchemaId, "Rules-work-schema", modulePrefix.value);
   s.backgroundColor = "white";
   const p1 = addQuestionPage109(s, "Q1:\n  Ja -> Jump to Q5", "q1");
   const p2 = addQuestionPage109(s, "Q2", "q2");
@@ -52,8 +55,9 @@ const jumpToPage = () => {
   return s;
 };
 const excludeByTagPage = () => {
-  const modulePrefix = "ex_tag";
-  const s = BuilderSchema.create("exclude_by_tag", "Exclude by tag.", modulePrefix);
+  const schemaId = SchemaID.create();
+  const schemaPrefix = SchemaPrefix.fromValueOrThrow("ex_tag");
+  const s = BuilderSchema.create(schemaId, "Exclude by tag.", schemaPrefix.value);
   s.backgroundColor = "white";
   const p1 = addQuestionPage109(s, "Q1:\n  Ja -> Exclude q2 abd q3 by tag", "q1");
   const p2 = addQuestionPage109(s, "Q2-text", "q2");
@@ -62,7 +66,6 @@ const excludeByTagPage = () => {
   const p5 = addQuestionPage109(s, "Q5-text", "q5");
   const p6 = addQuestionPage109(s, "Q6-text", "q6");
   const tag = BuilderTag.create("tag1", "Tag1");
-  console.log(tag.tagText);
   s.addTag(tag);
   p2.addTag(tag.tagText);
   p3.addTag(tag.tagText);
@@ -79,12 +82,12 @@ const excludeByTagPage = () => {
 
   const tagSelectItem = rule.getTagActions()[0];
   tagSelectItem.isSelected = true;
-  console.log(tagSelectItem);
+  // console.log(tagSelectItem);
   // console.log(a);
   // console.log(a);
   // console.log(a);
-  console.log(s.toJson());
-  console.log(s.compile().schema);
+  // console.log(s.toJson());
+  // console.log(s.compile().schema);
   // rule.jumpToActionManager.selected = a;
   return s;
 };

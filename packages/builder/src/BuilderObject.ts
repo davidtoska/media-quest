@@ -21,14 +21,9 @@ type BuilderObjectType =
 export namespace BuilderObjectId {
   export type QuestionOptionID = string & { __OPTION__ID__: true };
   export type QuestionID = string & { __QUESTION__ID__: true };
-  export type VideoFileID = string & { __VIDEO__ID__: true };
-  export type AudioFileID = string & { __AUDIO__ID__: true };
-  export type ImageID = string & { __IMAGE__ID__: true };
   export type TextID = string & { __TEXT__ID__: true };
   export type MainTextID = string & { __MAIN__TEXT__ID__: true };
-  export type PageID = string & { __PAGE__ID__: true };
   export type TagId = string & { __TAG__ID__: true };
-
   export const createTagId = (): TagId => {
     return createId("builder-tag") as TagId;
   };
@@ -45,9 +40,6 @@ export namespace BuilderObjectId {
   };
   export const questionId = (): QuestionID => {
     return createId("builder-question") as QuestionID;
-  };
-  export const pageId = (): PageID => {
-    return createId("builder-page") as PageID;
   };
 
   const createId = (type: BuilderObjectType): string => {

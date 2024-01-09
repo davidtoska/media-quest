@@ -2,32 +2,29 @@ import { AbstractThemeCompiler } from "./AbstractThemeCompiler";
 import type { BuilderSchemaDto } from "../Builder-schema";
 import { BuilderSchema } from "../Builder-schema";
 import type { BuilderPageDto } from "../Builder-page";
-import { DStateProps } from "./standard-props";
 import { ThemeUtils } from "./theme-utils";
 import { DefaultTheme, type IDefaultTheme } from "./IDefaultTheme";
 import type { BuilderMainImageDto } from "../BuilderMainImageDto";
 import type { BuilderMainVideoDto } from "../BuilderMainVideoDto";
 import {
-  DAudioDto,
-  DAutoPlaySequence,
-  DCommand,
+  ButtonClickAction,
   DDivDto,
   DElementDto,
   DImgDto,
   DTextDto,
-  DUtil,
-  DVideoDto,
-  Fact,
   PageDto,
-  PageQueCommand,
+  PageComponentDto,
+  RuleActionPageQue,
+  PlayAudioTask,
+  PlayVideoTask,
   Rule,
   SchemaDto,
+  DelayTask,
 } from "@media-quest/engine";
+
 import { AudioFile } from "../media-files";
 import { BuilderRule } from "../rulebuilder";
 
-const U = DUtil;
-const generateElementId = () => U.randomString(32);
 export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   readonly name = "Ispe default theme.";
   private readonly TAG = "[ DEFAULT_THEME_COMPILER ]: ";
@@ -35,19 +32,16 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     super(DefaultTheme);
   }
 
-  private compileRules(source: BuilderSchemaDto): Rule<PageQueCommand, never>[] {
+  private compileRules(source: BuilderSchemaDto): Rule<RuleActionPageQue, never>[] {
     const builderSchema = BuilderSchema.fromJson(source);
     const ruleInput = builderSchema.getRuleInput();
-    const pageQueRules: Rule<PageQueCommand, never>[] = [];
+    const pageQueRules: Rule<RuleActionPageQue, never>[] = [];
     source.rules.forEach((rule) => {
-      const engineRule = BuilderRule.fromDto(rule, ruleInput).toEngineRule(source.prefix);
+      const engineRule = BuilderRule.fromDto(rule, ruleInput).toEngineRule();
       if (!Rule.isEmpty(engineRule)) {
         pageQueRules.push(engineRule);
       } else {
-        console.groupCollapsed(this.TAG, "Throws away empty rule.");
-        console.log(rule);
-        console.log(ruleInput);
-        console.groupEnd();
+        console.log(this.TAG, "Throws away empty rule. " + rule.type + " " + rule.name);
       }
     });
     return pageQueRules;
@@ -56,7 +50,6 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   compile(source: BuilderSchemaDto): SchemaDto {
     const pages = source.pages.map((p) => this.compilePage(p, source.prefix));
     const rules = this.compileRules(source);
-    console.log(pages.map((p) => p.tags));
 
     const dto: SchemaDto = {
       backgroundColor: source.backgroundColor,
@@ -66,272 +59,222 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       pageSequences: [],
       pages,
       predefinedFacts: [],
-      prefix: source.prefix,
       rules,
-      stateFromEvent: [
-        {
-          onEvent: "VIDEO_ENDED_EVENT",
-          thenExecute: [
-            DStateProps.userPausedVideo.getSetFalseCommand(),
-            DStateProps.mediaBlockedByVideo.getSetFalseCommand(),
-            DStateProps.videoIsPlaying.getSetFalseCommand(),
-          ],
-        },
-        {
-          onEvent: "VIDEO_PAUSED_EVENT",
-          thenExecute: [
-            DStateProps.videoIsPlaying.getSetFalseCommand(),
-            DStateProps.mediaBlockedByVideo.getSetFalseCommand(),
-          ],
-        },
-        {
-          onEvent: "VIDEO_PLAY_EVENT",
-          thenExecute: [
-            DStateProps.videoIsPlaying.getSetTrueCommand(),
-            DStateProps.userPausedVideo.getSetFalseCommand(),
-          ],
-        },
-        {
-          onEvent: "AUDIO_PLAY_EVENT",
-          thenExecute: [
-            DStateProps.audioIsPlaying.getSetTrueCommand(),
-            DStateProps.mediaBlockedByAudio.getSetTrueCommand(),
-          ],
-        },
-        {
-          onEvent: "AUDIO_ENDED_EVENT",
-          thenExecute: [
-            DStateProps.audioIsPlaying.getSetFalseCommand(),
-            DStateProps.mediaBlockedByAudio.getSetFalseCommand(),
-          ],
-        },
-        {
-          onEvent: "AUDIO_PAUSED_EVENT",
-          thenExecute: [
-            DStateProps.audioIsPlaying.getSetFalseCommand(),
-            DStateProps.mediaBlockedByAudio.getSetFalseCommand(),
-          ],
-        },
-      ],
-      stateProps: DStateProps.allDefaultProperties.map((def) => def.propDefinition),
-      stateQueries: DStateProps.allDefaultQueries,
     };
     return dto;
   }
+
   private compilePage(page: BuilderPageDto, modulePrefix: string): PageDto {
-    // console.log(_moduleId);
-    // const textElement
     const tags = page.tags ?? [];
-    const { nextButton, mainText, id, mainMedia, _type } = page;
-    const elements: DElementDto[] = [];
-    const audioResourcesDto: DAudioDto[] = [];
-    const videoResources: DVideoDto[] = [];
-    let mainVideo: DVideoDto | false = false;
-    let mainTextAudio: DAudioDto | false = false;
+    const { nextButton, mainText, id, mainMedia, _type, prefix } = page;
+    const staticElements: DElementDto[] = [];
+    let initialAudioTasks: Array<PlayAudioTask | DelayTask> = [];
+    let initialVideoTaskList: Array<PlayVideoTask | DelayTask> = [];
+    const newPage: PageDto = {
+      background: "white",
+      components: [],
+      staticElements,
+      id,
+      prefix,
+      initialTasks: [],
+      tags: [...tags],
+    };
 
     if (page.mainText.audioFile) {
-      const res = this.compileMainTextAudio(page.mainText.audioFile);
-      elements.push(...res.elements);
-      audioResourcesDto.push(res.audioDto);
-      mainTextAudio = res.audioDto;
+      const autoPlay = page.mainText.autoplay;
+      const autoPlayDelay = page.mainText.autoplayDelay;
+      const res = this.compileMainTextAudio(page.mainText.audioFile, autoPlay, autoPlayDelay);
+      initialAudioTasks = [...res.initialTasks];
+      newPage.components.push(...res.components);
     }
 
     if (_type === "question") {
       const variableId = modulePrefix + "_" + page.prefix;
-      const { buttons, question } = this.compileQuestion(id, page, variableId);
+      const { components, question } = this.compileQuestion(id, page, variableId);
+      newPage.components.push(...components);
+      newPage.staticElements.push(question);
       // console.log(question);
-      elements.push(...buttons, question);
+      // elements.push(...buttons, question);
     }
 
     if (_type === "info-page") {
       const infoText = mainText.text;
-      const nextBtnElement: DElementDto = this.compileButton(id, nextButton, {
+      const nextButtonComponent = this.compileButton(nextButton, {
         kind: "next-button",
       });
-      const textStyle = mainMedia ? DefaultTheme.mainText.withMedia.text.css : DefaultTheme.mainText.noMedia.text.css;
-      const element: DElementDto = {
-        text: infoText,
+
+      const textStyle = mainMedia
+        ? DefaultTheme.mainText.withMedia.text.css
+        : DefaultTheme.mainText.noMedia.text.css;
+      const infoTextElement: DElementDto = {
+        innerText: infoText,
         _tag: "p",
-        id: generateElementId(),
         style: textStyle,
       };
-      elements.push(element);
-      elements.push(nextBtnElement);
+      newPage.staticElements.push(infoTextElement);
+      newPage.components.push(nextButtonComponent);
     }
     if (mainMedia && mainMedia.kind === "main-image") {
       const mainImageElement = this.compileImage(mainMedia);
-      elements.push(mainImageElement);
+      newPage.staticElements.push(mainImageElement);
     }
 
     if (mainMedia && mainMedia.kind === "main-video") {
       const videoOutput = this.compileVideo(mainMedia);
-      mainVideo = videoOutput.videoDto;
-      elements.push(...videoOutput.elements);
-      videoResources.push(videoOutput.videoDto);
-    }
-    const mainVideoId = mainVideo ? mainVideo.id : undefined;
-    const autoPlaySequence: DAutoPlaySequence = {
-      blockUserInput: true,
-      id: "1",
-      items: [],
-      startCommands: [
-        DStateProps.mediaBlockedBySequence.getSetTrueCommand(),
-        DStateProps.inputBlockingBySequence.getSetTrueCommand(),
-      ],
-      endCommands: [
-        DStateProps.mediaBlockedBySequence.getSetFalseCommand(),
-        DStateProps.inputBlockingBySequence.getSetFalseCommand(),
-      ],
-    };
-
-    if (mainVideo && page.mainMedia && page.mainMedia.kind === "main-video" && page.mainMedia.mode === "autoplay") {
-      autoPlaySequence.items.push({
-        kind: "autoplay-video",
-        videoId: mainVideo.id,
-      });
+      newPage.videoPlayer = videoOutput.videoPlayer;
+      newPage.components.push(...videoOutput.components);
+      initialVideoTaskList = [...videoOutput.autoPlayTasks];
     }
 
-    if (mainTextAudio && page.mainText.autoplay) {
-      autoPlaySequence.items.push({
-        kind: "autoplay-audio",
-        audioId: mainTextAudio.id,
-      });
-    }
-
-    const pageDto: PageDto = {
-      audio: audioResourcesDto,
-      autoPlaySequence: autoPlaySequence,
-      backgroundColor: "red",
-      elements,
-      id,
-      mainVideoId,
-      tags: [...tags],
-      video: videoResources,
-    };
-    return pageDto;
+    // ADDING INITIAL TASKS IN CORRECT ORDER
+    newPage.initialTasks.push(...initialVideoTaskList);
+    newPage.initialTasks.push(...initialAudioTasks);
+    const clone = JSON.parse(JSON.stringify(newPage));
+    return clone;
   }
 
   private compileImage(image: BuilderMainImageDto) {
     const img: DImgDto = {
       _tag: "img",
-      id: image.file.id,
       style: this.theme.image.style,
       url: image.file.downloadUrl,
     };
     return img;
   }
 
-  private compileMainTextAudio(audioFile: AudioFile): {
-    audioDto: DAudioDto;
-    elements: DElementDto[];
+  private compileMainTextAudio(
+    audioFile: AudioFile,
+    autoPlay: boolean,
+    autoPlayDelay: number,
+  ): {
+    components: PageComponentDto[];
+    initialTasks: Array<PlayAudioTask | DelayTask>;
   } {
     const t = this.theme.mainText;
     const audioId = audioFile.id;
     const iconUrl =
       "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/public-assets%2Fvolume_up-24px.svg?alt=media&token=551bd0a6-a515-4f87-a245-da433f4833f9";
 
-    const buttonId = U.randomString(30);
     const playMainTextAudio: DImgDto = {
       _tag: "img",
-      id: buttonId,
       url: iconUrl,
       style: { ...t.withMedia.audio.css },
-      onClick: [
-        {
-          kind: "AUDIO_PLAY_COMMAND",
-          target: "AUDIO",
-          targetId: audioId,
-          payload: { volume: 1 },
-        },
-      ],
-      onStateChange: [
-        {
-          queryName: DStateProps._Queries.disableAudioIconQuery.name,
-          whenTrue: [...ThemeUtils.disableClickCommands(buttonId, t.withMedia.audio.cssDisabled)],
-          whenFalse: [...ThemeUtils.enableClickCommands(buttonId, t.withMedia.audio.cssEnabled)],
-        },
-      ],
     };
-    const audioDto: DAudioDto = {
-      _tag: "audio",
-      // eventHandlers: [],
-      id: audioFile.id,
+
+    const task: PlayAudioTask = {
+      audioId,
+      blockAudio: false,
+      blockFormInput: false,
+      blockResponseButton: false,
+      blockVideo: false,
+      kind: "play-audio-task",
+      priority: "replace-all",
       url: audioFile.downloadUrl,
     };
-    return { audioDto, elements: [playMainTextAudio] };
+
+    let initialAudioTasks: Array<PlayAudioTask | DelayTask> = [];
+    if (autoPlay) {
+      const playAudioTask: PlayAudioTask = { ...task, priority: "follow-queue" };
+      initialAudioTasks = [playAudioTask];
+      if (autoPlayDelay > 0) {
+        const delayTask: DelayTask = {
+          kind: "delay-task",
+          priority: "follow-queue",
+          duration: autoPlayDelay,
+          blockVideo: false,
+          blockAudio: false,
+          blockResponseButton: false,
+          blockFormInput: false,
+        };
+        initialAudioTasks = [delayTask, playAudioTask];
+      }
+    }
+    // const autoplayTask =
+    const playBtn: PageComponentDto = {
+      el: playMainTextAudio,
+      onClick: { kind: "play-audio", task },
+    };
+
+    return { components: [playBtn], initialTasks: [...initialAudioTasks] };
   }
 
-  private compileVideo(video: BuilderMainVideoDto) {
+  private compileVideo(video: BuilderMainVideoDto): {
+    videoPlayer: PageDto["videoPlayer"];
+    components: PageComponentDto[];
+    autoPlayTasks: Array<PlayVideoTask | DelayTask>;
+  } {
     const t = this.theme.videoPlayer;
-    const videoId = video.file.id;
-    const playButtonId = "play-btn-for" + videoId;
-    const pauseButtonId = "pause-btn-for" + videoId;
-    const elements: DElementDto[] = [];
-    const videoDto: DVideoDto = {
-      _tag: "video",
-      id: video.file.id,
-      style: t.videoElement.css,
+    const mode = video.mode;
+    const components: PageComponentDto[] = [];
+
+    let autoPlayTasks: Array<PlayVideoTask | DelayTask> = [];
+
+    let autoplayVideoTask: PlayVideoTask | false = false;
+    let autoplayDelayTask: DelayTask | false = false;
+
+    const playButtonTask: PlayVideoTask = {
+      kind: "play-video-task",
       url: video.file.downloadUrl,
+      videoId: video.file.id,
+      blockAudio: false,
+      blockFormInput: false,
+      blockResponseButton: false,
+      loop: mode === "gif-mode",
+      blockVideo: false,
+      priority: "replace-all",
     };
-    const playBtn: DImgDto = {
-      id: playButtonId,
-      _tag: "img",
-      url: t.playButton.iconUrl,
-      style: { ...t.playButton.css, ...t.playButton.cssEnabled },
-      onClick: [
-        {
-          kind: "VIDEO_PLAY_COMMAND",
-          target: "VIDEO",
-          targetId: videoId,
-          payload: {},
-        },
-        // TODO Check if this video shall block other media first?
-        DStateProps.mediaBlockedByVideo.getSetTrueCommand(),
-        DStateProps.userPausedVideo.getSetFalseCommand(),
-      ],
-      onStateChange: [
-        {
-          queryName: DStateProps._Queries.disableVideoPlayQuery.name,
-          whenTrue: [...ThemeUtils.disableClickCommands(playButtonId, t.playButton.cssDisabled)],
-          whenFalse: [...ThemeUtils.enableClickCommands(playButtonId, t.playButton.cssEnabled)],
-        },
-        {
-          queryName: DStateProps._Queries.hideVideoPlayQuery.name,
-          whenTrue: [ThemeUtils.hideCommand(playButtonId)],
-          whenFalse: [ThemeUtils.showCommand(playButtonId)],
-        },
-      ],
+
+    if (video.mode === "autoplay" || video.mode === "gif-mode") {
+      autoplayVideoTask = { ...playButtonTask, priority: "follow-queue" };
+      autoPlayTasks = [autoplayVideoTask];
+      if (video.preDelay > 0) {
+        autoplayDelayTask = {
+          kind: "delay-task",
+          priority: "follow-queue",
+          duration: video.preDelay,
+          blockVideo: false,
+          blockAudio: false,
+          blockResponseButton: false,
+          blockFormInput: false,
+        };
+        autoPlayTasks = [autoplayDelayTask, autoplayVideoTask];
+      }
+    }
+
+    const videoPlayer: PageDto["videoPlayer"] = {
+      playUrl: video.file.downloadUrl,
+      style: { h: 45, w: 100, x: 0, y: 55 },
     };
-    const pauseBtn: DImgDto = {
-      id: pauseButtonId,
-      _tag: "img",
-      style: {
-        ...t.pauseButton.css,
-        visibility: "hidden",
-        ...t.pauseButton.cssEnabled,
+    const playButton: PageComponentDto = {
+      el: {
+        _tag: "img",
+        url: t.playButton.iconUrl,
+        style: { ...t.playButton.css, ...t.playButton.cssEnabled },
       },
-      url: t.pauseButton.iconUrl,
-      onClick: [
-        {
-          kind: "VIDEO_PAUSE_COMMAND",
-          target: "VIDEO",
-          targetId: videoId,
-          payload: {},
-        },
-        DStateProps.mediaBlockedByVideo.getSetFalseCommand(),
-        DStateProps.userPausedVideo.getSetTrueCommand(),
-      ],
-      onStateChange: [
-        {
-          queryName: DStateProps._Queries.hideVideoPauseQuery.name,
-          whenTrue: [ThemeUtils.hideCommand(pauseButtonId)],
-          whenFalse: [ThemeUtils.showCommand(pauseButtonId)],
-        },
-      ],
+      onClick: { kind: "play-video", task: playButtonTask },
+      whenVideoPlay: { visibility: "hidden" },
+      whenVideoPaused: { visibility: "visible" },
     };
-    elements.push(playBtn);
-    elements.push(pauseBtn);
-    return { videoDto, elements };
+    const pauseBtn: PageComponentDto = {
+      el: {
+        _tag: "img",
+        style: {
+          ...t.pauseButton.css,
+          visibility: "hidden",
+          ...t.pauseButton.cssEnabled,
+        },
+        url: t.pauseButton.iconUrl,
+      },
+      onClick: { kind: "pause-video" },
+      whenVideoPlay: { visibility: "visible" },
+      whenVideoPaused: { visibility: "hidden" },
+    };
+
+    if (mode !== "gif-mode") {
+      components.push(playButton);
+      components.push(pauseBtn);
+    }
+    return { videoPlayer, components, autoPlayTasks: [...autoPlayTasks] };
   }
   private compileQuestion(
     pageId: string,
@@ -339,7 +282,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     variableId: string,
   ): {
     question: DTextDto;
-    buttons: DDivDto[];
+    components: PageComponentDto[];
   } {
     // TODO REFACTORE DEFAULT QUESTION TO - (REMOVE USE TEXT1)
     // console.log(page);
@@ -350,79 +293,66 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       : DefaultTheme.mainText.noMedia.text.css;
     const question: DTextDto = {
       _tag: "p",
-      text,
-      eventHandlers: [],
-      id: U.randomString(30),
-      onClick: [],
-      onStateChange: [],
+      innerText: text,
       style: questionStyle,
     };
-    const buttons = q.options.map((o) => {
-      const btns = this.compileButton(pageId, o, {
+    const buttons: PageComponentDto[] = q.options.map((o) => {
+      const btns = this.compileButton(o, {
         kind: "response-button",
         questionId: variableId,
+        questionText: text,
       });
       return btns;
     });
-    ThemeUtils.spaceEvenlyX(buttons);
-    return { question, buttons };
+    const rootElements = buttons.map((b) => b.el);
+    ThemeUtils.spaceEvenlyX(rootElements);
+    return { question, components: buttons };
   }
 
   private compileButton(
-    pageId: string,
     buttonDto: BuilderPageDto["nextButton"],
-    options: { kind: "response-button"; questionId: string } | { kind: "next-button" },
-  ) {
-    const factsCollected: Fact[] = [];
+    options:
+      | { kind: "response-button"; questionId: string; questionText: string }
+      | { kind: "next-button" },
+  ): PageComponentDto {
     const { id, value, label } = buttonDto;
+    const onclickAction: ButtonClickAction =
+      options.kind === "response-button"
+        ? {
+            kind: "submit-fact",
+            fact: {
+              kind: "numeric-fact",
+              label: label,
+              value: value,
+              referenceId: options.questionId,
+              referenceLabel: options.questionText,
+            },
+          }
+        : { kind: "next-page" };
 
-    const { div, text1 } = DefaultTheme.responseButtons;
-    if (options.kind === "response-button") {
-      const fact: Fact = {
-        kind: "numeric-fact",
-        label: label,
-        value: value,
-        referenceId: options.questionId,
-        referenceLabel: "QuestionId: " + options.questionId,
-      };
-      factsCollected.push(fact);
-    }
-
-    const onClickHandler: DCommand = {
-      kind: "ENGINE_LEAVE_PAGE_COMMAND",
-      target: "ENGINE",
-      targetId: "ENGINE",
-      payload: {
-        pageId,
-        factsCollected,
-      },
-    };
+    const btnStyles =
+      value === 9 ? DefaultTheme.responseButtons.dontKnow : DefaultTheme.responseButtons.normal;
     const btn: DDivDto = {
-      id,
       _tag: "div",
       children: [
         {
           _tag: "p",
-          id: U.randomString(30),
-          text: label,
-          style: text1,
+          innerText: label,
+          style: btnStyles.text1,
         },
       ],
-      onStateChange: [
-        {
-          queryName: DStateProps._Queries.disableUserInputQuery.name,
-          whenFalse: [...ThemeUtils.enableClickCommands(id, div.cssEnabled)],
-          whenTrue: [...ThemeUtils.disableClickCommands(id, div.cssDisabled)],
-        },
-      ],
-      style: { ...div.css, ...div.cssEnabled },
-      onClick: [onClickHandler],
+      style: { ...btnStyles.btn.css, ...btnStyles.btn.cssEnabled },
     };
+
     if (options.kind === "next-button") {
       btn.style.x = 50;
       btn.style.y = 8;
       btn.style.transform = "translate(-50%, 0%)";
     }
-    return btn;
+    const component: PageComponentDto = {
+      el: btn,
+      onClick: onclickAction,
+    };
+    return component;
   }
 }

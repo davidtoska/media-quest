@@ -3,7 +3,9 @@ import type { BuilderPageDto } from "./Builder-page";
 import type { BuilderQuestionDto } from "./Builder-question";
 import { BuilderQuestion } from "./Builder-question";
 import type { BuilderObjectId } from "./BuilderObject";
-import { DUtil } from "@media-quest/engine";
+import { DUtil, PageID } from "@media-quest/engine";
+import { PagePrefix } from "./primitives/page-prefix";
+import { SchemaPrefix } from "./primitives/schema-prefix";
 
 const U = DUtil;
 const deleteIdsFromPage = (page: BuilderPageDto) => {
@@ -19,6 +21,7 @@ const deleteIdsFromPage = (page: BuilderPageDto) => {
   return page;
 };
 
+const pxx = PagePrefix.fromStringOrThrow("pxx");
 const questionPageDto: BuilderPageDto = {
   _type: "question",
   autoplaySequence: [],
@@ -58,8 +61,9 @@ const questionPageDto: BuilderPageDto = {
     ],
     _type: "select-one",
   },
-  id: "p1" as BuilderObjectId.PageID,
-  prefix: "",
+  // id: "p1" as BuilderObjectId.PageID,
+  id: PageID.create(),
+  prefix: PagePrefix.fromStringOrThrow("pxx"),
   questions: [],
 };
 
@@ -86,8 +90,8 @@ const multiQuestionPageDto: BuilderPageDto = {
     value: -1,
   },
 
-  id: "p2" as BuilderObjectId.PageID,
-  prefix: "",
+  id: PageID.create(),
+  prefix: PagePrefix.fromStringOrThrow("pxx"),
   questions: [
     {
       id: "q3" as BuilderObjectId.QuestionID,
@@ -140,10 +144,10 @@ const multiQuestionPageDto: BuilderPageDto = {
   ],
 };
 
-let page = BuilderPage.create("info-page", "a");
+let page = BuilderPage.create("info-page", PagePrefix.fromStringOrThrow("a"));
 
 beforeEach(() => {
-  page = BuilderPage.create("info-page", "a");
+  page = BuilderPage.create("info-page", PagePrefix.fromStringOrThrow("a"));
 });
 
 describe("Builder Page", () => {
@@ -190,7 +194,7 @@ describe("Builder Page", () => {
     expect(q3.type).toBe("email");
   });
   test("Can clone a page and everything except id is equal ", () => {
-    const page1 = BuilderPage.create("info-page", "as");
+    const page1 = BuilderPage.create("info-page", PagePrefix.fromStringOrThrow("as"));
     const clone1 = BuilderPage.fromJson(page1.clone());
     const page1Json = deleteIdsFromPage(page1.clone());
     const clone1Json = deleteIdsFromPage(page1.clone());
@@ -209,7 +213,7 @@ describe("Builder Page", () => {
     expect(page3Json).toStrictEqual(clone3Json);
   });
   test("Can clone a page and no id is equal", () => {
-    const page1 = BuilderPage.create("info-page", "as");
+    const page1 = BuilderPage.create("info-page", pxx);
     const clone1 = BuilderPage.fromJson(page1.clone());
     expect(page1.id).not.toBe(clone1.id);
 
@@ -243,7 +247,7 @@ describe("Builder Page", () => {
     testDtoIds(multiQuestionPageDto);
   });
   test("Can insert a new Question at index", () => {
-    const page1 = BuilderPage.create("form", "as");
+    const page1 = BuilderPage.create("form", pxx);
     const q1 = page1.addQuestion("select-one");
     const q2 = page1.addQuestion("select-many");
     expect(page1.questions.length).toBe(3);
@@ -256,7 +260,7 @@ describe("Builder Page", () => {
     expect(page1.questions[1]).toBe(q1Clone);
   });
   test("Can not  insert a duplicate question", () => {
-    const page1 = BuilderPage.create("form", "as");
+    const page1 = BuilderPage.create("form", pxx);
     const q1 = page1.addQuestion("select-one");
     expect(page1.questions.length).toBe(2);
     expect(page1.questions[1]).toBe(q1);
@@ -266,7 +270,7 @@ describe("Builder Page", () => {
   });
 
   test("Can move a question", () => {
-    const page1 = BuilderPage.create("form", "as1");
+    const page1 = BuilderPage.create("form", pxx);
     const q1 = page1.addQuestion("select-many");
     const q2 = page1.addQuestion("select-one");
     const q3 = page1.addQuestion("select-one");
@@ -285,7 +289,8 @@ describe("Builder Page", () => {
   });
 
   test("Can not move a question that is not in questions-array", () => {
-    const page1 = BuilderPage.create("form", "as1");
+    const prefix = PagePrefix.fromStringOrThrow("as1");
+    const page1 = BuilderPage.create("form", prefix);
     const q1 = page1.addQuestion("select-many");
     const q2 = page1.addQuestion("select-one");
     expect(page1.questions.length).toBe(3);
@@ -295,11 +300,13 @@ describe("Builder Page", () => {
     expect(m1).toBe(false);
   });
   test("Can get all rule-variables.", () => {
-    const page = BuilderPage.create("question", "as1");
+    const prefix = PagePrefix.fromStringOrThrow("as1");
+    const page = BuilderPage.create("question", prefix);
     page.mainText.text = "Hva heter du?";
     page.defaultQuestion.addOption("Ja", 1);
     page.defaultQuestion.addOption("Nei", 0);
-    const variables = page.getQuestionVariables("ax", 1);
+    const shemaPrefix = SchemaPrefix.fromValueOrThrow("ax");
+    const variables = page.getQuestionVariables(shemaPrefix, 1);
     const first = variables[0];
     expect(variables.length).toBe(1);
     expect(first.options.length).toBe(2);
