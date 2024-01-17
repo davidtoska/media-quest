@@ -17,6 +17,8 @@ export * from "./rulebuilder";
 export { PagePrefix, PagePrefixValue } from "./primitives/page-prefix";
 export { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
 export * from "./schema-config";
-export * from "./mq-variable";
 export * from "./codebook";
 export { VarID } from "./primitives/varID";
+
+export * from "./variable/mq-variable";
+export * from "./variable/sum-score-variable";

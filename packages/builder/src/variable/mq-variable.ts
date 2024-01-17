@@ -3,6 +3,7 @@ export interface MqVariable {
 
   label: string;
   varId: string;
+  description?: string;
 
   // Values - The actual value of the variable.
   stringValue?: string;
@@ -40,7 +41,9 @@ export interface MqVariable {
   rangeFloor?: number;
   rangeCeiling?: number;
 
+  // Analytics
   options?: Array<{ label: string; value: number }>;
+  basedOn?: Array<{ varId: string; weight?: number }>;
 }
 
 export interface PageVariable extends MqVariable {
@@ -56,6 +59,5 @@ export interface PredefinedVariable extends MqVariable {
   readonly modulePrefix: string;
   readonly moduleID: string;
   defaultValue: number;
-  requireManualSelection: boolean;
   options: Array<{ label: string; value: number }>;
 }

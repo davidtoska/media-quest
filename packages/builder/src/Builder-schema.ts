@@ -1,21 +1,27 @@
 import type { BuilderPageDto, BuilderPageType } from "./Builder-page";
 import { BuilderPage } from "./Builder-page";
-import { RuleInput } from "./rulebuilder/RuleInput";
+import type {
+  BuilderRuleDto,
+  CustomVariable,
+  ExcludeByPageAction,
+  ExcludeByTagAction,
+  JumpToPageAction,
+} from "./rulebuilder";
+import { BuilderRule, RuleInput } from "./rulebuilder";
 import type { QuestionVariable } from "./rulebuilder/RuleVariable";
-import type { CustomVariable } from "./rulebuilder";
-import type { ExcludeByPageAction, ExcludeByTagAction, JumpToPageAction } from "./rulebuilder";
 import type { BuilderTagDto } from "./BuilderTag";
 import { BuilderTag, TagCollection } from "./BuilderTag";
-import type { BuilderRuleDto } from "./rulebuilder";
-import { BuilderRule } from "./rulebuilder";
 import { DefaultThemeCompiler } from "./theme/default-theme-compiler";
 import { ImageFile } from "./media-files";
-import { SchemaDto, DUtil, PageID, SchemaID } from "@media-quest/engine";
+import { DUtil, SchemaID } from "@media-quest/engine";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
-import { Codebook, CodeBook } from "./codebook";
-import { PredefinedVariable } from "./mq-variable";
+import { CodeBook } from "./codebook";
+import { PredefinedVariable } from "./variable/mq-variable";
 import { SchemaConfig } from "./schema-config";
+import { CompilerOption, CompilerOutput } from "./builder-compiler";
+import { SumScoreVariable } from "./variable/sum-score-variable";
+
 const U = DUtil;
 
 export interface BuilderSchemaDto {
@@ -28,14 +34,14 @@ export interface BuilderSchemaDto {
   readonly baseHeight: number;
   readonly baseWidth: number;
   readonly predefinedVariables?: Array<PredefinedVariable>;
+  readonly sumScoreVariables?: Array<SumScoreVariable>;
   readonly rules: ReadonlyArray<BuilderRuleDto>;
   readonly tags: ReadonlyArray<BuilderTagDto>;
 }
 
-export interface SchemaBuildOutput {
-  schema: SchemaDto;
-  codebook: Codebook;
-  schemaConfig: SchemaConfig;
+class SumScoreVariableCollection {
+  private _all:Array<SumScoreVariable> = []
+
 }
 
 export class BuilderSchema {
@@ -47,8 +53,12 @@ export class BuilderSchema {
   mainImage: ImageFile | false = false;
   predefinedVariables: PredefinedVariable[] = [];
   private _rules: BuilderRule[] = [];
+  private _sumVariables: SumScoreVariable[] = [];
   get rules(): ReadonlyArray<BuilderRule> {
     return [...this._rules];
+  }
+  get sumScoreVariables(): ReadonlyArray<SumScoreVariable> {
+    return [...this._sumVariables];
   }
 
   // get prefix(): SchemaPrefixValue {
@@ -119,6 +129,11 @@ export class BuilderSchema {
       this.pages.push(newPage);
     }
     return newPage;
+  }
+
+  addSumScoreVariable(variable: SumScoreVariable) {
+    // TODO VALIDATE.
+    this._sumVariables.push({ ...variable });
   }
 
   insertPage(page: BuilderPage, atIndex: number): boolean {
@@ -242,13 +257,31 @@ export class BuilderSchema {
     this._tagCollection.add(builderTag);
   }
 
-  compile(): SchemaBuildOutput {
-    const moduleDto = this.toJson();
+  compile(
+    options: CompilerOption = { blockAutoplayQuestion: false, blockAutoplayVideo: false },
+  ): CompilerOutput {
+    // const moduleDto = this.toJson();
+    const builderSchema = BuilderSchema.fromJson(this.toJson());
+
+    // Overriding the
+    builderSchema.pages.forEach((p) => {
+      if (options.blockAutoplayQuestion) {
+        p.mainText.autoplay = false;
+      }
+      if (options.blockAutoplayVideo && p.mainMedia) {
+        if (p.mainMedia.kind === "main-video") {
+          // TODO autoplay as boolean, so that we know if video is optional or required when override.
+          p.mainMedia.mode = "optional";
+        }
+      }
+    });
+    const moduleDto = builderSchema.toJson();
     const imp = new DefaultThemeCompiler();
+
     const codebook = CodeBook.fromSchema(moduleDto);
     const schema = imp.compile(moduleDto);
     const schemaConfig = SchemaConfig.fromSchema(moduleDto);
-    const output: SchemaBuildOutput = { codebook, schema, schemaConfig };
+    const output: CompilerOutput = { codebook, schema, schemaConfig };
     return output;
   }
 }

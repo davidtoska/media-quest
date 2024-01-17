@@ -6,6 +6,7 @@ import { infopageWorks } from "./schema/infopage-works";
 import { gifModeWorks } from "./schema/gif-mode-works";
 import { Page2Works } from "./schema/page2-works";
 import { SchemaDto, SchemaEngine } from "../../packages/engine";
+import { autoplayOverrideWorks } from "./schema/autoplay-override-works";
 console.log("DEV APP");
 
 const initialSchema: IExampleSchema = excludeByTagWorks;
@@ -57,6 +58,7 @@ const menu = createMenu([
   toMenuItem(Page2Works),
   toMenuItem(gifModeWorks),
   toMenuItem(autoplayWorks),
+  toMenuItem(autoplayOverrideWorks),
   toMenuItem(infopageWorks),
   toMenuItem(excludeByPageIdRuleWorks),
   toMenuItem(jumpToRuleWorks),

@@ -69,5 +69,5 @@ addQuestionPage109(
 
 export const autoplayWorks: IExampleSchema = {
   menuLabel: "autoplay",
-  schema: s.compile().schema,
+  schema: s.compile({ blockAutoplayQuestion: true, blockAutoplayVideo: false }).schema,
 };

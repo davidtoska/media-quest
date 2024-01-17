@@ -1,4 +1,4 @@
-import { PredefinedVariable } from "./mq-variable";
+import { PredefinedVariable } from "./variable/mq-variable";
 import { BuilderSchemaDto } from "./Builder-schema";
 
 /**

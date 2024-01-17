@@ -7,6 +7,7 @@ import type { BuilderObjectId } from "./BuilderObject";
 import { PageID, SchemaID } from "@media-quest/engine";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix } from "./primitives/schema-prefix";
+import { SumScoreVariable } from "./variable/sum-score-variable";
 
 const tag1: BuilderTagDto = BuilderTag.create("tag1", "This tag is defined in schemaDto1").toJson();
 
@@ -21,6 +22,16 @@ const schemaDto1: BuilderSchemaDto = {
   id: SchemaID.create(),
   name: "dto1-name",
   tags: [tag1, tag2, tag3],
+  sumScoreVariables: [
+    {
+      kind: "numeric-variable",
+      origin: "sum-score",
+      label: "label for dummy variable",
+      initialValue: 0,
+      varId: "testId",
+      basedOn: [],
+    },
+  ],
   pages: [
     {
       id: PageID.ensure("a".repeat(24)),
@@ -302,5 +313,45 @@ describe("Builder schema", () => {
     ruleInput.jumpToPageActions.forEach((v) => {
       expect(allPageIds.has(v.pageId)).toBe(true);
     });
+  });
+  test.skip("Can add sum-variables - and save as json", () => {
+    // p0.prefix = "info_page_prefix_";
+    const p1 = builderSchema.addPage("question");
+    const p2 = builderSchema.addPage("question");
+    p1.prefix = PagePrefix.fromStringOrThrow("p1_prefix");
+    p2.prefix = PagePrefix.fromStringOrThrow("p2_prefix");
+    p1.defaultQuestion.addOption("Ja", 1, 0);
+    p1.defaultQuestion.addOption("Nei", 0, 0);
+    p2.defaultQuestion.addOption("Ja", 1, 0);
+    p2.defaultQuestion.addOption("Nei", 0);
+
+    const ruleInput = builderSchema.getRuleInput();
+    const ss1: SumScoreVariable = {
+      label: "ss1",
+      varId: "ss1_var_id",
+      initialValue: 0,
+      kind: "numeric-variable",
+      origin: "sum-score",
+      basedOn: [],
+    };
+
+    builderSchema.addSumScoreVariable(ss1);
+
+    expect(ruleInput.questionVars.length).toBe(2);
+    expect(ruleInput.jumpToPageActions.length).toBe(3);
+
+    // TODO add TAGS!!
+    // expect(ruleInput.excludeByTagActions.length).toBe(0);
+    // expect(ruleInput.excludeByPageIdActions.length).toBe(3);
+    // const allPageIds = new Set(ruleInput.jumpToPageActions.map((a) => a.pageId));
+    // expect(allPageIds.has(p0.id)).toBe(true);
+    // expect(allPageIds.has(p1.id)).toBe(true);
+    // expect(allPageIds.has(p2.id)).toBe(true);
+    // ruleInput.questionVars.forEach((v) => {
+    //   expect(allPageIds.has(v.varId)).toBe(true);
+    // });
+    // ruleInput.jumpToPageActions.forEach((v) => {
+    //   expect(allPageIds.has(v.pageId)).toBe(true);
+    // });
   });
 });

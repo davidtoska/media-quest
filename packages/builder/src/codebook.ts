@@ -1,6 +1,6 @@
 import { BuilderPageDto } from "./Builder-page";
 import { BuilderSchemaDto } from "./Builder-schema";
-import { PageVariable, PredefinedVariable } from "./mq-variable";
+import { PageVariable, PredefinedVariable } from "./variable/mq-variable";
 
 export interface Codebook {
   readonly predefinedVariables: ReadonlyArray<PredefinedVariable>;
