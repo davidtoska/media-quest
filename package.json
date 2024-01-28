@@ -2,12 +2,14 @@
   "name": "media-quest",
   "description": "A monorepo in TypeScript",
   "private": false,
+  "version": "0.0.24",
   "workspaces": [
     "packages/builder",
     "packages/engine"
   ],
   "scripts": {
     "dev": "node dev.js",
+    "pub": "ts-node pre-publish.ts",
     "tsc:watch": "tsc --watch --noEmit",
     "build:builder-lib": "cd packages/builder && npm run build",
     "build:engine": "cd packages/engine && npm run build",

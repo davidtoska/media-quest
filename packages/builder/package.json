@@ -1,6 +1,6 @@
 {
   "name": "@media-quest/builder",
-  "version": "0.0.22",
+  "version": "0.0.24",
   "description": "Builder library for Media-quest schemas",
   "main": "src/public-api.ts",
   "license": "MIT",

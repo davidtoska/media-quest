@@ -19,6 +19,6 @@ export { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
 export * from "./schema-config";
 export * from "./codebook";
 export { VarID } from "./primitives/varID";
-
 export * from "./variable/mq-variable";
-export * from "./variable/sum-score-variable";
+export * from "./builder-compiler";
+export * from "./variable/sum-score";

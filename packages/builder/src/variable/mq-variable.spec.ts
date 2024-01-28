@@ -1,5 +1,5 @@
 import { MqVariable } from "./mq-variable";
-import { SumScoreVariable } from "./sum-score-variable";
+import { SumScoreVariable, SumScore } from "./sum-score";
 const createVariable = (value: number): MqVariable => {
   return {
     varId: "v" + value,
@@ -36,56 +36,111 @@ const v9 = createVariable(9);
 
 const all = [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9];
 describe("Sum score variable.", () => {
+  test("Is allowed SumScoreValue", () => {
+    expect(SumScore.isAllowedValue(-1)).toBeFalsy();
+    expect(SumScore.isAllowedValue(0)).toBeTruthy();
+    expect(SumScore.isAllowedValue(1)).toBeTruthy();
+    expect(SumScore.isAllowedValue(2)).toBeTruthy();
+    expect(SumScore.isAllowedValue(3)).toBeTruthy();
+    expect(SumScore.isAllowedValue(4)).toBeTruthy();
+    expect(SumScore.isAllowedValue(5)).toBeTruthy();
+    expect(SumScore.isAllowedValue(6)).toBeTruthy();
+    expect(SumScore.isAllowedValue(7)).toBeTruthy();
+    expect(SumScore.isAllowedValue(8)).toBeTruthy();
+    expect(SumScore.isAllowedValue(9)).toBeFalsy();
+    expect(SumScore.isAllowedValue(999)).toBeFalsy();
+  });
+
   test("Will calculate 2", () => {
     const ss1 = createSumScore([
       { variable: v1, weight: 1 },
       { variable: v2, weight: 1 },
+      { variable: v9, weight: 1 },
     ]);
-    const score = SumScoreVariable.calculate(ss1, all);
+    const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(3);
-    expect(score.basedOn.length).toBe(2);
+    expect(score.basedOn.length).toBe(3);
+    expect(score.avg).toBe(1.5);
+    expect(score.skippedBy9Count).toBe(1);
   });
   test("Will calculate 5 values", () => {
     const ss1 = createSumScore([
       { variable: v1, weight: 1 },
       { variable: v2, weight: 1 },
       { variable: v4, weight: 1 },
-      { variable: v5 },
+      { variable: v5, weight: 1 },
       { variable: v6, weight: 1 },
+      { variable: v9, weight: 0.5 },
     ]);
-    const score = SumScoreVariable.calculate(ss1, all);
+    const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(18);
+    expect(score.avg).toBe(3.6);
     const basedOn1 = score.basedOn[0];
     expect(basedOn1.value).toBe(v1.numericValue);
     expect(basedOn1.weight).toBe(1);
     expect(basedOn1.varId).toBe(v1.varId);
     expect(basedOn1.varLabel).toBe(v1.label);
   });
-  test("Will not include 9", () => {
+  test("Will not include 9 in includedAnswersCount", () => {
     const ss1 = createSumScore([
+      { variable: v0, weight: 1 },
       { variable: v1, weight: 1 },
       { variable: v5, weight: 1 },
       { variable: v9, weight: 1 },
     ]);
-    const score = SumScoreVariable.calculate(ss1, all);
+    const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(6);
+    expect(score.avg).toBe(2);
+    expect(score.includedAnswerCount).toBe(3);
   });
-  test("Will not calculate weight", () => {
+  test("Will calculate weight", () => {
     const ss1 = createSumScore([
       { variable: v1, weight: 1 },
       { variable: v8, weight: 0.5 },
     ]);
-    const score = SumScoreVariable.calculate(ss1, all);
+    const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(5);
   });
-  test("Will not calculate many weighted variables.", () => {
+  test("Will calculate many weighted variables.", () => {
     const ss1 = createSumScore([
       { variable: v1, weight: 1 },
       { variable: v2, weight: 0.5 },
       { variable: v5, weight: 1.2 },
       { variable: v8, weight: 2 },
     ]);
-    const score = SumScoreVariable.calculate(ss1, all);
+    const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(24);
+  });
+  test("Will count missing answers (missingAnswersCount)", () => {
+    const ss1 = createSumScore([
+      { variable: v1 },
+      { variable: v2 },
+      { variable: v3 },
+      { variable: v5 },
+      { variable: v9 },
+    ]);
+    const missing5InDataSet = [v1, v2, v8];
+    const score = SumScore.calculate(ss1, missing5InDataSet);
+    expect(score.sumScore).toBe(3);
+    expect(score.includedAnswerCount).toBe(2);
+    expect(score.missingAnswerCount).toBe(3);
+    expect(score.avg).toBe(1.5);
+    expect(score.basedOn.length).toBe(2);
+    expect(score.avg).toBe(1.5);
+    expect(score.errorMessages.length).toBe(0);
+  });
+  test("includedAnswerCount + missingAnswerCount + skippedBy9Count = SumScoreVariable.basedOn.length", () => {
+    const ss1 = createSumScore([
+      { variable: v0 },
+      { variable: v1 },
+      { variable: v2 },
+      { variable: v9 },
+    ]);
+    const answers = [v1, v7, v8, v9];
+    const score = SumScore.calculate(ss1, answers);
+
+    expect(score.includedAnswerCount + score.missingAnswerCount + score.skippedBy9Count).toBe(
+      ss1.basedOn.length,
+    );
   });
 });

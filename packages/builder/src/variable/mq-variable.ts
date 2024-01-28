@@ -46,6 +46,11 @@ export interface MqVariable {
   basedOn?: Array<{ varId: string; weight?: number }>;
 }
 
+const MISSING = 999;
+export const MqVariable = {
+  MISSING,
+} as const;
+
 export interface PageVariable extends MqVariable {
   readonly pageId: string;
   readonly pagePrefix: string;

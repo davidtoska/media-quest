@@ -7,7 +7,7 @@ import type { BuilderObjectId } from "./BuilderObject";
 import { PageID, SchemaID } from "@media-quest/engine";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix } from "./primitives/schema-prefix";
-import { SumScoreVariable } from "./variable/sum-score-variable";
+import { SumScoreVariable } from "./variable/sum-score";
 
 const tag1: BuilderTagDto = BuilderTag.create("tag1", "This tag is defined in schemaDto1").toJson();
 

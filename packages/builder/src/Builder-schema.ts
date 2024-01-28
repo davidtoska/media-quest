@@ -20,7 +20,7 @@ import { CodeBook } from "./codebook";
 import { PredefinedVariable } from "./variable/mq-variable";
 import { SchemaConfig } from "./schema-config";
 import { CompilerOption, CompilerOutput } from "./builder-compiler";
-import { SumScoreVariable } from "./variable/sum-score-variable";
+import { SumScoreVariable } from "./variable/sum-score";
 
 const U = DUtil;
 
@@ -40,8 +40,7 @@ export interface BuilderSchemaDto {
 }
 
 class SumScoreVariableCollection {
-  private _all:Array<SumScoreVariable> = []
-
+  private _all: Array<SumScoreVariable> = [];
 }
 
 export class BuilderSchema {
