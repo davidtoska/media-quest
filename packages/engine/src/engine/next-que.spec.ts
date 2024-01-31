@@ -1,6 +1,6 @@
 import { NextQue } from "./next-que";
-import { PageID } from "../utils/ID";
 import { PageDto } from "../page/Page";
+import { DUtil } from "../utils/DUtil";
 
 const tag1 = "tag1";
 const tag2 = "tag2";
@@ -9,7 +9,7 @@ const tag3 = "tag3";
 let que = new NextQue();
 const createPage = (tags: string[]): PageDto => {
   const dto: PageDto = {
-    id: PageID.create(),
+    id: DUtil.randomObjectId(),
     prefix: "prefix",
     staticElements: [],
     background: "white",

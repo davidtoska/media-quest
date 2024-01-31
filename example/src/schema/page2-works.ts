@@ -1,10 +1,14 @@
 import { IExampleSchema } from "./IExample-schema";
-import { DDivDto, DTextDto, PageComponent, PageID, SchemaID } from "../../../packages/engine";
+import * as E from "@media-quest/engine";
+import * as B from "@media-quest/builder";
 import { dummyAudioFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
-import { PlayAudioTask, PlayVideoTask, Task } from "../../../packages/engine/src/page/task";
-import { PageComponentDto } from "../../../packages/engine/src/page/page-component";
+// import { PlayAudioTask, PlayVideoTask, Task } from "../../../packages/engine/src/page/task";
+// import { PageComponentDto } from "../../../packages/engine/src/page/page-component";
 
-const playVideoTask0 = (priority: PlayVideoTask["priority"], mode: "gif" | "normal" = "normal"): PlayVideoTask => ({
+const playVideoTask0 = (
+  priority: E.PlayVideoTask["priority"],
+  mode: "gif" | "normal" = "normal",
+): E.PlayVideoTask => ({
   kind: "play-video-task",
   url: dummyVideoFiles[1].downloadUrl,
   videoId: dummyVideoFiles[1].id,
@@ -19,7 +23,7 @@ const playVideoTask0 = (priority: PlayVideoTask["priority"], mode: "gif" | "norm
   volume: 1,
 });
 
-const playAudioTask0 = (priority: PlayAudioTask["priority"]): PlayAudioTask => ({
+const playAudioTask0 = (priority: E.PlayAudioTask["priority"]): E.PlayAudioTask => ({
   kind: "play-audio-task",
   url: dummyAudioFiles[0].downloadUrl,
   audioId: "id_audio_1_url",
@@ -29,13 +33,13 @@ const playAudioTask0 = (priority: PlayAudioTask["priority"]): PlayAudioTask => (
   blockAudio: false,
   blockVideo: false,
 });
-const createText = (text: string): DTextDto => ({
+const createText = (text: string): E.DTextDto => ({
   _tag: "p",
   innerText: text,
   style: { x: 20, y: 70, fontSize: { _unit: "px", value: 60 }, backgroundColor: "gray" },
 });
 
-const createNextButton = (): PageComponentDto => ({
+const createNextButton = (): E.PageComponentDto => ({
   el: {
     _tag: "div",
     style: {
@@ -53,55 +57,83 @@ const createNextButton = (): PageComponentDto => ({
   onClick: { kind: "next-page" },
 });
 
-const playVideoBtn = (task: PlayVideoTask) => {
-  const btn: DDivDto = {
+const playVideoBtn = (task: E.PlayVideoTask) => {
+  const btn: E.DDivDto = {
     _tag: "div",
-    style: { x: 0, y: 35, w: 10, h: 10, fontSize: { _unit: "px", value: 40 }, backgroundColor: "gray" },
+    style: {
+      x: 0,
+      y: 35,
+      w: 10,
+      h: 10,
+      fontSize: { _unit: "px", value: 40 },
+      backgroundColor: "gray",
+    },
     children: [],
     innerText: "Play video",
   };
-  const component: PageComponentDto = {
+  const component: E.PageComponentDto = {
     el: btn,
     onClick: { kind: "play-video", task },
   };
   return component;
 };
-const pauseVideoBtn = (): PageComponentDto => {
-  const btn: DDivDto = {
+const pauseVideoBtn = (): E.PageComponentDto => {
+  const btn: E.DDivDto = {
     _tag: "div",
-    style: { x: 20, y: 35, w: 10, h: 10, fontSize: { _unit: "px", value: 40 }, backgroundColor: "gray" },
+    style: {
+      x: 20,
+      y: 35,
+      w: 10,
+      h: 10,
+      fontSize: { _unit: "px", value: 40 },
+      backgroundColor: "gray",
+    },
     children: [],
     innerText: "Pause video",
   };
-  const component: PageComponentDto = {
+  const component: E.PageComponentDto = {
     el: btn,
     onClick: { kind: "pause-video" },
   };
   return component;
 };
 
-const playAudioBtn = (task: PlayAudioTask): PageComponentDto => {
-  const btn: DDivDto = {
+const playAudioBtn = (task: E.PlayAudioTask): E.PageComponentDto => {
+  const btn: E.DDivDto = {
     _tag: "div",
-    style: { x: 0, y: 20, w: 10, h: 10, fontSize: { _unit: "px", value: 40 }, backgroundColor: "gray" },
+    style: {
+      x: 0,
+      y: 20,
+      w: 10,
+      h: 10,
+      fontSize: { _unit: "px", value: 40 },
+      backgroundColor: "gray",
+    },
     children: [],
     innerText: "Play audio",
   };
-  const component: PageComponentDto = {
+  const component: E.PageComponentDto = {
     el: btn,
     onClick: { kind: "play-audio", task },
   };
   return component;
 };
 
-const pauseAudioBtn = (): PageComponentDto => {
-  const btn: DDivDto = {
+const pauseAudioBtn = (): E.PageComponentDto => {
+  const btn: E.DDivDto = {
     _tag: "div",
-    style: { x: 20, y: 20, w: 10, h: 10, fontSize: { _unit: "px", value: 40 }, backgroundColor: "gray" },
+    style: {
+      x: 20,
+      y: 20,
+      w: 10,
+      h: 10,
+      fontSize: { _unit: "px", value: 40 },
+      backgroundColor: "gray",
+    },
     children: [],
     innerText: "Pause audio",
   };
-  const component: PageComponentDto = {
+  const component: E.PageComponentDto = {
     el: btn,
     onClick: { kind: "pause-audio" },
   };
@@ -110,16 +142,16 @@ const pauseAudioBtn = (): PageComponentDto => {
 export const Page2Works: IExampleSchema = {
   menuLabel: "page2-works",
   schema: {
-    id: "spu:dummy-schema" as SchemaID,
+    id: "spu:dummy-schema" as B.SchemaID,
     baseHeight: 1300,
     baseWidth: 1024,
     backgroundColor: "white",
 
     pages: [
       {
-        id: PageID.create(),
+        id: B.PageID.create(),
         background: "white",
-
+        prefix: B.PagePrefix.create().value,
         tags: [],
         staticElements: [],
         components: [
@@ -132,16 +164,22 @@ export const Page2Works: IExampleSchema = {
         initialTasks: [],
       },
       {
-        id: PageID.create(),
+        id: B.PageID.create(),
         background: "white",
-        components: [playAudioBtn(playAudioTask0("replace-all")), createNextButton(), pauseAudioBtn()],
+        prefix: B.PagePrefix.create().value,
+        components: [
+          playAudioBtn(playAudioTask0("replace-all")),
+          createNextButton(),
+          pauseAudioBtn(),
+        ],
         tags: [],
         staticElements: [createText("Audio works")],
         initialTasks: [],
       },
       {
-        id: PageID.create(),
+        id: B.PageID.create(),
         background: "white",
+        prefix: B.PagePrefix.create().value,
         tags: [],
         components: [
           pauseVideoBtn(),
@@ -154,7 +192,8 @@ export const Page2Works: IExampleSchema = {
         initialTasks: [playVideoTask0("follow-queue", "gif")],
       },
       {
-        id: PageID.create(),
+        id: B.PageID.create(),
+        prefix: B.PagePrefix.create().value,
         tags: [],
         components: [
           pauseVideoBtn(),
@@ -168,11 +207,16 @@ export const Page2Works: IExampleSchema = {
         initialTasks: [playVideoTask0("follow-queue"), playAudioTask0("follow-queue")],
       },
       {
-        id: PageID.create(),
+        id: B.PageID.create(),
+        prefix: B.PagePrefix.create().value,
         tags: [],
         staticElements: [createText("Video works")],
         background: "white",
-        components: [pauseVideoBtn(), createNextButton(), playVideoBtn(playVideoTask0("replace-all"))],
+        components: [
+          pauseVideoBtn(),
+          createNextButton(),
+          playVideoBtn(playVideoTask0("replace-all")),
+        ],
         videoPlayer: { playUrl: playVideoTask0("replace-all").url },
         initialTasks: [],
       },

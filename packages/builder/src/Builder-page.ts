@@ -8,10 +8,11 @@ import type { BuilderMainImageDto } from "./BuilderMainImageDto";
 import type { BuilderMainTextDto } from "./BuilderMainText";
 import { BuilderMainText } from "./BuilderMainText";
 import { BuilderVariableOption, QuestionVariable } from "./rulebuilder/RuleVariable";
-import { DUtil, PageID } from "@media-quest/engine";
+import { DUtil } from "@media-quest/engine";
 import { PagePrefix, PagePrefixValue } from "./primitives/page-prefix";
 import { VarID } from "./primitives/varID";
 import { SchemaPrefix } from "./primitives/schema-prefix";
+import { PageID } from "./primitives/ID";
 
 const U = DUtil;
 export type BuilderPageType = "info-page" | "question" | "multi-select" | "form";
@@ -27,6 +28,7 @@ export interface BuilderPageDto {
   mainMedia?: BuilderMainImageDto | BuilderMainVideoDto;
   autoplaySequence: Array<string>;
   tags: ReadonlyArray<string>;
+  // sumScoreVariables: Array<BuilderObjectId.SumScoreVariableId>
 }
 
 export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {

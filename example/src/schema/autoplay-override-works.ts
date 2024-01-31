@@ -1,12 +1,11 @@
-import { BuilderSchema, SchemaPrefix } from "@media-quest/builder";
+import * as B from "@media-quest/builder";
 import { IExampleSchema } from "./IExample-schema";
 import { addQuestionPage109 } from "./helpers";
-import { SchemaID } from "../../../packages/engine";
 
-const s = BuilderSchema.create(
-  SchemaID.create(),
+const s = B.BuilderSchema.create(
+  B.SchemaID.create(),
   "Dummy-schema",
-  SchemaPrefix.fromValueOrThrow("spu").value,
+  B.SchemaPrefix.fromValueOrThrow("spu").value,
 );
 
 s.backgroundColor = "white";

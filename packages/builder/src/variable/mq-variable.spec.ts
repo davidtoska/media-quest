@@ -1,6 +1,7 @@
-import { MqVariable } from "./mq-variable";
-import { SumScoreVariable, SumScore } from "./sum-score";
-const createVariable = (value: number): MqVariable => {
+import { BVariable } from "./b-variable";
+import { SumScore } from "./sum-score";
+import { SumScoreVariableDto } from "./sum-score-variable";
+const createVariable = (value: number): BVariable => {
   return {
     varId: "v" + value,
     label: "label for v" + value,
@@ -10,8 +11,8 @@ const createVariable = (value: number): MqVariable => {
   };
 };
 
-const createSumScore = (basedOn: Array<{ variable: MqVariable; weight?: number }>) => {
-  const sumVar1: SumScoreVariable = {
+const createSumScore = (basedOn: Array<{ variable: BVariable; weight?: number }>) => {
+  const sumVar1: SumScoreVariableDto = {
     kind: "numeric-variable",
     initialValue: 0,
     min: 0,

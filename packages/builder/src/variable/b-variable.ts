@@ -1,6 +1,5 @@
-export interface MqVariable {
+export interface BVariable {
   readonly kind: "numeric-variable" | "numeric-range-variable" | "string-variable";
-
   label: string;
   varId: string;
   description?: string;
@@ -28,6 +27,7 @@ export interface MqVariable {
   pageId?: string;
   eventSource?: string;
   pagePrefix?: string;
+  questionPrefix?: string;
   modulePrefix?: string;
   moduleID?: string;
   pageNumber?: number;
@@ -47,11 +47,11 @@ export interface MqVariable {
 }
 
 const MISSING = 999;
-export const MqVariable = {
+export const BVariable = {
   MISSING,
 } as const;
 
-export interface PageVariable extends MqVariable {
+export interface PageVariable extends BVariable {
   readonly pageId: string;
   readonly pagePrefix: string;
   readonly pagePosition: number;
@@ -59,7 +59,7 @@ export interface PageVariable extends MqVariable {
   readonly origin: "question" | "form-field";
 }
 
-export interface PredefinedVariable extends MqVariable {
+export interface PredefinedVariable extends BVariable {
   readonly origin: "predefined";
   readonly modulePrefix: string;
   readonly moduleID: string;

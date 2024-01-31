@@ -1,4 +1,4 @@
-export type RandomObjectId = string & { randomObjectId: true };
+// export type RandomObjectId = string & { randomObjectId: true };
 export namespace DUtil {
   export const randomString = (length: number): string => {
     const letters = "abcdefghijklmnopqrstuvxyz";
@@ -14,7 +14,7 @@ export namespace DUtil {
     return result;
   };
 
-  export const randomObjectId = () => randomString(32) as RandomObjectId;
+  export const randomObjectId = () => randomString(32);
 
   export const deleteProp = <Obj, Key extends keyof Obj>(obj: Obj, key: Key): Omit<Obj, Key> => {
     delete obj[key];

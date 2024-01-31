@@ -1,13 +1,5 @@
-import { MqVariable } from "./mq-variable";
-
-export interface SumScoreVariable extends MqVariable {
-  readonly origin: "sum-score";
-  useAvg?: boolean;
-  /**
-   * All variables that the sum-score should be based on.
-   */
-  basedOn: Array<{ varId: string; weight?: number }>;
-}
+import { BVariable } from "./b-variable";
+import { SumScoreVariableDto } from "./sum-score-variable";
 
 /**
  *
@@ -37,8 +29,8 @@ export interface SumScore {
 }
 
 const calculate = (
-  sumScoreVariable: SumScoreVariable,
-  allVariables: Array<Pick<MqVariable, "varId" | "numericValue" | "kind" | "label">>,
+  sumScoreVariable: SumScoreVariableDto,
+  allVariables: Array<Pick<BVariable, "varId" | "numericValue" | "kind" | "label">>,
 ): SumScore => {
   const legalValues: Array<number> = [...ALLOWED_VALUES];
 
@@ -66,7 +58,7 @@ const calculate = (
       };
       return result;
     }
-    const value = maybeVariable.numericValue ?? MqVariable.MISSING;
+    const value = maybeVariable.numericValue ?? BVariable.MISSING;
     const varLabel = maybeVariable.label;
     const weight = scv.weight ?? 1;
     const varId = maybeVariable.varId;
@@ -119,7 +111,7 @@ const calculate = (
 
   return result;
 };
-const createVariable = (varId: string): SumScoreVariable => {
+const createVariable = (varId: string): SumScoreVariableDto => {
   return {
     origin: "sum-score",
     kind: "numeric-variable",

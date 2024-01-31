@@ -4,8 +4,6 @@ const ID_LENGTH = 32;
 // The minimum length of an ID
 const MIN_LENGTH = 10;
 
-// const SPLITTER = "_";
-
 export type ID<B extends string> = string & { __ID__: B };
 
 const isID = <const B extends string>(idName: B, id?: string): id is ID<B> => {
@@ -17,18 +15,42 @@ const createIDByName = <const B extends string>(idName: B): ID<B> => {
   const letters = "abcdefghijklmnopqrstuvyz";
   const all = letters + letters.toUpperCase();
   let result = "";
+
   for (let i = 0; i < ID_LENGTH; i++) {
     const char = all.charAt(Math.floor(Math.random() * all.length));
     result += char;
   }
+
   return result as ID<B>;
 };
+const createDummyID = <const B extends string>(idName: B, letter: string): ID<B> => {
+  return letter.repeat(ID_LENGTH) as ID<B>;
+};
+interface Id<T extends string> {
+  name: T;
+  is: (id: string) => id is ID<T>;
+  validateOrCreate: (id: string) => ID<T>;
+  validateOrThrow: (id: string) => ID<T>;
+  create: () => ID<T>;
+  dummy: {
+    a: ID<T>;
+    b: ID<T>;
+    c: ID<T>;
+    d: ID<T>;
+    e: ID<T>;
+    f: ID<T>;
+    g: ID<T>;
+    h: ID<T>;
+    i: ID<T>;
+    j: ID<T>;
+  };
+}
 
 /**
  * Creates a object with helper functions for a specific ID type
  * @param idName
  */
-export const createTypedIdSingleton = <const B extends string>(idName: B) => {
+export const createTypedIdSingleton = <const B extends string>(idName: B): Id<B> => {
   /**
    * Creates a new ID of the correct type
    */
@@ -60,14 +82,38 @@ export const createTypedIdSingleton = <const B extends string>(idName: B) => {
    * Ensures that the id is of the correct type, if not it creates a new one
    * @param id
    */
-  const ensure = (id: string): ID<B> => {
+  const validateOrCreate = (id: string): ID<B> => {
     return is(id) ? id : create();
   };
 
-  return Object.freeze({ create, is, ensure, validateOrThrow, name });
+  const dummy = {
+    a: createDummyID(idName, "a"),
+    b: createDummyID(idName, "b"),
+    c: createDummyID(idName, "c"),
+    d: createDummyID(idName, "d"),
+    e: createDummyID(idName, "e"),
+    f: createDummyID(idName, "f"),
+    g: createDummyID(idName, "g"),
+    h: createDummyID(idName, "h"),
+    i: createDummyID(idName, "i"),
+    j: createDummyID(idName, "j"),
+  };
+
+  return Object.freeze({ create, is, validateOrCreate, validateOrThrow, name, dummy });
 };
 
 export type SchemaID = ID<"SCHEMA">;
 export const SchemaID = createTypedIdSingleton("SCHEMA");
+
 export type PageID = ID<"PAGE">;
 export const PageID = createTypedIdSingleton("PAGE");
+
+export type TagID = ID<"TAG">;
+export const TagID = createTypedIdSingleton("TAG");
+export type OptionID = ID<"OPTION">;
+export const OptionID = createTypedIdSingleton("OPTION");
+
+export type TextID = ID<"TEXT">;
+export const TextID = createTypedIdSingleton("TEXT");
+export type QuestionID = ID<"QUESTION">;
+export const QuestionID = createTypedIdSingleton("QUESTION");

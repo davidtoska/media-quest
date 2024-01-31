@@ -1,12 +1,11 @@
-import { BuilderSchema, BuilderTag, SchemaPrefix } from "@media-quest/builder";
+import * as B from "@media-quest/builder";
 import { IExampleSchema } from "./IExample-schema";
 import { addQuestionPage109 } from "./helpers";
-import { SchemaID } from "../../../packages/engine";
 
 const createExcludeByPageId = () => {
-  const SchemaId = SchemaID.create();
-  const modulePrefix = SchemaPrefix.fromValueOrThrow("ex_pid");
-  const s = BuilderSchema.create(SchemaId, "Rules-work-schema", modulePrefix.value);
+  const SchemaId = B.SchemaID.create();
+  const modulePrefix = B.SchemaPrefix.fromValueOrThrow("ex_pid");
+  const s = B.BuilderSchema.create(SchemaId, "Rules-work-schema", modulePrefix.value);
   s.backgroundColor = "white";
   const p1 = addQuestionPage109(s, "Q1:\n  Ja -> Exclude q2.", "q1");
   const p2 = addQuestionPage109(s, "Q2", "q2");
@@ -28,9 +27,9 @@ const createExcludeByPageId = () => {
   return s;
 };
 const jumpToPage = () => {
-  const SchemaId = SchemaID.create();
-  const modulePrefix = SchemaPrefix.fromValueOrThrow("rw");
-  const s = BuilderSchema.create(SchemaId, "Rules-work-schema", modulePrefix.value);
+  const SchemaId = B.SchemaID.create();
+  const modulePrefix = B.SchemaPrefix.fromValueOrThrow("rw");
+  const s = B.BuilderSchema.create(SchemaId, "Rules-work-schema", modulePrefix.value);
   s.backgroundColor = "white";
   const p1 = addQuestionPage109(s, "Q1:\n  Ja -> Jump to Q5", "q1");
   const p2 = addQuestionPage109(s, "Q2", "q2");
@@ -55,9 +54,9 @@ const jumpToPage = () => {
   return s;
 };
 const excludeByTagPage = () => {
-  const schemaId = SchemaID.create();
-  const schemaPrefix = SchemaPrefix.fromValueOrThrow("ex_tag");
-  const s = BuilderSchema.create(schemaId, "Exclude by tag.", schemaPrefix.value);
+  const schemaId = B.SchemaID.create();
+  const schemaPrefix = B.SchemaPrefix.fromValueOrThrow("ex_tag");
+  const s = B.BuilderSchema.create(schemaId, "Exclude by tag.", schemaPrefix.value);
   s.backgroundColor = "white";
   const p1 = addQuestionPage109(s, "Q1:\n  Ja -> Exclude q2 abd q3 by tag", "q1");
   const p2 = addQuestionPage109(s, "Q2-text", "q2");
@@ -65,7 +64,7 @@ const excludeByTagPage = () => {
   const p4 = addQuestionPage109(s, "Q4-text", "q4");
   const p5 = addQuestionPage109(s, "Q5-text", "q5");
   const p6 = addQuestionPage109(s, "Q6-text", "q6");
-  const tag = BuilderTag.create("tag1", "Tag1");
+  const tag = B.BuilderTag.create("tag1", "Tag1");
   s.addTag(tag);
   p2.addTag(tag.tagText);
   p3.addTag(tag.tagText);

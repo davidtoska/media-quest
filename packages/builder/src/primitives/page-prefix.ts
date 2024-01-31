@@ -31,15 +31,16 @@ export class PagePrefix {
     return value;
   };
   public static castOrCreateRandom = (value: string): PagePrefix => {
-    const v = PagePrefix.isValid(value) ? value : createRandomPrefix<PagePrefixValue>(PagePrefix.randomLen);
+    const v = PagePrefix.isValid(value)
+      ? value
+      : createRandomPrefix<PagePrefixValue>(PagePrefix.randomLen);
     return new PagePrefix(v);
   };
 
   public static isValid = (prefix: string | 999): prefix is PagePrefixValue => {
     if (typeof prefix !== "string") return false;
     if (prefix.length < SchemaPrefix.MIN_LENGTH) return false;
-    if (prefix.length > SchemaPrefix.MAX_LENGTH) return false;
-    return true;
+    return prefix.length <= SchemaPrefix.MAX_LENGTH;
   };
 
   get value(): PagePrefixValue {

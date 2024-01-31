@@ -1,6 +1,3 @@
-import { DUtil } from "@media-quest/engine";
-
-const U = DUtil;
 /**
  * Builder objects are complex objects that are embedded inside
  * a Builder-schema, and needs to be serialized to json. Often these objects
@@ -14,39 +11,10 @@ type BuilderObjectType =
   | "builder-text"
   | "builder-rule"
   | "builder-tag"
+  | "builder-sum-score-variable"
   | "builder-condition"
   | "builder-variable"
   | "builder-condition-group";
-
-export namespace BuilderObjectId {
-  export type QuestionOptionID = string & { __OPTION__ID__: true };
-  export type QuestionID = string & { __QUESTION__ID__: true };
-  export type TextID = string & { __TEXT__ID__: true };
-  export type MainTextID = string & { __MAIN__TEXT__ID__: true };
-  export type TagId = string & { __TAG__ID__: true };
-  export const createTagId = (): TagId => {
-    return createId("builder-tag") as TagId;
-  };
-
-  export const mainTextId = (): MainTextID => {
-    return createId("builder-main-text") as MainTextID;
-  };
-  export const textId = (): TextID => {
-    return createId("builder-text") as TextID;
-  };
-
-  export const questionOptionId = (): QuestionOptionID => {
-    return createId("builder-question-option") as QuestionOptionID;
-  };
-  export const questionId = (): QuestionID => {
-    return createId("builder-question") as QuestionID;
-  };
-
-  const createId = (type: BuilderObjectType): string => {
-    const id = U.randomString(24);
-    return type + "-" + id;
-  };
-}
 
 export abstract class BuilderObject<T extends BuilderObjectType, Dto extends {}> {
   // abstract readonly id: string;

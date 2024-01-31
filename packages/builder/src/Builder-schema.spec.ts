@@ -3,11 +3,11 @@ import { BuilderSchema } from "./Builder-schema";
 import { BuilderPage } from "./Builder-page";
 import type { BuilderTagDto } from "./BuilderTag";
 import { BuilderTag } from "./BuilderTag";
-import type { BuilderObjectId } from "./BuilderObject";
-import { PageID, SchemaID } from "@media-quest/engine";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix } from "./primitives/schema-prefix";
-import { SumScoreVariable } from "./variable/sum-score";
+
+import { SumScoreVariableDto } from "./variable/sum-score-variable";
+import { OptionID, PageID, QuestionID, SchemaID } from "./primitives/ID";
 
 const tag1: BuilderTagDto = BuilderTag.create("tag1", "This tag is defined in schemaDto1").toJson();
 
@@ -34,7 +34,7 @@ const schemaDto1: BuilderSchemaDto = {
   ],
   pages: [
     {
-      id: PageID.ensure("a".repeat(24)),
+      id: PageID.validateOrCreate("a".repeat(24)),
       _type: "info-page",
       prefix: PagePrefix.fromStringOrThrow("p1"),
       mainText: {
@@ -45,28 +45,28 @@ const schemaDto1: BuilderSchemaDto = {
       },
 
       nextButton: {
-        id: "next-button-text-id" as BuilderObjectId.QuestionOptionID,
+        id: "next-button-text-id" as OptionID,
         label: "Neste",
         value: -1,
       },
       defaultQuestion: {
-        id: "q1" as BuilderObjectId.QuestionID,
+        id: QuestionID.create(),
         prefix: "one-prefix",
         _type: "select-one",
         text: "q1-text",
         options: [
           {
-            id: "opt-nei" as BuilderObjectId.QuestionOptionID,
+            id: "opt-nei" as OptionID,
             value: 0,
             label: "Nei",
           },
           {
-            id: "opt-ja" as BuilderObjectId.QuestionOptionID,
+            id: "opt-ja" as OptionID,
             value: 1,
             label: "Ja",
           },
           {
-            id: "opt-vet-ikke" as BuilderObjectId.QuestionOptionID,
+            id: "opt-vet-ikke" as OptionID,
             value: 9,
             label: "Vet ikke",
           },
@@ -82,7 +82,7 @@ const schemaDto1: BuilderSchemaDto = {
       autoplaySequence: [],
     },
     {
-      id: PageID.ensure("b".repeat(24)),
+      id: PageID.validateOrCreate("b".repeat(24)),
       _type: "multi-select",
       prefix: PagePrefix.fromStringOrThrow("page2-prefix"),
       tags: [tag3.tag],
@@ -93,12 +93,12 @@ const schemaDto1: BuilderSchemaDto = {
         audioFile: false,
       },
       nextButton: {
-        id: "next-button-id-page2" as BuilderObjectId.QuestionOptionID,
+        id: "next-button-id-page2" as OptionID,
         label: "Neste",
         value: -1,
       },
       defaultQuestion: {
-        id: "default-q" as BuilderObjectId.QuestionID,
+        id: QuestionID.validateOrCreate("default-question-id"),
         prefix: "one-prefix",
         _type: "select-one",
         text: "q1",
@@ -106,23 +106,23 @@ const schemaDto1: BuilderSchemaDto = {
       },
       questions: [
         {
-          id: "q1" as BuilderObjectId.QuestionID,
+          id: QuestionID.create(),
           prefix: "one-prefix",
           _type: "select-one",
           text: "q1-text",
           options: [
             {
-              id: "opt-nei" as BuilderObjectId.QuestionOptionID,
+              id: "opt-nei" as OptionID,
               value: 0,
               label: "Nei",
             },
             {
-              id: "opt-ja" as BuilderObjectId.QuestionOptionID,
+              id: "opt-ja" as OptionID,
               value: 1,
               label: "Ja",
             },
             {
-              id: "opt-vet-ikke" as BuilderObjectId.QuestionOptionID,
+              id: "opt-vet-ikke" as OptionID,
               value: 9,
               label: "Vet ikke",
             },
@@ -326,7 +326,7 @@ describe("Builder schema", () => {
     p2.defaultQuestion.addOption("Nei", 0);
 
     const ruleInput = builderSchema.getRuleInput();
-    const ss1: SumScoreVariable = {
+    const ss1: SumScoreVariableDto = {
       label: "ss1",
       varId: "ss1_var_id",
       initialValue: 0,

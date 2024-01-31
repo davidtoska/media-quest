@@ -1,6 +1,6 @@
 import { BuilderOperator } from "../condition/Builder-operator";
 import { BuilderConditionDto } from "../condition/Builder-condition";
-import { BuilderConditionGroupDto, ConditionGroupType } from "../condition/Builder-condition-group";
+import { BuilderConditionGroupDto } from "../condition/Builder-condition-group";
 import { BuilderRuleDto } from "../Builder-rule";
 
 type SolveErrorReason =
@@ -13,12 +13,16 @@ type SolveErrorReason =
 
 type TrueResult = { readonly type: "IS_TRUE" };
 type FalseResult = { readonly type: "IS_FALSE" };
-type MissingFactsResult = { readonly type: "MISSING_FACTS"; readonly missingVariables: ReadonlyArray<string> };
+type MissingFactsResult = {
+  readonly type: "MISSING_FACTS";
+  readonly missingVariables: ReadonlyArray<string>;
+};
 type ErrorResult = {
   readonly type: "HAS_ERROR";
   readonly reason: SolveErrorReason;
   readonly data: Record<string, string>;
 };
+
 export type EvalResult = FalseResult | TrueResult | MissingFactsResult | ErrorResult;
 
 export interface Fact2 {

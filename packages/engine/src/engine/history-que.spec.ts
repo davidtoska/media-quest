@@ -1,12 +1,12 @@
 import { HistoryQue } from "./history-que";
 import { DTimestamp } from "../common/DTimestamp";
-import { PageID } from "../utils/ID";
 import { PageDto } from "../page/Page";
 import { PageResult } from "../page/page-result";
+import { DUtil } from "../utils/DUtil";
 
 const p = (id: number): PageDto => {
   return {
-    id: PageID.create(),
+    id: DUtil.randomObjectId(),
     prefix: "prefix" + id,
     components: [],
     initialTasks: [],

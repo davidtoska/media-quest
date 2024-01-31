@@ -3,10 +3,11 @@ import { RuleBuilderTestUtils as U } from "./RuleBuilder-test-utils";
 import { RuleInput } from "./RuleInput";
 import type { BuilderConditionGroupDto } from "./condition/Builder-condition-group";
 import { BuilderConditionDto } from "./condition/Builder-condition";
-import { Condition, PageID } from "@media-quest/engine";
+import { Condition } from "@media-quest/engine";
 import { PagePrefix } from "../primitives/page-prefix";
 import { VarID } from "../primitives/varID";
 import { SchemaPrefix } from "../primitives/schema-prefix";
+import { PageID } from "../primitives/ID";
 
 const { createPagesAndVars_A_H } = U;
 

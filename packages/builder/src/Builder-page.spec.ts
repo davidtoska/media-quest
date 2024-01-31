@@ -2,10 +2,10 @@ import { BuilderPage } from "./Builder-page";
 import type { BuilderPageDto } from "./Builder-page";
 import type { BuilderQuestionDto } from "./Builder-question";
 import { BuilderQuestion } from "./Builder-question";
-import type { BuilderObjectId } from "./BuilderObject";
-import { DUtil, PageID } from "@media-quest/engine";
+import { DUtil } from "@media-quest/engine";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix } from "./primitives/schema-prefix";
+import { OptionID, PageID, QuestionID } from "./primitives/ID";
 
 const U = DUtil;
 const deleteIdsFromPage = (page: BuilderPageDto) => {
@@ -34,27 +34,27 @@ const questionPageDto: BuilderPageDto = {
   tags: [],
 
   nextButton: {
-    id: "next-button-id-5" as BuilderObjectId.QuestionOptionID,
+    id: OptionID.dummy.a,
     label: "Neste",
     value: -1,
   },
   defaultQuestion: {
-    id: "q1" as BuilderObjectId.QuestionID,
+    id: QuestionID.validateOrThrow("default-question-id"),
     prefix: "q1",
     text: "sadf",
     options: [
       {
-        id: "q1-opt1" as BuilderObjectId.QuestionOptionID,
+        id: "q1-opt1" as OptionID,
         value: 0,
         label: "Nei",
       },
       {
-        id: "q1-opt2" as BuilderObjectId.QuestionOptionID,
+        id: "q1-opt2" as OptionID,
         value: 1,
         label: "Ja",
       },
       {
-        id: "q1-opt3" as BuilderObjectId.QuestionOptionID,
+        id: "q1-opt3" as OptionID,
         value: 9,
         label: "Vet ikke",
       },
@@ -77,7 +77,7 @@ const multiQuestionPageDto: BuilderPageDto = {
   },
   autoplaySequence: [],
   defaultQuestion: {
-    id: "q1" as BuilderObjectId.QuestionID,
+    id: QuestionID.create(),
     prefix: "",
     text: "",
     options: [],
@@ -85,7 +85,7 @@ const multiQuestionPageDto: BuilderPageDto = {
   },
   tags: [],
   nextButton: {
-    id: "next-button-id-3" as BuilderObjectId.QuestionOptionID,
+    id: "next-button-id-3" as OptionID,
     label: "Neste",
     value: -1,
   },
@@ -94,48 +94,48 @@ const multiQuestionPageDto: BuilderPageDto = {
   prefix: PagePrefix.fromStringOrThrow("pxx"),
   questions: [
     {
-      id: "q3" as BuilderObjectId.QuestionID,
+      id: QuestionID.dummy.a,
       prefix: "a",
       text: "har du..",
       _type: "select-one",
       // options: []
       options: [
         {
-          id: "q3-opt1" as BuilderObjectId.QuestionOptionID,
+          id: "q3-opt1" as OptionID,
           value: 0,
           label: "Nei",
         },
         {
-          id: "q3-opt2" as BuilderObjectId.QuestionOptionID,
+          id: "q3-opt2" as OptionID,
           value: 1,
           label: "Ja",
         },
         {
-          id: "q3-opt3" as BuilderObjectId.QuestionOptionID,
+          id: "q3-opt3" as OptionID,
           value: 9,
           label: "Vet ikke",
         },
       ],
     },
     {
-      id: "q4" as BuilderObjectId.QuestionID,
+      id: QuestionID.create(),
       prefix: "a",
       text: "har du..",
       _type: "select-one",
       // options: []
       options: [
         {
-          id: "q4-opt1" as BuilderObjectId.QuestionOptionID,
+          id: OptionID.dummy.a,
           value: 0,
           label: "Nei",
         },
         {
-          id: "q4-opt2" as BuilderObjectId.QuestionOptionID,
+          id: OptionID.dummy.b,
           value: 1,
           label: "Ja",
         },
         {
-          id: "q4-opt3" as BuilderObjectId.QuestionOptionID,
+          id: OptionID.dummy.c,
           value: 9,
           label: "Vet ikke",
         },

@@ -1,6 +1,6 @@
 {
   "name": "@media-quest/builder",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "Builder library for Media-quest schemas",
   "main": "src/public-api.ts",
   "license": "MIT",
@@ -10,6 +10,6 @@
     "buildXXX": "npm run clean && tsup src/public-api.ts --sourcemap inline --format cjs,esm --dts"
   },
   "dependencies": {
-    "@media-quest/engine": "0.0.22"
+    "@media-quest/engine": "0.0.25"
   }
 }

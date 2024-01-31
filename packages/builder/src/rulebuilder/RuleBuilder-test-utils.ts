@@ -6,10 +6,10 @@ import type { BuilderConditionDto } from "./condition/Builder-condition";
 import type { BuilderOperator } from "./condition/Builder-operator";
 import type { ExcludeByPageAction, ExcludeByTagAction, JumpToPageAction } from "./RuleAction";
 import { ExcludeByPageIdSelectItem, ExcludeByTagSelectItem } from "./multi-select-item";
-import { PageID } from "@media-quest/engine";
-import { PagePrefix, PagePrefixValue } from "../primitives/page-prefix";
+import { PagePrefix } from "../primitives/page-prefix";
 import { VarID } from "../primitives/varID";
 import { SchemaPrefix } from "../primitives/schema-prefix";
+import { PageID } from "../primitives/ID";
 
 const idPxx = () => {
   const id = PageID.create();
@@ -129,7 +129,9 @@ export namespace RuleBuilderTestUtils {
     };
   };
 
-  export const createConditionGroupDto = (conditions: BuilderConditionDto[]): BuilderConditionGroupDto => {
+  export const createConditionGroupDto = (
+    conditions: BuilderConditionDto[],
+  ): BuilderConditionGroupDto => {
     return {
       kind: "condition-group",
       conditions,
@@ -138,7 +140,9 @@ export namespace RuleBuilderTestUtils {
     };
   };
 
-  export const createBuilderRuleDto = (schemaPrefix: SchemaPrefix): ReadonlyArray<BuilderRuleDto> => {
+  export const createBuilderRuleDto = (
+    schemaPrefix: SchemaPrefix,
+  ): ReadonlyArray<BuilderRuleDto> => {
     const v = createPagesAndVars_A_H(schemaPrefix);
     const condition0 = createConditionDto(v.items.a);
     const condition1 = createConditionDto(v.items.b);

@@ -1,6 +1,4 @@
-import { PagePrefix } from "../primitives/page-prefix";
 import { VarID } from "../primitives/varID";
-import { SchemaPrefix } from "../primitives/schema-prefix";
 
 const BuilderVariableType = {
   numericWithOptions: true,
@@ -26,6 +24,7 @@ export class BuilderVariableOption {
 export class QuestionVariable {
   readonly kind: "question-variable" = "question-variable";
   readonly dataType: BuilderVariableType = "numericWithOptions";
+
   constructor(
     // private schemaPrefix: SchemaPrefix,
     // private pagePrefix: PagePrefix,

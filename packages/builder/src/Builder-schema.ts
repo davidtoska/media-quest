@@ -13,14 +13,16 @@ import type { BuilderTagDto } from "./BuilderTag";
 import { BuilderTag, TagCollection } from "./BuilderTag";
 import { DefaultThemeCompiler } from "./theme/default-theme-compiler";
 import { ImageFile } from "./media-files";
-import { DUtil, SchemaID } from "@media-quest/engine";
+import { DUtil } from "@media-quest/engine";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
 import { CodeBook } from "./codebook";
-import { PredefinedVariable } from "./variable/mq-variable";
+import { PredefinedVariable } from "./variable/b-variable";
 import { SchemaConfig } from "./schema-config";
 import { CompilerOption, CompilerOutput } from "./builder-compiler";
-import { SumScoreVariable } from "./variable/sum-score";
+
+import { SumScoreVariableDto } from "./variable/sum-score-variable";
+import { SchemaID } from "./primitives/ID";
 
 const U = DUtil;
 
@@ -34,13 +36,13 @@ export interface BuilderSchemaDto {
   readonly baseHeight: number;
   readonly baseWidth: number;
   readonly predefinedVariables?: Array<PredefinedVariable>;
-  readonly sumScoreVariables?: Array<SumScoreVariable>;
+  readonly sumScoreVariables?: ReadonlyArray<SumScoreVariableDto>;
   readonly rules: ReadonlyArray<BuilderRuleDto>;
   readonly tags: ReadonlyArray<BuilderTagDto>;
 }
 
 class SumScoreVariableCollection {
-  private _all: Array<SumScoreVariable> = [];
+  private _all: Array<SumScoreVariableDto> = [];
 }
 
 export class BuilderSchema {
@@ -52,11 +54,11 @@ export class BuilderSchema {
   mainImage: ImageFile | false = false;
   predefinedVariables: PredefinedVariable[] = [];
   private _rules: BuilderRule[] = [];
-  private _sumVariables: SumScoreVariable[] = [];
+  private _sumVariables: SumScoreVariableDto[] = [];
   get rules(): ReadonlyArray<BuilderRule> {
     return [...this._rules];
   }
-  get sumScoreVariables(): ReadonlyArray<SumScoreVariable> {
+  get sumScoreVariables(): ReadonlyArray<SumScoreVariableDto> {
     return [...this._sumVariables];
   }
 
@@ -77,6 +79,7 @@ export class BuilderSchema {
     const schemaPrefix = SchemaPrefix.castOrCreateRandom(dto.prefix);
     const schema = new BuilderSchema(dto.id, dto.name, schemaPrefix);
     const pages = dto.pages.map(BuilderPage.fromJson);
+
     schema._tagCollection.init(dto.tags);
     schema.backgroundColor = dto.backgroundColor;
     schema.baseHeight = dto.baseHeight;
@@ -87,6 +90,8 @@ export class BuilderSchema {
     schema.mainImage = dto.mainImage ?? false;
     const rulesDto = dto.rules ?? [];
     const ruleInput = schema.getRuleInput();
+
+    schema._sumVariables = Array.isArray(dto.sumScoreVariables) ? [...dto.sumScoreVariables] : [];
     schema._rules = rulesDto.map((r) => BuilderRule.fromDto(r, ruleInput));
     return schema;
   }
@@ -106,6 +111,7 @@ export class BuilderSchema {
       rules,
       tags,
       predefinedVariables: this.predefinedVariables,
+      sumScoreVariables: [...this.sumScoreVariables],
       mainImage: this.mainImage,
       prefix: this.prefix.value,
     };
@@ -130,7 +136,7 @@ export class BuilderSchema {
     return newPage;
   }
 
-  addSumScoreVariable(variable: SumScoreVariable) {
+  addSumScoreVariable(variable: SumScoreVariableDto) {
     // TODO VALIDATE.
     this._sumVariables.push({ ...variable });
   }
