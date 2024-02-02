@@ -86,17 +86,30 @@ export const createTypedIdSingleton = <const B extends string>(idName: B): Id<B>
     return is(id) ? id : create();
   };
 
+  const a = createDummyID(idName, "a");
+  const b = createDummyID(idName, "b");
+  const c = createDummyID(idName, "c");
+  const d = createDummyID(idName, "d");
+  const e = createDummyID(idName, "e");
+  const f = createDummyID(idName, "f");
+  const g = createDummyID(idName, "g");
+  const h = createDummyID(idName, "h");
+  const i = createDummyID(idName, "i");
+  const j = createDummyID(idName, "j");
+  const list = [a, b, c, d, e, f, g, h, i, j];
+
   const dummy = {
-    a: createDummyID(idName, "a"),
-    b: createDummyID(idName, "b"),
-    c: createDummyID(idName, "c"),
-    d: createDummyID(idName, "d"),
-    e: createDummyID(idName, "e"),
-    f: createDummyID(idName, "f"),
-    g: createDummyID(idName, "g"),
-    h: createDummyID(idName, "h"),
-    i: createDummyID(idName, "i"),
-    j: createDummyID(idName, "j"),
+    a,
+    b,
+    c,
+    d,
+    e,
+    f,
+    g,
+    h,
+    i,
+    j,
+    list,
   };
 
   return Object.freeze({ create, is, validateOrCreate, validateOrThrow, name, dummy });
@@ -117,3 +130,9 @@ export type TextID = ID<"TEXT">;
 export const TextID = createTypedIdSingleton("TEXT");
 export type QuestionID = ID<"QUESTION">;
 export const QuestionID = createTypedIdSingleton("QUESTION");
+
+export type SumScoreVariableID = ID<"SUM_SCORE_VARIABLE">;
+export const SumScoreVariableID = createTypedIdSingleton("SUM_SCORE_VARIABLE");
+
+export type SumScoreMemberShipID = ID<"SUM_SCORE_MEMBERSHIP">;
+export const SumScoreMemberShipID = createTypedIdSingleton("SUM_SCORE_MEMBERSHIP");

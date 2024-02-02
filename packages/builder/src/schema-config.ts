@@ -1,4 +1,4 @@
-import { PredefinedVariable } from "./variable/b-variable";
+import { CodebookPredefinedVariable } from "./code-book/codebook-variable";
 import { BuilderSchemaDto } from "./Builder-schema";
 
 /**
@@ -9,7 +9,7 @@ export interface SchemaConfig {
   readonly schemaName: string;
   readonly schemaId: string;
   readonly schemaPrefix: string;
-  readonly variables: ReadonlyArray<Readonly<PredefinedVariable>>;
+  readonly variables: ReadonlyArray<CodebookPredefinedVariable>;
 }
 
 export const SchemaConfig = {

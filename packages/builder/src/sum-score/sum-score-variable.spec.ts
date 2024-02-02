@@ -1,42 +1,46 @@
-import { BVariable } from "./b-variable";
 import { SumScore } from "./sum-score";
 import { SumScoreVariableDto } from "./sum-score-variable";
-const createVariable = (value: number): BVariable => {
+import { SumScoreVariableID } from "../primitives/ID";
+import { SumScoreAnswer } from "./sum-score-answer";
+
+const createAnswer = (value: number): SumScoreAnswer => {
+  const varId = "v" + value;
+  const varLabel = "label for " + varId;
+  const valueLabel = "label for value " + value;
   return {
-    varId: "v" + value,
-    label: "label for v" + value,
-    numericValue: value,
-    origin: "question",
-    kind: "numeric-variable",
+    varId,
+    varLabel,
+    value,
+    valueLabel,
   };
 };
 
-const createSumScore = (basedOn: Array<{ variable: BVariable; weight?: number }>) => {
+const createSumScore = (basedOn: SumScoreVariableDto["basedOn"]) => {
+  const id = SumScoreVariableID.create();
   const sumVar1: SumScoreVariableDto = {
-    kind: "numeric-variable",
-    initialValue: 0,
-    min: 0,
-    origin: "sum-score",
-    label: "Sum 123",
-    varId: "sum-score-variable-id",
-    basedOn: basedOn.map((v) => ({ varId: v.variable.varId, weight: v.weight })),
+    id,
+    name: "",
+    description: "",
+    useAvg: true,
+    basedOn,
   };
   return sumVar1;
 };
 
-const v0 = createVariable(0);
-const v1 = createVariable(1);
-const v2 = createVariable(2);
-const v3 = createVariable(3);
-const v4 = createVariable(4);
-const v5 = createVariable(5);
-const v6 = createVariable(6);
-const v7 = createVariable(7);
-const v8 = createVariable(8);
-const v9 = createVariable(9);
+const a0 = createAnswer(0);
+const a1 = createAnswer(1);
+const a2 = createAnswer(2);
+const a3 = createAnswer(3);
+const a4 = createAnswer(4);
+const a5 = createAnswer(5);
+const a6 = createAnswer(6);
+const a7 = createAnswer(7);
+const a8 = createAnswer(8);
+const a9 = createAnswer(9);
 
-const all = [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9];
-describe("Sum score variable.", () => {
+const all = [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9];
+
+describe("Sum score sum-score.", () => {
   test("Is allowed SumScoreValue", () => {
     expect(SumScore.isAllowedValue(-1)).toBeFalsy();
     expect(SumScore.isAllowedValue(0)).toBeTruthy();
@@ -54,9 +58,9 @@ describe("Sum score variable.", () => {
 
   test("Will calculate 2", () => {
     const ss1 = createSumScore([
-      { variable: v1, weight: 1 },
-      { variable: v2, weight: 1 },
-      { variable: v9, weight: 1 },
+      { varId: a1.varId, varLabel: a1.varLabel, weight: 1 },
+      { varId: a2.varId, varLabel: a2.varLabel, weight: 1 },
+      { varId: a9.varId, varLabel: a9.varLabel, weight: 1 },
     ]);
     const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(3);
@@ -66,28 +70,28 @@ describe("Sum score variable.", () => {
   });
   test("Will calculate 5 values", () => {
     const ss1 = createSumScore([
-      { variable: v1, weight: 1 },
-      { variable: v2, weight: 1 },
-      { variable: v4, weight: 1 },
-      { variable: v5, weight: 1 },
-      { variable: v6, weight: 1 },
-      { variable: v9, weight: 0.5 },
+      { varId: a1.varId, varLabel: a1.varLabel, weight: 1 },
+      { varId: a2.varId, varLabel: a2.varLabel, weight: 1 },
+      { varId: a4.varId, varLabel: a4.varLabel, weight: 1 },
+      { varId: a5.varId, varLabel: a5.varLabel, weight: 1 },
+      { varId: a6.varId, varLabel: a6.varLabel, weight: 1 },
+      { varId: a9.varId, varLabel: a9.varLabel, weight: 0.5 },
     ]);
     const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(18);
     expect(score.avg).toBe(3.6);
     const basedOn1 = score.basedOn[0];
-    expect(basedOn1.value).toBe(v1.numericValue);
+    expect(basedOn1.value).toBe(a1.value);
     expect(basedOn1.weight).toBe(1);
-    expect(basedOn1.varId).toBe(v1.varId);
-    expect(basedOn1.varLabel).toBe(v1.label);
+    expect(basedOn1.varId).toBe(a1.varId);
+    expect(basedOn1.varLabel).toBe(a1.varLabel);
   });
   test("Will not include 9 in includedAnswersCount", () => {
     const ss1 = createSumScore([
-      { variable: v0, weight: 1 },
-      { variable: v1, weight: 1 },
-      { variable: v5, weight: 1 },
-      { variable: v9, weight: 1 },
+      { varId: a0.varId, varLabel: a0.varLabel, weight: 1 },
+      { varId: a1.varId, varLabel: a1.varLabel, weight: 1 },
+      { varId: a5.varId, varLabel: a5.varLabel, weight: 1 },
+      { varId: a9.varId, varLabel: a9.varLabel, weight: 1 },
     ]);
     const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(6);
@@ -96,31 +100,31 @@ describe("Sum score variable.", () => {
   });
   test("Will calculate weight", () => {
     const ss1 = createSumScore([
-      { variable: v1, weight: 1 },
-      { variable: v8, weight: 0.5 },
+      { varId: a1.varId, varLabel: a1.varLabel, weight: 1 },
+      { varId: a8.varId, varLabel: a8.varLabel, weight: 0.5 },
     ]);
     const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(5);
   });
   test("Will calculate many weighted variables.", () => {
     const ss1 = createSumScore([
-      { variable: v1, weight: 1 },
-      { variable: v2, weight: 0.5 },
-      { variable: v5, weight: 1.2 },
-      { variable: v8, weight: 2 },
+      { varId: a1.varId, varLabel: a1.varLabel, weight: 1 },
+      { varId: a2.varId, varLabel: a2.varLabel, weight: 0.5 },
+      { varId: a5.varId, varLabel: a5.varLabel, weight: 1.2 },
+      { varId: a8.varId, varLabel: a8.varLabel, weight: 2 },
     ]);
     const score = SumScore.calculate(ss1, all);
     expect(score.sumScore).toBe(24);
   });
   test("Will count missing answers (missingAnswersCount)", () => {
     const ss1 = createSumScore([
-      { variable: v1 },
-      { variable: v2 },
-      { variable: v3 },
-      { variable: v5 },
-      { variable: v9 },
+      { varId: a1.varId, varLabel: a1.varLabel },
+      { varId: a2.varId, varLabel: a2.varLabel },
+      { varId: a3.varId, varLabel: a3.varLabel },
+      { varId: a5.varId, varLabel: a5.varLabel },
+      { varId: a9.varId, varLabel: a9.varLabel },
     ]);
-    const missing5InDataSet = [v1, v2, v8];
+    const missing5InDataSet = [a1, a2, a8];
     const score = SumScore.calculate(ss1, missing5InDataSet);
     expect(score.sumScore).toBe(3);
     expect(score.includedAnswerCount).toBe(2);
@@ -132,12 +136,12 @@ describe("Sum score variable.", () => {
   });
   test("includedAnswerCount + missingAnswerCount + skippedBy9Count = SumScoreVariable.basedOn.length", () => {
     const ss1 = createSumScore([
-      { variable: v0 },
-      { variable: v1 },
-      { variable: v2 },
-      { variable: v9 },
+      { varId: a0.varId, varLabel: a0.varLabel },
+      { varId: a1.varId, varLabel: a1.varLabel },
+      { varId: a2.varId, varLabel: a2.varLabel },
+      { varId: a9.varId, varLabel: a9.varLabel },
     ]);
-    const answers = [v1, v7, v8, v9];
+    const answers = [a1, a7, a8, a9];
     const score = SumScore.calculate(ss1, answers);
 
     expect(score.includedAnswerCount + score.missingAnswerCount + score.skippedBy9Count).toBe(

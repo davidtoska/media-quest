@@ -1,6 +1,6 @@
 import { BuilderCondition, type BuilderConditionDto } from "./Builder-condition";
 import { BuilderObject } from "../../BuilderObject";
-import type { BuilderVariable } from "../RuleVariable";
+import type { RuleVariable } from "../RuleVariable";
 import { Condition } from "@media-quest/engine";
 
 const ConditionGroupType = {
@@ -18,7 +18,10 @@ export interface BuilderConditionGroupDto {
   readonly conditions: ReadonlyArray<BuilderConditionDto>;
 }
 
-export class BuilderConditionGroup extends BuilderObject<"builder-condition-group", BuilderConditionGroupDto> {
+export class BuilderConditionGroup extends BuilderObject<
+  "builder-condition-group",
+  BuilderConditionGroupDto
+> {
   static readonly isConditionGroupType = (value: string | symbol): value is ConditionGroupType => {
     if (typeof value !== "string") {
       return false;
@@ -31,12 +34,15 @@ export class BuilderConditionGroup extends BuilderObject<"builder-condition-grou
   private _type: ConditionGroupType;
   name = "";
   private readonly _conditions: Array<BuilderCondition>;
-  private readonly _variableList: ReadonlyArray<BuilderVariable>;
+  private readonly _variableList: ReadonlyArray<RuleVariable>;
 
-  public static readonly fromDto = (dto: BuilderConditionGroupDto, variableList: ReadonlyArray<BuilderVariable>) => {
+  public static readonly fromDto = (
+    dto: BuilderConditionGroupDto,
+    variableList: ReadonlyArray<RuleVariable>,
+  ) => {
     return new BuilderConditionGroup(dto, variableList);
   };
-  protected constructor(dto: BuilderConditionGroupDto, variableList: ReadonlyArray<BuilderVariable>) {
+  protected constructor(dto: BuilderConditionGroupDto, variableList: ReadonlyArray<RuleVariable>) {
     super(dto);
     this.name = dto.name;
     this._type = dto.type;
@@ -73,7 +79,9 @@ export class BuilderConditionGroup extends BuilderObject<"builder-condition-grou
   }
 
   toJson(): BuilderConditionGroupDto {
-    const conditions: ReadonlyArray<BuilderConditionDto> = [...this._conditions.map((c) => c.toJson())];
+    const conditions: ReadonlyArray<BuilderConditionDto> = [
+      ...this._conditions.map((c) => c.toJson()),
+    ];
     return {
       name: this.name,
       conditions,

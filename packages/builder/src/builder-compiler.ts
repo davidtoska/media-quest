@@ -1,5 +1,5 @@
 import { SchemaDto } from "@media-quest/engine";
-import { Codebook } from "./codebook";
+import { Codebook } from "./code-book/codebook";
 import { SchemaConfig } from "./schema-config";
 
 export interface CompilerOutput {

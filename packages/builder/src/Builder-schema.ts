@@ -2,13 +2,13 @@ import type { BuilderPageDto, BuilderPageType } from "./Builder-page";
 import { BuilderPage } from "./Builder-page";
 import type {
   BuilderRuleDto,
-  CustomVariable,
+  RuleCustomVariable,
   ExcludeByPageAction,
   ExcludeByTagAction,
   JumpToPageAction,
 } from "./rulebuilder";
 import { BuilderRule, RuleInput } from "./rulebuilder";
-import type { QuestionVariable } from "./rulebuilder/RuleVariable";
+import type { RuleQuestionVariable } from "./rulebuilder/RuleVariable";
 import type { BuilderTagDto } from "./BuilderTag";
 import { BuilderTag, TagCollection } from "./BuilderTag";
 import { DefaultThemeCompiler } from "./theme/default-theme-compiler";
@@ -16,13 +16,14 @@ import { ImageFile } from "./media-files";
 import { DUtil } from "@media-quest/engine";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
-import { CodeBook } from "./codebook";
-import { PredefinedVariable } from "./variable/b-variable";
+import { CodeBook } from "./code-book/codebook";
+import { CodebookPredefinedVariable } from "./code-book/codebook-variable";
 import { SchemaConfig } from "./schema-config";
 import { CompilerOption, CompilerOutput } from "./builder-compiler";
 
-import { SumScoreVariableDto } from "./variable/sum-score-variable";
+import { SumScoreVariableDto } from "./sum-score/sum-score-variable";
 import { SchemaID } from "./primitives/ID";
+import { SumScoreMemberShip, SumScoreMembershipDto } from "./sum-score/sum-score-membership";
 
 const U = DUtil;
 
@@ -35,8 +36,9 @@ export interface BuilderSchemaDto {
   readonly pages: BuilderPageDto[];
   readonly baseHeight: number;
   readonly baseWidth: number;
-  readonly predefinedVariables?: Array<PredefinedVariable>;
+  readonly predefinedVariables?: Array<CodebookPredefinedVariable>;
   readonly sumScoreVariables?: ReadonlyArray<SumScoreVariableDto>;
+  readonly sumScoreMemberShips?: ReadonlyArray<SumScoreMembershipDto>;
   readonly rules: ReadonlyArray<BuilderRuleDto>;
   readonly tags: ReadonlyArray<BuilderTagDto>;
 }
@@ -52,7 +54,7 @@ export class BuilderSchema {
   backgroundColor = "#000000";
   pages: BuilderPage[] = [];
   mainImage: ImageFile | false = false;
-  predefinedVariables: PredefinedVariable[] = [];
+  predefinedVariables: CodebookPredefinedVariable[] = [];
   private _rules: BuilderRule[] = [];
   private _sumVariables: SumScoreVariableDto[] = [];
   get rules(): ReadonlyArray<BuilderRule> {
@@ -139,6 +141,8 @@ export class BuilderSchema {
   addSumScoreVariable(variable: SumScoreVariableDto) {
     // TODO VALIDATE.
     this._sumVariables.push({ ...variable });
+
+    return variable;
   }
 
   insertPage(page: BuilderPage, atIndex: number): boolean {
@@ -210,8 +214,8 @@ export class BuilderSchema {
   }
 
   getRuleInput(): RuleInput {
-    const qVars: QuestionVariable[] = [];
-    const cVars: CustomVariable[] = [];
+    const qVars: RuleQuestionVariable[] = [];
+    const cVars: RuleCustomVariable[] = [];
     const pageIdActions: ExcludeByPageAction[] = [];
     const tagActions: ExcludeByTagAction[] = this.tags.map((t) => {
       const tag = t.tagText;

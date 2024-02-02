@@ -1,7 +1,7 @@
 import { BuilderCondition, type BuilderConditionDto } from "./Builder-condition";
 import { RuleBuilderTestUtils } from "../RuleBuilder-test-utils";
-import type { BuilderVariable, BuilderVariableOption } from "../RuleVariable";
-import { QuestionVariable } from "../RuleVariable";
+import { type RuleVariable, RuleVariableOption, RuleQuestionVariable } from "../RuleVariable";
+// import { QuestionVariable } from "../RuleVariable";
 
 import { SchemaPrefix } from "../../primitives/schema-prefix";
 
@@ -77,9 +77,9 @@ describe("Builder Operator", () => {
       value: 0,
     };
     const c = BuilderCondition.fromDto(dto, vs.list);
-    expect(c.variable).toBeInstanceOf(QuestionVariable);
+    expect(c.variable).toBeInstanceOf(RuleQuestionVariable);
     expect(c.operator === "equal").toBe(true);
-    const value = c.value as BuilderVariableOption;
+    const value = c.value as RuleVariableOption;
     expect(value.value).toBe(0);
     expect(value.label).toBe("Nei");
     expect(c.variable).toBe(a);
@@ -96,9 +96,9 @@ describe("Builder Operator", () => {
       value: 0,
     };
     const c = BuilderCondition.fromDto(dto, vs.list);
-    expect(c.variable).toBeInstanceOf(QuestionVariable);
+    expect(c.variable).toBeInstanceOf(RuleQuestionVariable);
     expect(c.operator === "equal").toBe(true);
-    const value = c.value as BuilderVariableOption;
+    const value = c.value as RuleVariableOption;
     expect(value.value).toBe(0);
     expect(value.label).toBe("Nei");
     expect(c.validate().isValid).toBe(true);
@@ -114,7 +114,7 @@ describe("Builder Operator", () => {
     const c = BuilderCondition.fromDto(dto, []);
     expect(c.validate().isValid).toBe(false);
   });
-  test("Condition is invalid, when variable dont exist in universe.", () => {
+  test("Condition is invalid, when sum-score dont exist in universe.", () => {
     const variables = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
     const dto: BuilderConditionDto = {
       kind: "condition",
@@ -127,7 +127,7 @@ describe("Builder Operator", () => {
     expect(c.variable).toBe(false);
     expect(c.validate().isValid).toBe(false);
   });
-  test("Condition is invalid if not all set, when variable dont exist in variables.", () => {
+  test("Condition is invalid if not all set, when sum-score dont exist in variables.", () => {
     const variables = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
     const dto: BuilderConditionDto = {
       kind: "condition",
@@ -153,11 +153,11 @@ describe("Builder Operator", () => {
     };
     expect(a.varId).toBe("as_a");
     const c = BuilderCondition.fromDto(dto, variables.list);
-    expect(c.variable).toBeInstanceOf(QuestionVariable);
+    expect(c.variable).toBeInstanceOf(RuleQuestionVariable);
     expect(c.validate().isValid).toBe(false);
     expect(c.value).toBe(false);
   });
-  test("Condition is invalid if value (from dto) is not found in variable", () => {
+  test("Condition is invalid if value (from dto) is not found in sum-score", () => {
     const { list, items } = RuleBuilderTestUtils.createPagesAndVars_A_H(as);
     expect(items.a.varId).toBe("as_a");
     const dto: BuilderConditionDto = {
@@ -169,7 +169,7 @@ describe("Builder Operator", () => {
     };
     const c = BuilderCondition.fromDto(dto, list);
     expect(c).toBeInstanceOf(BuilderCondition);
-    expect(c.variable).toBeInstanceOf(QuestionVariable);
+    expect(c.variable).toBeInstanceOf(RuleQuestionVariable);
     expect(c.operator).toBe("equal");
     expect(c.operatorsSelectItems.length).toBe(BuilderCondition.NUMBER_OPERATORS.length);
     expect(c.value).toBe(false);
@@ -186,7 +186,7 @@ describe("Builder Operator", () => {
       value: 7,
     };
     const c = BuilderCondition.fromDto(dto, variables.list);
-    expect(c.variable).toBeInstanceOf(QuestionVariable);
+    expect(c.variable).toBeInstanceOf(RuleQuestionVariable);
     expect(c.operator).toBe("equal");
     expect(c.operatorsSelectItems.length).toBe(BuilderCondition.NUMBER_OPERATORS.length);
     expect(c.value).toBe(false);

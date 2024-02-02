@@ -1,48 +1,34 @@
 import { VarID } from "../primitives/varID";
 
-const BuilderVariableType = {
-  numericWithOptions: true,
-  numeric: true,
-  numericRange: true,
-  text: true,
-  date: true,
-  dateRange: true,
-  time: true,
-  duration: true,
-  boolean: true,
-} as const;
+/*******************************************
+ ** ONLY USE THESE TYPES IN RULE-BUILDER  **
+ ******************************************/
 
-export type BuilderVariableType = keyof typeof BuilderVariableType;
-
-export class BuilderVariableOption {
+export class RuleVariableOption {
   constructor(
     readonly label: string,
     readonly value: number,
   ) {}
 }
 
-export class QuestionVariable {
+export class RuleQuestionVariable {
   readonly kind: "question-variable" = "question-variable";
-  readonly dataType: BuilderVariableType = "numericWithOptions";
-
   constructor(
-    // private schemaPrefix: SchemaPrefix,
-    // private pagePrefix: PagePrefix,
     readonly varId: VarID,
     readonly label: string,
-    readonly options: ReadonlyArray<BuilderVariableOption>,
+    readonly options: ReadonlyArray<RuleVariableOption>,
     readonly pageNumber: number,
   ) {}
 }
 
-export class CustomVariable {
+export class RuleCustomVariable {
   readonly kind: "configuration-variable" = "configuration-variable";
-  readonly dataType: BuilderVariableType = "numericWithOptions";
   constructor(
-    readonly varId: VarID,
+    readonly varId: string,
     readonly label: string,
-    readonly options: ReadonlyArray<BuilderVariableOption>,
+    readonly options: ReadonlyArray<RuleVariableOption>,
   ) {}
 }
 
-export type BuilderVariable = QuestionVariable | CustomVariable;
+// export class RuleVariable {}
+export type RuleVariable = RuleQuestionVariable | RuleCustomVariable;

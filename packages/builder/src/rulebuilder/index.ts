@@ -7,11 +7,24 @@ export {
 export { BuilderOperator } from "./condition/Builder-operator";
 export { BuilderRule, type BuilderRuleDto } from "./Builder-rule";
 export { JumpToActionManager } from "./jump-to-action-manager";
-export { MultiSelectItem, ExcludeByPageIdSelectItem, ExcludeByTagSelectItem } from "./multi-select-item";
+export {
+  MultiSelectItem,
+  ExcludeByPageIdSelectItem,
+  ExcludeByTagSelectItem,
+} from "./multi-select-item";
 export { PageActionManager } from "./page-action-manager";
-export { type ExcludeByPageAction, type ExcludeByTagAction, type JumpToPageAction } from "./RuleAction";
+export {
+  type ExcludeByPageAction,
+  type ExcludeByTagAction,
+  type JumpToPageAction,
+} from "./RuleAction";
 export { RuleInput } from "./RuleInput";
-export { CustomVariable, BuilderVariableOption, type BuilderVariable, QuestionVariable } from "./RuleVariable";
+export {
+  RuleCustomVariable,
+  RuleVariableOption,
+  type RuleVariable,
+  RuleQuestionVariable,
+} from "./RuleVariable";
 export {
   SingleSelectItem,
   OperatorSelectItem,

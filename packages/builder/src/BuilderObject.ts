@@ -12,6 +12,7 @@ type BuilderObjectType =
   | "builder-rule"
   | "builder-tag"
   | "builder-sum-score-variable"
+  | "builder-sum-score-membership"
   | "builder-condition"
   | "builder-variable"
   | "builder-condition-group";

@@ -156,7 +156,7 @@ describe("Builder Rule", () => {
     expect(rule.conditionCount).toBe(2);
   });
 
-  test("Conditions have no operators available before variable is set.", () => {
+  test("Conditions have no operators available before sum-score is set.", () => {
     const c1 = rule.addCondition();
     expect(c1.operatorsSelectItems.length).toBe(0);
 

@@ -1,5 +1,6 @@
-import { BVariable } from "./b-variable";
 import { SumScoreVariableDto } from "./sum-score-variable";
+import { SumScoreVariableID } from "../primitives/ID";
+import { SumScoreAnswer } from "./sum-score-answer";
 
 /**
  *
@@ -30,7 +31,7 @@ export interface SumScore {
 
 const calculate = (
   sumScoreVariable: SumScoreVariableDto,
-  allVariables: Array<Pick<BVariable, "varId" | "numericValue" | "kind" | "label">>,
+  answers: Array<SumScoreAnswer>,
 ): SumScore => {
   const legalValues: Array<number> = [...ALLOWED_VALUES];
 
@@ -41,27 +42,19 @@ const calculate = (
   let sumScore = 0;
   const errorMessages: string[] = [];
   const basedOn: SumScore["basedOn"] = [];
-  const useAvg = !!sumScoreVariable.useAvg;
+  const useAvg = sumScoreVariable.useAvg;
 
   const basedOnEntries: BasedOnEntry[] = sumScoreVariable.basedOn.map((scv) => {
-    const maybeVariable = allVariables.find((v) => v.varId === scv.varId);
+    const maybeAnswer = answers.find((v) => v.varId === scv.varId);
     let result: BasedOnEntry = { kind: "missing", varId: scv.varId };
-    if (!maybeVariable) {
+    if (!maybeAnswer) {
       return result;
     }
 
-    if (maybeVariable.kind !== "numeric-variable") {
-      result = {
-        kind: "invalid-variable",
-        varId: scv.varId,
-        message: "The actual variable is not a numeric-variable",
-      };
-      return result;
-    }
-    const value = maybeVariable.numericValue ?? BVariable.MISSING;
-    const varLabel = maybeVariable.label;
+    const value = maybeAnswer.value;
+    const varLabel = maybeAnswer.varLabel;
     const weight = scv.weight ?? 1;
-    const varId = maybeVariable.varId;
+    const varId = maybeAnswer.varId;
 
     result = {
       kind: "has-value",
@@ -111,14 +104,13 @@ const calculate = (
 
   return result;
 };
-const createVariable = (varId: string): SumScoreVariableDto => {
+const createVariable = (): SumScoreVariableDto => {
+  const id = SumScoreVariableID.create();
   return {
-    origin: "sum-score",
-    kind: "numeric-variable",
-    initialValue: 0,
-    min: 0,
-    label: "Sum 123",
-    varId: "sum-score-variable-id",
+    id,
+    name: "",
+    useAvg: true,
+    description: "",
     basedOn: [],
   };
 };

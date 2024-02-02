@@ -1,5 +1,5 @@
 import { BuilderOption } from "../Builder-option";
-import { type BuilderVariable, QuestionVariable } from "./RuleVariable";
+import { type RuleVariable, RuleQuestionVariable } from "./RuleVariable";
 import type { BuilderRuleDto } from "./Builder-rule";
 import type { BuilderConditionGroupDto } from "./condition/Builder-condition-group";
 import type { BuilderConditionDto } from "./condition/Builder-condition";
@@ -72,8 +72,8 @@ export namespace RuleBuilderTestUtils {
     ] as const;
     return list;
   };
-  export const createRuleVariable = (varId: VarID, pageNumber: number): QuestionVariable =>
-    new QuestionVariable(varId, "Har du " + varId + "?", createOptions(), pageNumber);
+  export const createRuleVariable = (varId: VarID, pageNumber: number): RuleQuestionVariable =>
+    new RuleQuestionVariable(varId, "Har du " + varId + "?", createOptions(), pageNumber);
 
   /**
    *
@@ -117,7 +117,7 @@ export namespace RuleBuilderTestUtils {
     return { list, items, pageIds, pageIdList };
   };
 
-  export const createConditionDto = (variable: BuilderVariable): BuilderConditionDto => {
+  export const createConditionDto = (variable: RuleVariable): BuilderConditionDto => {
     const operator: BuilderOperator = Math.random() > 0 ? "equal" : "notEqual";
     const opt = variable.options[0];
     return {

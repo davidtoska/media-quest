@@ -51,7 +51,7 @@ export class FactCollection {
     if (typeof fact.valueLabel !== "string") {
       return false;
     }
-    // NB: This is a temporary check until we have more variable types.
+    // NB: This is a temporary check until we have more sum-score types.
     if (typeof fact.variableType !== "string" || fact.variableType !== "numeric") {
       return false;
     }
@@ -168,11 +168,7 @@ export class ConditionGroup implements FactEvaluator, IsValid {
     }
 
     const minLimit = this.dto.count;
-    if (type === "count" && typeof minLimit === "number" && trueCount >= minLimit) {
-      return true;
-    }
-
-    return false;
+    return type === "count" && typeof minLimit === "number" && trueCount >= minLimit;
   }
 
   isValid(): boolean {
