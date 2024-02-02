@@ -1,7 +1,11 @@
 import { BuilderObject } from "../../BuilderObject";
 import { BuilderOperator } from "./Builder-operator";
-import type { BuilderVariable, BuilderVariableOption } from "../RuleVariable";
-import { OperatorSelectItem, RuleOptionSelectItem, RuleVariableSelectItem } from "../SingleSelectItem";
+import type { RuleVariable, RuleVariableOption } from "../RuleVariable";
+import {
+  OperatorSelectItem,
+  RuleOptionSelectItem,
+  RuleVariableSelectItem,
+} from "../SingleSelectItem";
 import { Condition } from "@media-quest/engine";
 export interface BuilderConditionDto {
   readonly kind: "condition";
@@ -21,7 +25,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
   private initialDto: BuilderConditionDto;
   name = "";
 
-  public static create = (variableList: ReadonlyArray<BuilderVariable>) => {
+  public static create = (variableList: ReadonlyArray<RuleVariable>) => {
     const condition = new BuilderCondition(
       {
         kind: "condition",
@@ -35,7 +39,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     return condition;
   };
 
-  public static fromDto = (dto: BuilderConditionDto, variables: ReadonlyArray<BuilderVariable>) => {
+  public static fromDto = (dto: BuilderConditionDto, variables: ReadonlyArray<RuleVariable>) => {
     const _dto: BuilderConditionDto = {
       kind: "condition",
       name: dto.name ?? "",
@@ -46,16 +50,16 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     const instance = new BuilderCondition(_dto, variables);
     return instance;
   };
-  private _variable: BuilderVariable | false = false;
+  private _variable: RuleVariable | false = false;
   private _operator: BuilderOperator | "" = "";
-  private _value: BuilderVariableOption | false = false;
-  private _variableList: ReadonlyArray<BuilderVariable> = [];
+  private _value: RuleVariableOption | false = false;
+  private _variableList: ReadonlyArray<RuleVariable> = [];
 
   /**
    * Can only set variables that exist in variableList.
    * @param variable
    */
-  set variable(variable: BuilderVariable | false) {
+  set variable(variable: RuleVariable | false) {
     if (variable === this._variable) {
       return;
     }
@@ -68,7 +72,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     return this._variable;
   }
 
-  set value(variableValue: BuilderVariableOption | false) {
+  set value(variableValue: RuleVariableOption | false) {
     this._value = variableValue;
   }
   get value() {
@@ -96,7 +100,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     if (!this._value) {
       return {
         isValid: false,
-        message: "Value (BuilderVariableOption) is not initialized",
+        message: "Value (RuleVariableOption) is not initialized",
       };
     }
 
@@ -124,7 +128,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     return false;
   }
 
-  private findVariableInUniverse(variableId: string): BuilderVariable | false {
+  private findVariableInUniverse(variableId: string): RuleVariable | false {
     const v = this._variableList.find((v) => v.varId === variableId);
     return v ?? false;
   }
@@ -141,7 +145,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     return this._operator;
   }
 
-  private constructor(dto: BuilderConditionDto, variables: ReadonlyArray<BuilderVariable>) {
+  private constructor(dto: BuilderConditionDto, variables: ReadonlyArray<RuleVariable>) {
     super(dto);
     this.initialDto = dto;
     this.name = dto.name;
@@ -168,7 +172,7 @@ export class BuilderCondition extends BuilderObject<"builder-condition", Builder
     return this.toJson();
   }
 
-  private _setVariableList(variables: ReadonlyArray<BuilderVariable>): boolean {
+  private _setVariableList(variables: ReadonlyArray<RuleVariable>): boolean {
     this._variableList = variables;
     const v = this._variableList.find((v) => v.varId === this.originalDto.variableId);
     if (!v) {

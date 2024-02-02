@@ -1,7 +1,6 @@
 import { Rule } from "../rules/rule";
 import { Fact } from "../rules/fact";
 import { RuleActionPageQue } from "./page-que-ruleengine-action";
-import { SchemaID } from "../utils/ID";
 import { PageDto } from "../page/Page";
 
 export type PageQueRules = Rule<RuleActionPageQue, never>;
@@ -13,7 +12,7 @@ export interface PageSequenceDto {
 }
 
 export interface SchemaDto {
-  readonly id: SchemaID;
+  readonly id: string;
   readonly baseHeight: number;
   readonly baseWidth: number;
   readonly backgroundColor: string;

@@ -1,12 +1,11 @@
-import { BuilderSchema, SchemaPrefix } from "@media-quest/builder";
+import * as B from "@media-quest/builder";
 import { IExampleSchema } from "./IExample-schema";
 import { addPage } from "./helpers";
-import { SchemaID } from "../../../packages/engine";
 
-const s = BuilderSchema.create(
-  SchemaID.create(),
+const s = B.BuilderSchema.create(
+  B.SchemaID.create(),
   "Gif-mode-works",
-  SchemaPrefix.fromValueOrThrow("spxx").value,
+  B.SchemaPrefix.fromValueOrThrow("spxx").value,
 );
 
 s.backgroundColor = "white";

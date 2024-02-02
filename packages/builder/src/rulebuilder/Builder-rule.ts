@@ -9,7 +9,8 @@ import { BuilderObject } from "../BuilderObject";
 import { TagActionManager } from "./tag-action-manager";
 import { PageActionManager } from "./page-action-manager";
 import { JumpToActionManager } from "./jump-to-action-manager";
-import { Condition, PageID, RuleActionPageQue, PageQueRules } from "@media-quest/engine";
+import { Condition, RuleActionPageQue, PageQueRules } from "@media-quest/engine";
+import { PageID } from "../primitives/ID";
 
 export interface BuilderRuleDto {
   readonly type: ConditionGroupType;

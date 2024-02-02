@@ -1,14 +1,21 @@
-import { BuilderSchema, SchemaPrefix } from "@media-quest/builder";
+import * as B from "@media-quest/builder";
 import { IExampleSchema } from "./IExample-schema";
 import { addPage } from "./helpers";
-import { SchemaID } from "../../../packages/engine";
 
-const s = BuilderSchema.create(SchemaID.create(), "Dummy-schema", SchemaPrefix.fromValueOrThrow("spxx").value);
+const s = B.BuilderSchema.create(
+  B.SchemaID.create(),
+  "Dummy-schema",
+  B.SchemaPrefix.fromValueOrThrow("spxx").value,
+);
 
 s.backgroundColor = "white";
 
-addPage(s, "p1", "info-page").withMainText("P1: Information page - No image\n  Text should be on top.");
-addPage(s, "p2", "info-page").addImage().withMainText("P2: Information page - With image\n  Text should be bottom.");
+addPage(s, "p1", "info-page").withMainText(
+  "P1: Information page - No image\n  Text should be on top.",
+);
+addPage(s, "p2", "info-page")
+  .addImage()
+  .withMainText("P2: Information page - With image\n  Text should be bottom.");
 addPage(s, "p3", "question").withMainText("P3: Question page No Image -> Text up.");
 addPage(s, "p4", "question").addImage().withMainText("P3: Question With image -> Text down.");
 export const infopageWorks: IExampleSchema = {

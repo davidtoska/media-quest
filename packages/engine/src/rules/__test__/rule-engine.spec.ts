@@ -3,9 +3,10 @@ import { Rule } from "../rule";
 import { Fact } from "../fact";
 import { Condition } from "../condition";
 import { RuleActionPageQue } from "../../engine/page-que-ruleengine-action";
-import { PageID } from "../../utils/ID";
+import { DUtil } from "../../utils/DUtil";
+// import { PageID } from "../../utils/ID";
 
-const excludeById = (ids: PageID[]): RuleActionPageQue => {
+const excludeById = (ids: string[]): RuleActionPageQue => {
   return {
     kind: "excludeByPageId",
     pageIds: ids,
@@ -100,7 +101,7 @@ describe("Rule-engine spec", () => {
   });
 
   it("Empty facts => no actions, no errors.", () => {
-    const hideAs1 = excludeById([PageID.create()]);
+    const hideAs1 = excludeById([DUtil.randomObjectId()]);
     const rule: Rule<any, any> = {
       id: "id123",
       description: "",
@@ -126,7 +127,7 @@ describe("Rule-engine spec", () => {
       some: [],
       all: [...trueIf_0_conditions],
       onFailure: [],
-      onSuccess: [excludeById([PageID.create(), PageID.create()])],
+      onSuccess: [excludeById([DUtil.randomObjectId(), DUtil.randomObjectId()])],
     };
     const f1 = xIs(0);
     const rules = [rule];
@@ -146,9 +147,11 @@ describe("Rule-engine spec", () => {
       some: [],
       all: [xCondition("eq", 0)],
       onFailure: [],
-      onSuccess: [excludeById([PageID.create(), PageID.create()])],
+      onSuccess: [excludeById([DUtil.randomObjectId(), DUtil.randomObjectId()])],
     };
+
     expect(engine.solve(rule, facts)).toEqual(false);
+
     const results = engine.solveAll([rule], facts);
     expect(results.matching.length).toBe(0);
     expect(results.errors.length).toBe(0);
@@ -162,7 +165,7 @@ describe("Rule-engine spec", () => {
       some: [xCondition("eq", 6)],
       all: [],
       onFailure: [],
-      onSuccess: [excludeById([PageID.create()])],
+      onSuccess: [excludeById([DUtil.randomObjectId()])],
     };
     expect(engine.solve(rule, facts)).toBe(true);
     const result = engine.solveAll([rule], facts);
@@ -299,7 +302,7 @@ describe("Rule-engine spec", () => {
 
   it("Complex all 6 true conditions -> true", () => {
     const facts = [xIs(0)];
-    const action = excludeById([PageID.create()]);
+    const action = excludeById([DUtil.randomObjectId()]);
     const rule: Rule<any, any> = {
       id: "id123",
 

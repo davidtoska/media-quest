@@ -7,11 +7,12 @@ import type { BuilderMainVideoDto } from "./BuilderMainVideoDto";
 import type { BuilderMainImageDto } from "./BuilderMainImageDto";
 import type { BuilderMainTextDto } from "./BuilderMainText";
 import { BuilderMainText } from "./BuilderMainText";
-import { BuilderVariableOption, QuestionVariable } from "./rulebuilder/RuleVariable";
-import { DUtil, PageID } from "@media-quest/engine";
+import { RuleVariableOption, RuleQuestionVariable } from "./rulebuilder";
+import { DUtil } from "@media-quest/engine";
 import { PagePrefix, PagePrefixValue } from "./primitives/page-prefix";
 import { VarID } from "./primitives/varID";
 import { SchemaPrefix } from "./primitives/schema-prefix";
+import { PageID } from "./primitives/ID";
 
 const U = DUtil;
 export type BuilderPageType = "info-page" | "question" | "multi-select" | "form";
@@ -27,6 +28,7 @@ export interface BuilderPageDto {
   mainMedia?: BuilderMainImageDto | BuilderMainVideoDto;
   autoplaySequence: Array<string>;
   tags: ReadonlyArray<string>;
+  // sumScoreVariables: Array<BuilderObjectId.SumScoreVariableId>
 }
 
 export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
@@ -168,8 +170,8 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
   getQuestionVariables(
     modulePrefix: SchemaPrefix,
     pageNumber: number,
-  ): ReadonlyArray<QuestionVariable> {
-    const variables: QuestionVariable[] = [];
+  ): ReadonlyArray<RuleQuestionVariable> {
+    const variables: RuleQuestionVariable[] = [];
 
     if (this._pageType === "question") {
       const pagePrefix = this.prefix;
@@ -178,9 +180,9 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
       const op = this.defaultQuestion.options.map((o) => {
         const label = o.label;
         const value = o.value;
-        return new BuilderVariableOption(label, value);
+        return new RuleVariableOption(label, value);
       });
-      const singleVar = new QuestionVariable(varId, label, op, pageNumber);
+      const singleVar = new RuleQuestionVariable(varId, label, op, pageNumber);
       variables.push(singleVar);
     }
     return variables;

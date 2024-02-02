@@ -1,4 +1,4 @@
-import { BuilderVariable, BuilderVariableOption } from "./RuleVariable";
+import { RuleVariable, RuleVariableOption } from "./RuleVariable";
 import { BuilderOperator } from "./condition/Builder-operator";
 import { JumpToPageAction } from "./RuleAction";
 
@@ -27,12 +27,12 @@ export abstract class SingleSelectItem<T> {
   protected abstract getSearchString(): string;
 }
 
-export class RuleVariableSelectItem extends SingleSelectItem<BuilderVariable> {
-  public static create = (data: BuilderVariable) => {
+export class RuleVariableSelectItem extends SingleSelectItem<RuleVariable> {
+  public static create = (data: RuleVariable) => {
     return new RuleVariableSelectItem(data);
   };
   readonly options: ReadonlyArray<RuleOptionSelectItem>;
-  constructor(readonly data: BuilderVariable) {
+  constructor(readonly data: RuleVariable) {
     super(data);
     this.options = data.options.map(RuleOptionSelectItem.create);
   }
@@ -50,11 +50,11 @@ export class RuleVariableSelectItem extends SingleSelectItem<BuilderVariable> {
   }
 }
 
-export class RuleOptionSelectItem extends SingleSelectItem<BuilderVariableOption> {
-  public static create = (option: BuilderVariableOption) => {
+export class RuleOptionSelectItem extends SingleSelectItem<RuleVariableOption> {
+  public static create = (option: RuleVariableOption) => {
     return new RuleOptionSelectItem(option);
   };
-  private constructor(option: BuilderVariableOption) {
+  private constructor(option: RuleVariableOption) {
     super(option);
   }
   protected getSearchString(): string {
@@ -116,7 +116,8 @@ export class OperatorSelectItem extends SingleSelectItem<BuilderOperator | ""> {
 }
 
 export class JumpToPageSelectItem extends SingleSelectItem<JumpToPageAction> {
-  public static readonly create = (pageData: JumpToPageAction) => new JumpToPageSelectItem(pageData);
+  public static readonly create = (pageData: JumpToPageAction) =>
+    new JumpToPageSelectItem(pageData);
   protected constructor(pageData: JumpToPageAction) {
     super(pageData);
   }

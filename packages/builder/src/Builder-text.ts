@@ -1,17 +1,18 @@
-import { BuilderObjectId, BuilderObject } from './BuilderObject';
+import { BuilderObject } from "./BuilderObject";
+import { TextID } from "./primitives/ID";
 
 export interface BuilderTextDto {
-  readonly id: BuilderObjectId.TextID;
+  readonly id: TextID;
   text: string;
   name: string;
   translationRequired: boolean;
 }
 
-export class BuilderText extends BuilderObject<'builder-text', BuilderTextDto> {
-  readonly objectType = 'builder-text';
-  id: BuilderObjectId.TextID;
-  text = '';
-  name = '';
+export class BuilderText extends BuilderObject<"builder-text", BuilderTextDto> {
+  readonly objectType = "builder-text";
+  id: TextID;
+  text = "";
+  name = "";
   translateRequired = false;
   // audio: {id: B}
   private constructor(dto: BuilderTextDto) {
@@ -23,12 +24,12 @@ export class BuilderText extends BuilderObject<'builder-text', BuilderTextDto> {
   }
 
   public static create(name: string) {
-    const id = BuilderObjectId.textId();
+    const id = TextID.create();
     const dto: BuilderTextDto = {
       id,
       name,
-      text: '',
-      translationRequired: false
+      text: "",
+      translationRequired: false,
     };
     const instance = new BuilderText(dto);
     return instance;
@@ -39,9 +40,8 @@ export class BuilderText extends BuilderObject<'builder-text', BuilderTextDto> {
   }
 
   clone(): BuilderTextDto {
-    const newId = BuilderObjectId.textId();
     const dto = this.toJson();
-    const withNewId: BuilderTextDto = { ...dto, id: newId };
+    const withNewId: BuilderTextDto = { ...dto, id: TextID.create() };
     return withNewId;
   }
 
@@ -50,7 +50,7 @@ export class BuilderText extends BuilderObject<'builder-text', BuilderTextDto> {
       id: this.id,
       name: this.name,
       text: this.text,
-      translationRequired: this.translateRequired
+      translationRequired: this.translateRequired,
     };
     return dto;
   }

@@ -3,10 +3,11 @@ import { RuleBuilderTestUtils as U } from "./RuleBuilder-test-utils";
 import { RuleInput } from "./RuleInput";
 import type { BuilderConditionGroupDto } from "./condition/Builder-condition-group";
 import { BuilderConditionDto } from "./condition/Builder-condition";
-import { Condition, PageID } from "@media-quest/engine";
+import { Condition } from "@media-quest/engine";
 import { PagePrefix } from "../primitives/page-prefix";
 import { VarID } from "../primitives/varID";
 import { SchemaPrefix } from "../primitives/schema-prefix";
+import { PageID } from "../primitives/ID";
 
 const { createPagesAndVars_A_H } = U;
 
@@ -155,7 +156,7 @@ describe("Builder Rule", () => {
     expect(rule.conditionCount).toBe(2);
   });
 
-  test("Conditions have no operators available before variable is set.", () => {
+  test("Conditions have no operators available before sum-score is set.", () => {
     const c1 = rule.addCondition();
     expect(c1.operatorsSelectItems.length).toBe(0);
 

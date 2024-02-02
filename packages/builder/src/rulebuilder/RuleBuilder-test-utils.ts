@@ -1,15 +1,15 @@
 import { BuilderOption } from "../Builder-option";
-import { type BuilderVariable, QuestionVariable } from "./RuleVariable";
+import { type RuleVariable, RuleQuestionVariable } from "./RuleVariable";
 import type { BuilderRuleDto } from "./Builder-rule";
 import type { BuilderConditionGroupDto } from "./condition/Builder-condition-group";
 import type { BuilderConditionDto } from "./condition/Builder-condition";
 import type { BuilderOperator } from "./condition/Builder-operator";
 import type { ExcludeByPageAction, ExcludeByTagAction, JumpToPageAction } from "./RuleAction";
 import { ExcludeByPageIdSelectItem, ExcludeByTagSelectItem } from "./multi-select-item";
-import { PageID } from "@media-quest/engine";
-import { PagePrefix, PagePrefixValue } from "../primitives/page-prefix";
+import { PagePrefix } from "../primitives/page-prefix";
 import { VarID } from "../primitives/varID";
 import { SchemaPrefix } from "../primitives/schema-prefix";
+import { PageID } from "../primitives/ID";
 
 const idPxx = () => {
   const id = PageID.create();
@@ -72,8 +72,8 @@ export namespace RuleBuilderTestUtils {
     ] as const;
     return list;
   };
-  export const createRuleVariable = (varId: VarID, pageNumber: number): QuestionVariable =>
-    new QuestionVariable(varId, "Har du " + varId + "?", createOptions(), pageNumber);
+  export const createRuleVariable = (varId: VarID, pageNumber: number): RuleQuestionVariable =>
+    new RuleQuestionVariable(varId, "Har du " + varId + "?", createOptions(), pageNumber);
 
   /**
    *
@@ -117,7 +117,7 @@ export namespace RuleBuilderTestUtils {
     return { list, items, pageIds, pageIdList };
   };
 
-  export const createConditionDto = (variable: BuilderVariable): BuilderConditionDto => {
+  export const createConditionDto = (variable: RuleVariable): BuilderConditionDto => {
     const operator: BuilderOperator = Math.random() > 0 ? "equal" : "notEqual";
     const opt = variable.options[0];
     return {
@@ -129,7 +129,9 @@ export namespace RuleBuilderTestUtils {
     };
   };
 
-  export const createConditionGroupDto = (conditions: BuilderConditionDto[]): BuilderConditionGroupDto => {
+  export const createConditionGroupDto = (
+    conditions: BuilderConditionDto[],
+  ): BuilderConditionGroupDto => {
     return {
       kind: "condition-group",
       conditions,
@@ -138,7 +140,9 @@ export namespace RuleBuilderTestUtils {
     };
   };
 
-  export const createBuilderRuleDto = (schemaPrefix: SchemaPrefix): ReadonlyArray<BuilderRuleDto> => {
+  export const createBuilderRuleDto = (
+    schemaPrefix: SchemaPrefix,
+  ): ReadonlyArray<BuilderRuleDto> => {
     const v = createPagesAndVars_A_H(schemaPrefix);
     const condition0 = createConditionDto(v.items.a);
     const condition1 = createConditionDto(v.items.b);

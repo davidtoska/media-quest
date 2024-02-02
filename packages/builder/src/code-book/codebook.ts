@@ -1,37 +1,37 @@
-import { BuilderPageDto } from "./Builder-page";
-import { BuilderSchemaDto } from "./Builder-schema";
-import { PageVariable, PredefinedVariable } from "./mq-variable";
+import { BuilderPageDto } from "../Builder-page";
+import { BuilderSchemaDto } from "../Builder-schema";
+import { CodeBookQuestionVariable, CodebookPredefinedVariable } from "./codebook-variable";
 
 export interface Codebook {
-  readonly predefinedVariables: ReadonlyArray<PredefinedVariable>;
-  readonly pageVariables: ReadonlyArray<PageVariable>;
+  readonly predefinedVariables: ReadonlyArray<CodebookPredefinedVariable>;
+  readonly pageVariables: ReadonlyArray<CodeBookQuestionVariable>;
 }
 
 const fromPage = (
   page: BuilderPageDto,
   pagePosition: number,
   modulePrefix: string,
-): PageVariable[] => {
-  const variables: PageVariable[] = [];
+): CodeBookQuestionVariable[] => {
+  const variables: CodeBookQuestionVariable[] = [];
 
   if (page._type !== "question") {
     // TODO Implement form field variables
     return [];
   }
 
-  const options: PageVariable["options"] = page.defaultQuestion.options.map((o) => {
+  const options: CodeBookQuestionVariable["options"] = page.defaultQuestion.options.map((o) => {
     return { value: o.value, label: o.label };
   });
 
-  const variable: PageVariable = {
-    kind: "numeric-variable",
+  const variable: CodeBookQuestionVariable = {
+    kind: "codebook-question-variable",
     label: page.mainText.text,
+    pageId: page.id,
+    pagePrefix: page.prefix,
     options,
     modulePrefix,
-    origin: "question",
-    pageId: page.id,
     pagePosition,
-    pagePrefix: page.prefix,
+    questionPrefix: "",
     varId: modulePrefix + "_" + page.prefix,
   };
 
@@ -48,8 +48,8 @@ const fromPage = (
 const getPageVariablesFromPages = (
   pages: BuilderPageDto[],
   modulePrefix: string,
-): PageVariable[] => {
-  const variables: PageVariable[] = [];
+): CodeBookQuestionVariable[] => {
+  const variables: CodeBookQuestionVariable[] = [];
   pages.forEach((page, index) => {
     const pageVariables = fromPage(page, index, modulePrefix);
     variables.push(...pageVariables);
@@ -61,7 +61,7 @@ const fromSchema = (schema: BuilderSchemaDto): Codebook => {
   const modulePrefix = schema.prefix;
   const pageVariables = getPageVariablesFromPages(schema.pages, modulePrefix);
   const vs = schema.predefinedVariables;
-  const predefinedVariables: PredefinedVariable[] = vs ? [...vs] : [];
+  const predefinedVariables: CodebookPredefinedVariable[] = vs ? [...vs] : [];
   return { pageVariables, predefinedVariables };
 };
 

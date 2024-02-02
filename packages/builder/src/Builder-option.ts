@@ -1,10 +1,11 @@
-import { BuilderObjectId, BuilderObject } from "./BuilderObject";
+import { BuilderObject } from "./BuilderObject";
 import type { BuilderOptionTheme } from "./theme/IDefaultTheme";
 import { DefaultTheme } from "./theme/IDefaultTheme";
 import { AudioFile } from "./media-files";
+import { OptionID } from "./primitives/ID";
 
 export interface BuilderOptionDto {
-  readonly id: BuilderObjectId.QuestionOptionID;
+  readonly id: OptionID;
   readonly value: number;
   readonly label: string;
   readonly labelAudio?: AudioFile;
@@ -12,9 +13,7 @@ export interface BuilderOptionDto {
 
 export class BuilderOption extends BuilderObject<"builder-question-option", BuilderOptionDto> {
   readonly objectType = "builder-question-option";
-  theme: BuilderOptionTheme = DefaultTheme.responseButtons;
-
-  id: BuilderObjectId.QuestionOptionID;
+  id: OptionID;
   value: number;
   label = "";
   private _labelAudioFile: AudioFile | false = false;
@@ -33,7 +32,7 @@ export class BuilderOption extends BuilderObject<"builder-question-option", Buil
     // this.theme = dto.theme;
   }
   public static create(value: number, label: string) {
-    const id = BuilderObjectId.questionOptionId();
+    const id = OptionID.create();
     const dto: BuilderOptionDto = {
       id,
       value,
@@ -58,9 +57,8 @@ export class BuilderOption extends BuilderObject<"builder-question-option", Buil
   }
 
   clone(): BuilderOptionDto {
-    const cloneId = BuilderObjectId.questionOptionId();
     const dto = this.toJson();
-    const cloneDto: BuilderOptionDto = { ...dto, id: cloneId };
+    const cloneDto: BuilderOptionDto = { ...dto, id: OptionID.create() };
     return cloneDto;
   }
 }
