@@ -77,7 +77,6 @@ const schemaDto1: BuilderSchemaDto = {
         // { tag: 'can_read', description: 'The patient can read' },
         // { tag: 'is grown up', description: 'Is grownUp.' }
       ],
-      questions: [],
       autoplaySequence: [],
     },
     {
@@ -103,31 +102,6 @@ const schemaDto1: BuilderSchemaDto = {
         text: "q1",
         options: [],
       },
-      questions: [
-        {
-          id: QuestionID.create(),
-          prefix: "one-prefix",
-          _type: "select-one",
-          text: "q1-text",
-          options: [
-            {
-              id: "opt-nei" as OptionID,
-              value: 0,
-              label: "Nei",
-            },
-            {
-              id: "opt-ja" as OptionID,
-              value: 1,
-              label: "Ja",
-            },
-            {
-              id: "opt-vet-ikke" as OptionID,
-              value: 9,
-              label: "Vet ikke",
-            },
-          ],
-        },
-      ],
       autoplaySequence: [],
     },
   ],

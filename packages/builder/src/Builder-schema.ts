@@ -2,10 +2,10 @@ import type { BuilderPageDto, BuilderPageType } from "./Builder-page";
 import { BuilderPage } from "./Builder-page";
 import type {
   BuilderRuleDto,
-  RuleCustomVariable,
   ExcludeByPageAction,
   ExcludeByTagAction,
   JumpToPageAction,
+  RuleCustomVariable,
 } from "./rulebuilder";
 import { BuilderRule, RuleInput } from "./rulebuilder";
 import type { RuleQuestionVariable } from "./rulebuilder/RuleVariable";
@@ -23,7 +23,7 @@ import { CompilerOption, CompilerOutput } from "./builder-compiler";
 
 import { SumScoreVariableDto } from "./sum-score/sum-score-variable";
 import { SchemaID } from "./primitives/ID";
-import { SumScoreMemberShip, SumScoreMembershipDto } from "./sum-score/sum-score-membership";
+import { SumScoreMembershipDto } from "./sum-score/sum-score-membership";
 
 const U = DUtil;
 

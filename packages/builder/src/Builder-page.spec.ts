@@ -16,7 +16,6 @@ const deleteIdsFromPage = (page: BuilderPageDto) => {
     });
   };
   U.deleteProp(page, "id");
-  page.questions.forEach(deleteIdsFromQuestion);
   deleteIdsFromQuestion(page.defaultQuestion);
   return page;
 };
@@ -64,7 +63,6 @@ const questionPageDto: BuilderPageDto = {
   // id: "p1" as BuilderObjectId.PageID,
   id: PageID.create(),
   prefix: PagePrefix.fromStringOrThrow("pxx"),
-  questions: [],
 };
 
 const multiQuestionPageDto: BuilderPageDto = {
@@ -92,56 +90,6 @@ const multiQuestionPageDto: BuilderPageDto = {
 
   id: PageID.create(),
   prefix: PagePrefix.fromStringOrThrow("pxx"),
-  questions: [
-    {
-      id: QuestionID.dummy.a,
-      prefix: "a",
-      text: "har du..",
-      _type: "select-one",
-      // options: []
-      options: [
-        {
-          id: "q3-opt1" as OptionID,
-          value: 0,
-          label: "Nei",
-        },
-        {
-          id: "q3-opt2" as OptionID,
-          value: 1,
-          label: "Ja",
-        },
-        {
-          id: "q3-opt3" as OptionID,
-          value: 9,
-          label: "Vet ikke",
-        },
-      ],
-    },
-    {
-      id: QuestionID.create(),
-      prefix: "a",
-      text: "har du..",
-      _type: "select-one",
-      // options: []
-      options: [
-        {
-          id: OptionID.dummy.a,
-          value: 0,
-          label: "Nei",
-        },
-        {
-          id: OptionID.dummy.b,
-          value: 1,
-          label: "Ja",
-        },
-        {
-          id: OptionID.dummy.c,
-          value: 9,
-          label: "Vet ikke",
-        },
-      ],
-    },
-  ],
 };
 
 let page = BuilderPage.create("info-page", PagePrefix.fromStringOrThrow("a"));
@@ -159,39 +107,6 @@ describe("Builder Page", () => {
     const asJson2 = page2.toJson();
     expect(multiQuestionPageDto).toStrictEqual(asJson2);
     // expect(page1.prefix).toBe(pageDto.prefix);
-  });
-  test("Can change question type", () => {
-    expect(page.questions.length).toBe(0);
-    page.addQuestion("select-one");
-    page.addQuestion("select-one");
-    expect(page.questions.length).toBe(2);
-    page.pageType = "question";
-    expect(page.questions.length).toBe(0);
-  });
-  test("Can add and delete questions", () => {
-    page.pageType = "multi-select";
-    expect(page.questions.length).toBe(1);
-    const q1 = page.addQuestion("select-one");
-    const q2 = page.addQuestion("select-one");
-    expect(page.questions.length).toBe(3);
-    page.deleteQuestion(q1);
-    expect(page.questions.length).toBe(2);
-    page.deleteQuestion(q2);
-    expect(page.questions.length).toBe(1);
-    // page.pageType = 'question';
-    // expect(page.questions.length).toBe(0);
-  });
-  test("Can add question at concrete index. ", () => {
-    page.pageType = "multi-select";
-    expect(page.questions.length).toBe(1);
-    const q1 = page.addQuestion("select-one", 0);
-    expect(page.questions[0].id).toBe(q1.id);
-    const q2 = page.addQuestion("select-one", 1);
-    expect(page.questions[1].id).toBe(q2.id);
-    expect(page.questions.length).toBe(3);
-    const q3 = page.addQuestion("email", 2);
-    expect(page.questions[2]).toBe(q3);
-    expect(q3.type).toBe("email");
   });
   test("Can clone a page and everything except id is equal ", () => {
     const page1 = BuilderPage.create("info-page", PagePrefix.fromStringOrThrow("as"));
@@ -220,85 +135,12 @@ describe("Builder Page", () => {
     const testDtoIds = (dto: BuilderPageDto) => {
       const instance = BuilderPage.fromJson(dto);
       const clone = BuilderPage.fromJson(instance.clone());
-      const p2QuestionIds = instance.questions.map((q) => q.id);
-      const cloneQuestionIds = clone.questions.map((q) => q.id);
 
-      // expect(instance.id).to.not.eq(clone.id);
-      // expect(instance.defaultQuestion.id).to.not.eq(clone.defaultQuestion.id);
-      expect(p2QuestionIds.length).toBe(cloneQuestionIds.length);
-      p2QuestionIds.forEach((id, index) => {
-        expect(id).not.toBe(cloneQuestionIds[index]);
-      });
-
-      instance.questions.forEach((q, qIndex) => {
-        const cloneQ = clone.questions[qIndex];
-        expect(cloneQ).toBeDefined();
-        expect(q.id).not.toBe(cloneQ.id);
-        q.options.forEach((op, opIndex) => {
-          const cloneOp = cloneQ.options[opIndex];
-          expect(cloneOp).toBeDefined();
-          expect(op.id).not.toBe(cloneOp.id);
-        });
-      });
-
-      // expect(p)
+      testDtoIds(questionPageDto);
+      testDtoIds(multiQuestionPageDto);
     };
-    testDtoIds(questionPageDto);
-    testDtoIds(multiQuestionPageDto);
-  });
-  test("Can insert a new Question at index", () => {
-    const page1 = BuilderPage.create("form", pxx);
-    const q1 = page1.addQuestion("select-one");
-    const q2 = page1.addQuestion("select-many");
-    expect(page1.questions.length).toBe(3);
-    expect(page1.questions[1]).toBe(q1);
-    const q1Clone = BuilderQuestion.fromJson(q1.clone());
-    const result10 = page1.insertQuestion(q1Clone, 10);
-    expect(result10).toBeFalsy();
-    const result1 = page1.insertQuestion(q1Clone, 1);
-    expect(result1).toBeTruthy();
-    expect(page1.questions[1]).toBe(q1Clone);
-  });
-  test("Can not  insert a duplicate question", () => {
-    const page1 = BuilderPage.create("form", pxx);
-    const q1 = page1.addQuestion("select-one");
-    expect(page1.questions.length).toBe(2);
-    expect(page1.questions[1]).toBe(q1);
-    const result1 = page1.insertQuestion(q1, 0);
-    expect(page1.questions.length).toBe(2);
-    expect(result1).toBeFalsy();
   });
 
-  test("Can move a question", () => {
-    const page1 = BuilderPage.create("form", pxx);
-    const q1 = page1.addQuestion("select-many");
-    const q2 = page1.addQuestion("select-one");
-    const q3 = page1.addQuestion("select-one");
-    const q4 = page1.addQuestion("select-one");
-    expect(page1.questions.length).toBe(5);
-    const m1 = page1.moveQuestion(q1, 0);
-    expect(page1.questions.length).toBe(5);
-    expect(page1.questions[0]).toBe(q1);
-    expect(m1).toBeTruthy();
-    const illegalMove = page1.moveQuestion(q2, -1);
-    expect(illegalMove).toBeFalsy();
-    expect(page1.questions.length).toBe(5);
-    const m3 = page1.moveQuestion(q4, 1);
-    expect(m3).toBe(true);
-    expect(page1.questions[1]).toBe(q4);
-  });
-
-  test("Can not move a question that is not in questions-array", () => {
-    const prefix = PagePrefix.fromStringOrThrow("as1");
-    const page1 = BuilderPage.create("form", prefix);
-    const q1 = page1.addQuestion("select-many");
-    const q2 = page1.addQuestion("select-one");
-    expect(page1.questions.length).toBe(3);
-    const newQuestion = BuilderQuestion.create("select-one");
-    const m1 = page1.moveQuestion(newQuestion, 0);
-    expect(page1.questions.length).toBe(3);
-    expect(m1).toBe(false);
-  });
   test("Can get all rule-variables.", () => {
     const prefix = PagePrefix.fromStringOrThrow("as1");
     const page = BuilderPage.create("question", prefix);
