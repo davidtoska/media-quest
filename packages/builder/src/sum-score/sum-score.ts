@@ -31,10 +31,10 @@ export interface SumScore {
 
 const calculate = (
   sumScoreVariable: SumScoreVariableDto,
+  basedOnVariables: Array<{ varId: string; weight: number }>,
   answers: Array<SumScoreAnswer>,
 ): SumScore => {
   const legalValues: Array<number> = [...ALLOWED_VALUES];
-
   // CALCULATE THESE!!
   let includedAnswerCount = 0;
   let skippedBy9Count = 0;
@@ -44,7 +44,7 @@ const calculate = (
   const basedOn: SumScore["basedOn"] = [];
   const useAvg = sumScoreVariable.useAvg;
 
-  const basedOnEntries: BasedOnEntry[] = sumScoreVariable.basedOn.map((scv) => {
+  const basedOnEntries: BasedOnEntry[] = basedOnVariables.map((scv) => {
     const maybeAnswer = answers.find((v) => v.varId === scv.varId);
     let result: BasedOnEntry = { kind: "missing", varId: scv.varId };
     if (!maybeAnswer) {
@@ -111,7 +111,7 @@ const createVariable = (): SumScoreVariableDto => {
     name: "",
     useAvg: true,
     description: "",
-    basedOn: [],
+    // basedOn: [],
   };
 };
 export const SumScore = {

@@ -1,7 +1,7 @@
 import { AbstractThemeCompiler } from "./AbstractThemeCompiler";
 import type { BuilderSchemaDto } from "../Builder-schema";
 import { BuilderSchema } from "../Builder-schema";
-import type { BuilderPageDto } from "../Builder-page";
+import type { BuilderPageDto } from "../page/Builder-page";
 import { ThemeUtils } from "./theme-utils";
 import { DefaultTheme, type IDefaultTheme } from "./IDefaultTheme";
 import type { BuilderMainImageDto } from "../BuilderMainImageDto";

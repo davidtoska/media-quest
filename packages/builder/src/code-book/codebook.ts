@@ -1,4 +1,4 @@
-import { BuilderPageDto } from "../Builder-page";
+import { BuilderPageDto } from "../page/Builder-page";
 import { BuilderSchemaDto } from "../Builder-schema";
 import { CodeBookQuestionVariable, CodebookPredefinedVariable } from "./codebook-variable";
 

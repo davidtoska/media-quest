@@ -5,7 +5,8 @@
     "moduleResolution": "node",
     "declaration": true,
     "strict": true,
-  //  "incremental": true,
+    "stripInternal": true,
+    //  "incremental": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -13,7 +14,7 @@
     "strictPropertyInitialization": true,
     "strictNullChecks": true,
     "outDir": "./dist",
-   "composite": true
+    "composite": true
   },
   "include": ["src"]
 }

@@ -1,11 +1,10 @@
 import { BuilderPage } from "./Builder-page";
 import type { BuilderPageDto } from "./Builder-page";
-import type { BuilderQuestionDto } from "./Builder-question";
-import { BuilderQuestion } from "./Builder-question";
+import type { BuilderQuestionDto } from "../Builder-question";
 import { DUtil } from "@media-quest/engine";
-import { PagePrefix } from "./primitives/page-prefix";
-import { SchemaPrefix } from "./primitives/schema-prefix";
-import { OptionID, PageID, QuestionID } from "./primitives/ID";
+import { PagePrefix } from "../primitives/page-prefix";
+import { SchemaPrefix } from "../primitives/schema-prefix";
+import { OptionID, PageID, QuestionID } from "../primitives/ID";
 
 const U = DUtil;
 const deleteIdsFromPage = (page: BuilderPageDto) => {
@@ -66,7 +65,7 @@ const questionPageDto: BuilderPageDto = {
 };
 
 const multiQuestionPageDto: BuilderPageDto = {
-  _type: "multi-select",
+  _type: "question",
   mainText: {
     text: "Velkommen til denne undersøkelsen.",
     audioFile: false,

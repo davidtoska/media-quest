@@ -1,21 +1,21 @@
-import type { BuilderQuestionDto, BuilderQuestionType } from "./Builder-question";
-import { BuilderQuestion } from "./Builder-question";
-import { BuilderObject } from "./BuilderObject";
-import type { BuilderOptionDto } from "./Builder-option";
-import { BuilderOption } from "./Builder-option";
-import type { BuilderMainVideoDto } from "./BuilderMainVideoDto";
-import type { BuilderMainImageDto } from "./BuilderMainImageDto";
-import type { BuilderMainTextDto } from "./BuilderMainText";
-import { BuilderMainText } from "./BuilderMainText";
-import { RuleVariableOption, RuleQuestionVariable } from "./rulebuilder";
+import type { BuilderQuestionDto, BuilderQuestionType } from "../Builder-question";
+import { BuilderQuestion } from "../Builder-question";
+import { BuilderObject } from "../BuilderObject";
+import type { BuilderOptionDto } from "../Builder-option";
+import { BuilderOption } from "../Builder-option";
+import type { BuilderMainVideoDto } from "../BuilderMainVideoDto";
+import type { BuilderMainImageDto } from "../BuilderMainImageDto";
+import type { BuilderMainTextDto } from "../BuilderMainText";
+import { BuilderMainText } from "../BuilderMainText";
+import { RuleVariableOption, RuleQuestionVariable } from "../rulebuilder";
 import { DUtil } from "@media-quest/engine";
-import { PagePrefix, PagePrefixValue } from "./primitives/page-prefix";
-import { VarID } from "./primitives/varID";
-import { SchemaPrefix } from "./primitives/schema-prefix";
-import { PageID } from "./primitives/ID";
+import { PagePrefix, PagePrefixValue } from "../primitives/page-prefix";
+import { VarID } from "../primitives/varID";
+import { SchemaPrefix } from "../primitives/schema-prefix";
+import { PageID, SumScoreVariableID } from "../primitives/ID";
 
 const U = DUtil;
-export type BuilderPageType = "info-page" | "question" | "multi-select" | "form";
+export type BuilderPageType = "info-page" | "question";
 
 export interface BuilderPageDto {
   readonly id: PageID;
@@ -25,6 +25,7 @@ export interface BuilderPageDto {
   nextButton: BuilderOptionDto;
   defaultQuestion: BuilderQuestionDto;
   mainMedia?: BuilderMainImageDto | BuilderMainVideoDto;
+  sumScores?: Array<{ sumScoreVariableId: SumScoreVariableID }>;
   autoplaySequence: Array<string>;
   tags: ReadonlyArray<string>;
 }
