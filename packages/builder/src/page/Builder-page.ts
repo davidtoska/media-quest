@@ -13,6 +13,7 @@ import { PagePrefix, PagePrefixValue } from "../primitives/page-prefix";
 import { VarID } from "../primitives/varID";
 import { SchemaPrefix } from "../primitives/schema-prefix";
 import { PageID, SumScoreVariableID } from "../primitives/ID";
+import { SumScoreVariable } from "../sum-score/sum-score-variable";
 
 const U = DUtil;
 export type BuilderPageType = "info-page" | "question";
@@ -25,7 +26,7 @@ export interface BuilderPageDto {
   nextButton: BuilderOptionDto;
   defaultQuestion: BuilderQuestionDto;
   mainMedia?: BuilderMainImageDto | BuilderMainVideoDto;
-  sumScores?: Array<{ sumScoreVariableId: SumScoreVariableID }>;
+  includedInSumScores: Array<{ sumScoreVariableId: SumScoreVariableID; weight: number }>;
   autoplaySequence: Array<string>;
   tags: ReadonlyArray<string>;
 }
@@ -37,6 +38,16 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
   private _prefix: PagePrefix;
   private readonly _tags: Set<string>;
   private _backgroundColor = "#FFFFFF";
+  private _includedInSumScores: Map<
+    SumScoreVariableID,
+    {
+      sumScoreVariableId: SumScoreVariableID;
+      weight: number;
+      name: string;
+      description: string;
+    }
+  > = new Map();
+
   mainMedia: BuilderMainVideoDto | BuilderMainImageDto | false = false;
   defaultQuestion: BuilderQuestion;
   mainText: BuilderMainText;
@@ -61,7 +72,7 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
       nextButton: nextButtonDto,
       mainText: mainTextDto,
       prefix: _prefix,
-      // questions: [],
+      includedInSumScores: [],
       tags: [],
     };
 
@@ -83,6 +94,15 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     this.nextButton = BuilderOption.fromJson(dto.nextButton);
     this.defaultQuestion = BuilderQuestion.fromJson(dto.defaultQuestion);
     const tagList: string[] = Array.isArray(dto.tags) ? dto.tags : [];
+    const sumScores = Array.isArray(dto.includedInSumScores) ? dto.includedInSumScores : [];
+    sumScores.forEach((item) => {
+      this._includedInSumScores.set(item.sumScoreVariableId, {
+        sumScoreVariableId: item.sumScoreVariableId,
+        weight: item.weight,
+        name: "",
+        description: "",
+      });
+    });
     this._tags = new Set(tagList);
     if (dto.mainMedia) {
       this.mainMedia = dto.mainMedia;
@@ -98,6 +118,10 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
 
   set pageType(value: BuilderPageType) {
     this._pageType = value;
+  }
+
+  get includedInSumScores() {
+    return [...this._includedInSumScores.values()];
   }
 
   getQuestionVariables(
@@ -136,10 +160,36 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     this._prefix.value = value;
   }
 
+  sumScoreVariableSet(sumScoreVariable: SumScoreVariable, weight: number) {
+    const { id, name, description } = sumScoreVariable;
+
+    this._includedInSumScores.set(sumScoreVariable.id, {
+      sumScoreVariableId: id,
+      weight,
+      name,
+      description,
+    });
+
+    return true;
+  }
+
+  sumScoreVariableUpdateData(variables: ReadonlyArray<SumScoreVariable>) {
+    variables.forEach((v) => {
+      const sumScoreEntry = this._includedInSumScores.get(v.id);
+      if (sumScoreEntry) {
+        this.sumScoreVariableSet(v, sumScoreEntry.weight);
+      }
+    });
+  }
+
   toJson(): BuilderPageDto {
     const mainText = this.mainText.toJson();
     const nextButton = this.nextButton.toJson();
     const mainMedia = this.mainMedia;
+    const includedInSumScores = this.includedInSumScores.map(({ sumScoreVariableId, weight }) => ({
+      sumScoreVariableId,
+      weight,
+    }));
     const dto: BuilderPageDto = {
       _type: this.pageType,
       mainText,
@@ -147,6 +197,7 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
       nextButton,
       id: this.id,
       tags: [...this.tags],
+      includedInSumScores,
       prefix: this._prefix.value,
       defaultQuestion: this.defaultQuestion.toJson(),
     };
@@ -179,5 +230,9 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     if (typeof color === "string") {
       this._backgroundColor = color;
     }
+  }
+
+  sumScoreVariableDelete(sumScoreVariableID: SumScoreVariableID) {
+    this._includedInSumScores.delete(sumScoreVariableID);
   }
 }

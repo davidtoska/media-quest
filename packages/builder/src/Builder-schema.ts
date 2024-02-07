@@ -22,9 +22,10 @@ import { SchemaConfig } from "./schema-config";
 import { CompilerOption, CompilerOutput } from "./builder-compiler";
 
 import { SumScoreVariable, SumScoreVariableDto } from "./sum-score/sum-score-variable";
-import { SchemaID, SumScoreVariableID } from "./primitives/ID";
+import { PageID, SchemaID, SumScoreVariableID } from "./primitives/ID";
 import { SumScoreVariableCollection } from "./sum-score/sum-score-variable-collection";
 import { TagCollection } from "./tag/Tag-Collection";
+import { BuilderPageCollection } from "./page/Builder-page-collection";
 
 const U = DUtil;
 
@@ -34,7 +35,7 @@ export interface BuilderSchemaDto {
   readonly mainImage: ImageFile | false;
   readonly backgroundColor: string;
   readonly name: string;
-  readonly pages: BuilderPageDto[];
+  readonly pages: ReadonlyArray<BuilderPageDto>;
   readonly baseHeight: number;
   readonly baseWidth: number;
   readonly predefinedVariables?: Array<CodebookPredefinedVariable>;
@@ -48,7 +49,7 @@ export class BuilderSchema {
   baseHeight = 1300;
   baseWidth = 1024;
   backgroundColor = "#000000";
-  private _pages: BuilderPage[] = [];
+  private readonly _pageCollection: BuilderPageCollection;
   mainImage: ImageFile | false = false;
   predefinedVariables: CodebookPredefinedVariable[] = [];
   private _rules: BuilderRule[] = [];
@@ -57,7 +58,7 @@ export class BuilderSchema {
     return [...this._rules];
   }
   get pages(): ReadonlyArray<BuilderPage> {
-    return [...this._pages];
+    return [...this._pageCollection];
   }
 
   get sumScoreVariables(): ReadonlyArray<SumScoreVariable> {
@@ -80,8 +81,8 @@ export class BuilderSchema {
   public static fromJson(dto: BuilderSchemaDto): BuilderSchema {
     const schemaPrefix = SchemaPrefix.castOrCreateRandom(dto.prefix);
     const schema = new BuilderSchema(dto.id, dto.name, schemaPrefix);
-    const pages = dto.pages.map(BuilderPage.fromJson);
     const sumScoreVariables = dto.sumScoreVariables ? [...dto.sumScoreVariables] : [];
+    const pagesDto = Array.isArray(dto.pages) ? dto.pages : [];
 
     // Init collections.
     schema._tagCollection.init(dto.tags);
@@ -90,7 +91,7 @@ export class BuilderSchema {
     schema.backgroundColor = dto.backgroundColor;
     schema.baseHeight = dto.baseHeight;
     schema.baseWidth = dto.baseWidth;
-    schema._pages = pages;
+    schema._pageCollection._init(pagesDto);
     schema.predefinedVariables = dto.predefinedVariables ?? [];
     schema.backgroundColor = dto.backgroundColor;
     schema.mainImage = dto.mainImage ?? false;
@@ -101,7 +102,7 @@ export class BuilderSchema {
   }
 
   toJson(): BuilderSchemaDto {
-    const pages = this._pages.map((p) => p.toJson());
+    const pages = this._pageCollection.toJson();
     const tags = this._tagCollection.toJson();
     const rules = this._rules.map((rule) => rule.toJson());
     const sumScoreVariables = this._sumScoreCollection.toJson();
@@ -128,36 +129,30 @@ export class BuilderSchema {
   ) {
     this.prefix = prefix;
     this._sumScoreCollection = SumScoreVariableCollection.create([]);
+    this._pageCollection = BuilderPageCollection.create([]);
     // this
   }
 
   addPage(type: BuilderPageType, atIndex = -1): BuilderPage {
-    const pagePrefix = PagePrefix.create();
-    const newPage = BuilderPage.create(type, pagePrefix.value);
-    if (atIndex >= 0 && atIndex < this._pages.length) {
-      this._pages.splice(atIndex, 0, newPage);
-    } else {
-      this._pages.push(newPage);
-    }
-    return newPage;
+    return this._pageCollection.add(type, atIndex);
   }
 
   sumScoreVariableCreate(options: { name: string; description: string; useAvg: boolean }) {
     // TODO VALIDATE.
     // this._sumVariables.push({ ...variable });
     const variable = this._sumScoreCollection.addNew(options);
+
     return variable;
   }
+  sumScoreVariableAddToPage(sumScoreVariable: SumScoreVariable, page: BuilderPage, weight: number) {
+    // this._pages.
+    return this._pageCollection.addSumScoreVariable(sumScoreVariable, page.id, weight);
+  }
 
-  sumScoreVariableUpdate(
-    id: SumScoreVariableID,
-    data: {
-      name?: string;
-      description?: string;
-      useAvg?: boolean;
-    },
-  ) {
-    this._sumScoreCollection._updateOne(id, data);
+  sumScoreVariableUpdate(id: SumScoreVariableID, data: Partial<SumScoreVariableDto>) {
+    const didUpdate = this._sumScoreCollection._updateOne(id, data);
+    this._pageCollection.updateAllData({ sumScoreVariables: this._sumScoreCollection.asArray() });
+    return didUpdate;
   }
 
   insertPage(page: BuilderPage, atIndex: number): boolean {
@@ -165,16 +160,7 @@ export class BuilderSchema {
   }
 
   private insertPageAtIndex(page: BuilderPage, atIndex: number) {
-    const isValidIndex = U.isInRange(0, this._pages.length - 1);
-    if (!isValidIndex(atIndex)) {
-      return false;
-    }
-    const exists = !!this._pages.find((p) => p.id === page.id);
-    if (exists) {
-      return false;
-    }
-    this._pages.splice(atIndex, 0, page);
-    return true;
+    return this._pageCollection.insertPage(page, atIndex);
   }
 
   addRule() {
@@ -200,25 +186,11 @@ export class BuilderSchema {
   }
 
   movePage(page: BuilderPage, toIndex: number): boolean {
-    const index = this._pages.indexOf(page);
-    if (index < 0) {
-      return false;
-    }
-    const isValidIndex = U.isInRange(0, this._pages.length - 1);
-    if (!isValidIndex(toIndex)) {
-      return false;
-    }
-    // console.log('Moving from :' + index + ' to: ' + toIndex);
-    this._pages.splice(index, 1);
-    this._pages.splice(toIndex, 0, page);
-    return true;
+    return this._pageCollection.movePage(page, toIndex);
   }
 
   deletePage(page: BuilderPage): boolean {
-    const filtered = this._pages.filter((p) => p !== page);
-    const didDelete = filtered.length === this._pages.length - 1;
-    this._pages = filtered;
-    return didDelete;
+    return this._pageCollection.deleteById(page.id);
   }
 
   reevaluateRules() {
@@ -234,7 +206,7 @@ export class BuilderSchema {
     const pageIdActions: ExcludeByPageAction[] = [];
     const tagActions: ExcludeByTagAction[] = this.tags.map((t) => {
       const tag = t.tagText;
-      const pageCount = this._pages.reduce((count, curr) => {
+      const pageCount = this._pageCollection.pages.reduce((count, curr) => {
         return curr.tags.includes(tag) ? count + 1 : count;
       }, 0);
       const excludeByTagDto: ExcludeByTagAction = {
@@ -248,7 +220,7 @@ export class BuilderSchema {
 
     const jumpActions: JumpToPageAction[] = [];
 
-    this._pages.forEach((page, index) => {
+    this._pageCollection.pages.forEach((page, index) => {
       const pageVariables = page.getQuestionVariables(this.prefix, index);
       qVars.push(...pageVariables);
       const mainText = page.mainText.text;
@@ -290,7 +262,7 @@ export class BuilderSchema {
     const builderSchema = BuilderSchema.fromJson(this.toJson());
 
     // Overriding the
-    builderSchema._pages.forEach((p) => {
+    builderSchema._pageCollection.pages.forEach((p) => {
       if (options.blockAutoplayQuestion) {
         p.mainText.autoplay = false;
       }
@@ -312,6 +284,10 @@ export class BuilderSchema {
   }
 
   sumScoreVariableDelete(id: SumScoreVariableID) {
-    return this._sumScoreCollection._deleteVariable(id);
+    const didDelete = this._sumScoreCollection._deleteVariable(id);
+    const sumScoreVariables = [...this._sumScoreCollection];
+    this._pageCollection.updateAllData({ sumScoreVariables });
+    this._pageCollection.sumScoreVariableDelete(id);
+    return didDelete;
   }
 }

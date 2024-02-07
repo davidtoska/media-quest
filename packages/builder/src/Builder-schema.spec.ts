@@ -35,6 +35,7 @@ const schemaDto1: BuilderSchemaDto = {
     {
       id: PageID.validateOrCreate("a".repeat(24)),
       _type: "info-page",
+      includedInSumScores: [],
       prefix: PagePrefix.fromStringOrThrow("p1"),
       mainText: {
         text: "hello from test",
@@ -84,6 +85,7 @@ const schemaDto1: BuilderSchemaDto = {
       _type: "question",
       prefix: PagePrefix.fromStringOrThrow("page2-prefix"),
       tags: [tag3.tag],
+      includedInSumScores: [],
       mainText: {
         text: "hello from test",
         autoplay: false,
@@ -317,5 +319,30 @@ describe("Builder schema", () => {
       description: "description for v1",
     });
     expect(s1.sumScoreVariables.length).toBe(1);
+    expect(s1.pages.length).toBe(1);
+    const success = s1.sumScoreVariableAddToPage(v1, p1, 1);
+    expect(success).toBe(true);
+    expect(p1.includedInSumScores.length).toBe(1);
+    const updateSuccess = s1.sumScoreVariableUpdate(v1.id, {
+      name: "updated_name",
+      description: "updated_description",
+      useAvg: !v1.useAvg,
+    });
+    expect(updateSuccess).toBe(true);
+    expect(p1.includedInSumScores[0].name).toBe("updated_name");
+    expect(p1.includedInSumScores[0].description).toBe("updated_description");
+  });
+
+  test("When a sum-score is deleted, then pages will delete from included in sum-scores.", () => {
+    const p1 = s1.addPage("question");
+    const v1 = s1.sumScoreVariableCreate({
+      name: "v1",
+      useAvg: true,
+      description: "description for v1",
+    });
+    const success = s1.sumScoreVariableAddToPage(v1, p1, 1);
+    expect(success).toBe(true);
+    s1.sumScoreVariableDelete(v1.id);
+    expect(p1.includedInSumScores.length).toBe(0);
   });
 });

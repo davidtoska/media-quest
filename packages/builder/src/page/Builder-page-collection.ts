@@ -1,6 +1,8 @@
 import { DUtil } from "@media-quest/engine";
 import { BuilderPage, BuilderPageDto } from "./Builder-page";
-import { PageID, PagePrefix } from "../public-api";
+import { PageID, PagePrefix, SumScoreVariableID } from "../public-api";
+import { SumScoreVariableCollection } from "../sum-score/sum-score-variable-collection";
+import { SumScoreVariable } from "../sum-score/sum-score-variable";
 
 const U = DUtil;
 export type BuilderPageType = "info-page" | "question";
@@ -13,7 +15,7 @@ export class BuilderPageCollection implements Iterable<BuilderPage> {
     page._all = pages.map((p) => BuilderPage.fromJson(p));
     return page;
   }
-  private constructor(pages: BuilderPageDto[]) {}
+  private constructor(initialPages: BuilderPageDto[]) {}
 
   /** @internal - used by Schema*/
   _init(pages: BuilderPageDto[]) {
@@ -39,6 +41,11 @@ export class BuilderPageCollection implements Iterable<BuilderPage> {
     } else {
       return false;
     }
+  }
+
+  private getPageById(pageId: PageID) {
+    const maybePage = this._all.find((p) => p.id === pageId);
+    return maybePage ?? false;
   }
   get size() {
     return this._all.length;
@@ -81,5 +88,26 @@ export class BuilderPageCollection implements Iterable<BuilderPage> {
     }
     this._all.splice(atIndex, 0, page);
     return true;
+  }
+
+  addSumScoreVariable(sumScoreVariable: SumScoreVariable, pageId: PageID, weight: number) {
+    const maybePage = this.getPageById(pageId);
+    if (!maybePage) return false;
+    maybePage.sumScoreVariableSet(sumScoreVariable, weight);
+
+    // maybePage.addSumScoreVariable(maybeVariable, weight);
+    return true;
+  }
+
+  updateAllData(context: { sumScoreVariables: ReadonlyArray<SumScoreVariable> }) {
+    this._all.forEach((p) => {
+      p.sumScoreVariableUpdateData(context.sumScoreVariables);
+    });
+  }
+
+  sumScoreVariableDelete(sumScoreVariableID: SumScoreVariableID) {
+    this._all.forEach((p) => {
+      p.sumScoreVariableDelete(sumScoreVariableID);
+    });
   }
 }

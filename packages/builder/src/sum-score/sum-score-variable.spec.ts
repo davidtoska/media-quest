@@ -1,7 +1,12 @@
 import { SumScore } from "./sum-score";
-import { SumScoreVariableDto } from "./sum-score-variable";
-import { SumScoreVariableID } from "../primitives/ID";
+import { SumScoreVariable, SumScoreVariableDto } from "./sum-score-variable";
+import { SchemaID, SumScoreVariableID } from "../primitives/ID";
 import { SumScoreAnswer } from "./sum-score-answer";
+import { BuilderSchema } from "../Builder-schema";
+import { SchemaPrefix } from "../primitives/schema-prefix";
+import { CodeBook } from "../code-book/codebook";
+import { BuilderPage } from "../page/Builder-page";
+import { VarID } from "../primitives/varID";
 
 const createAnswer = (value: number): SumScoreAnswer => {
   const varId = "v" + value;
@@ -154,5 +159,95 @@ describe("Sum score sum-score.", () => {
     expect(score.includedAnswerCount + score.missingAnswerCount + score.skippedBy9Count).toBe(
       basedOn.length,
     );
+  });
+  test("calculateAll", () => {
+    const prefix = SchemaPrefix.fromValueOrThrow("angst");
+    const schema = BuilderSchema.create(SchemaID.create(), "testing", prefix.value);
+    const p1 = schema.addPage("question");
+    const p2 = schema.addPage("question");
+    const p3 = schema.addPage("question");
+
+    // Setting question text
+    p1.mainText.text = "q1";
+    p2.mainText.text = "q2";
+    p3.mainText.text = "q3";
+    const v1 = schema.sumScoreVariableCreate({
+      name: "ss1",
+      description: "ss1-desc",
+      useAvg: true,
+    });
+    const v2 = schema.sumScoreVariableCreate({
+      name: "ss2",
+      description: "ss2-desc",
+      useAvg: true,
+    });
+    const v3 = schema.sumScoreVariableCreate({
+      name: "ss3",
+      description: "ss3-desc",
+      useAvg: true,
+    });
+    const success_v1_p1 = schema.sumScoreVariableAddToPage(v1, p1, 1);
+    const success_v1_p2 = schema.sumScoreVariableAddToPage(v1, p2, 1);
+    const success_v2_p2 = schema.sumScoreVariableAddToPage(v2, p2, 1);
+    const success_v3_p1 = schema.sumScoreVariableAddToPage(v3, p1, 1);
+    const success_v3_p2 = schema.sumScoreVariableAddToPage(v3, p2, 1);
+    const success_v3_p3 = schema.sumScoreVariableAddToPage(v3, p3, 1);
+    expect(success_v1_p1).toBeTruthy();
+    expect(success_v1_p2).toBeTruthy();
+    expect(success_v2_p2).toBeTruthy();
+    expect(success_v3_p1).toBeTruthy();
+    expect(success_v3_p2).toBeTruthy();
+    expect(success_v3_p3).toBeTruthy();
+
+    // const v = schema.
+    const p1_questionVariable = p1.getQuestionVariables(prefix, 0)[0];
+    const p2_questionVariable = p2.getQuestionVariables(prefix, 1)[0];
+    const p3_questionVariable = p3.getQuestionVariables(prefix, 2)[0];
+
+    const ans1: SumScoreAnswer = {
+      varId: p1_questionVariable.varId,
+      value: 1,
+      varLabel: p1_questionVariable.label,
+      valueLabel: "Ja",
+    };
+
+    const ans2: SumScoreAnswer = {
+      varId: p2_questionVariable.varId,
+      value: 2,
+      varLabel: p2_questionVariable.label,
+      valueLabel: "Ja",
+    };
+    const ans3: SumScoreAnswer = {
+      varId: p3_questionVariable.varId,
+      value: 3,
+      varLabel: p3_questionVariable.label,
+      valueLabel: "Ja",
+    };
+
+    const sumScores = SumScore.calculateAll(schema.toJson(), [ans1, ans2, ans3]);
+    const ss1 = sumScores[0] as SumScore;
+    const ss2 = sumScores[1] as SumScore;
+    const ss3 = sumScores[2] as SumScore;
+
+    expect(sumScores.length).toBe(3);
+    // BASED ON IS WORKING.
+    expect(ss1.basedOn.length).toBe(2);
+    expect(ss2.basedOn.length).toBe(1);
+    expect(ss3.basedOn.length).toBe(3);
+    const isBasedOn = (sumScore: SumScore, variableId: string, variableLabel: string) => {
+      const found = sumScore.basedOn.find((basedOnItem) => basedOnItem.varId === variableId);
+
+      expect(found?.varId).toBe(variableId);
+      expect(found?.varLabel).toBe(variableLabel);
+    };
+    isBasedOn(ss1, ans1.varId, p1_questionVariable.label);
+    isBasedOn(ss1, ans2.varId, p2_questionVariable.label);
+    isBasedOn(ss2, ans2.varId, p2_questionVariable.label);
+    isBasedOn(ss3, ans1.varId, p1_questionVariable.label);
+    isBasedOn(ss3, ans2.varId, p2_questionVariable.label);
+    isBasedOn(ss3, ans3.varId, p3_questionVariable.label);
+    expect(ss1.sumScore).toBe(3);
+    expect(ss2.sumScore).toBe(2);
+    expect(ss3.sumScore).toBe(6);
   });
 });

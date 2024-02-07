@@ -23,6 +23,7 @@ export class SumScoreVariable extends BuilderObject<
   private _name = "";
   private _description = "";
   private _error = "";
+  // private _basedOn = new Map<pageId: Page>()
 
   // private _basedOn: Array<{ varId: string }> = [];
   public static readonly create = (data: {

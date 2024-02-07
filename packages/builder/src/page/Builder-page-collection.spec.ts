@@ -3,11 +3,29 @@ import { PagePrefix } from "../primitives/page-prefix";
 import { BuilderPageCollection } from "./Builder-page-collection";
 import { OptionID, PageID, QuestionID } from "../primitives/ID";
 import { BuilderPage, BuilderPageDto } from "./Builder-page";
+import { SumScoreVariable } from "../sum-score/sum-score-variable";
+import { SumScoreVariableCollection } from "../sum-score/sum-score-variable-collection";
 
 const tag1: BuilderTagDto = BuilderTag.create("tag1", "This tag is defined in schemaDto1").toJson();
 
 const tag2: BuilderTagDto = BuilderTag.create("tag2", "This tag is defined in schemaDto1").toJson();
 const tag3: BuilderTagDto = BuilderTag.create("tag3", "This tag is defined in schemaDto1").toJson();
+
+const sumScoreVariable1 = SumScoreVariable.create({
+  name: "ss1",
+  useAvg: true,
+  description: "ss1 description",
+});
+const sumScoreVariable2 = SumScoreVariable.create({
+  name: "ss2",
+  useAvg: true,
+  description: "ss2 description",
+});
+const sumScoreVariable3 = SumScoreVariable.create({
+  name: "ss3",
+  useAvg: true,
+  description: "ss3 description",
+});
 
 const pages: BuilderPageDto[] = [
   {
@@ -20,6 +38,7 @@ const pages: BuilderPageDto[] = [
       autoplayDelay: 0,
       audioFile: false,
     },
+    includedInSumScores: [{ sumScoreVariableId: sumScoreVariable1.id, weight: 1 }],
 
     nextButton: {
       id: OptionID.create(),
@@ -62,6 +81,7 @@ const pages: BuilderPageDto[] = [
     _type: "question",
     prefix: PagePrefix.fromStringOrThrow("page2-prefix"),
     tags: [tag3.tag],
+    includedInSumScores: [],
     mainText: {
       text: "hello from test",
       autoplay: false,
@@ -84,8 +104,18 @@ const pages: BuilderPageDto[] = [
   },
 ];
 
+let sumScoreVariableCollection = SumScoreVariableCollection.create([
+  sumScoreVariable1,
+  sumScoreVariable2,
+  sumScoreVariable3,
+]);
 let empty = BuilderPageCollection.create([]);
 beforeEach(() => {
+  sumScoreVariableCollection = SumScoreVariableCollection.create([
+    sumScoreVariable1,
+    sumScoreVariable2,
+    sumScoreVariable3,
+  ]);
   empty = BuilderPageCollection.create([]);
 });
 
@@ -111,12 +141,14 @@ describe("Builder page collection", () => {
     const result3 = empty.deleteById(PageID.create());
     expect(result3).toBe(false);
   });
+
   test("fromJson === toJson", () => {
     const col = BuilderPageCollection.create(pages);
     const json = col.toJson();
     expect(pages).toStrictEqual(json);
   });
   //
+
   test("Can add page at concrete index", () => {
     const p1 = empty.add("question");
     expect(p1.pageType).toBe("question");

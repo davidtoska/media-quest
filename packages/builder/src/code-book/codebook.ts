@@ -1,6 +1,7 @@
 import { BuilderPageDto } from "../page/Builder-page";
 import { BuilderSchemaDto } from "../Builder-schema";
 import { CodeBookQuestionVariable, CodebookPredefinedVariable } from "./codebook-variable";
+import { SumScoreVariableDto } from "../sum-score/sum-score-variable";
 
 export interface Codebook {
   readonly predefinedVariables: ReadonlyArray<CodebookPredefinedVariable>;
@@ -9,6 +10,7 @@ export interface Codebook {
 
 const fromPage = (
   page: BuilderPageDto,
+  sumScoreVariables: ReadonlyArray<SumScoreVariableDto>,
   pagePosition: number,
   modulePrefix: string,
 ): CodeBookQuestionVariable[] => {
@@ -23,6 +25,10 @@ const fromPage = (
     return { value: o.value, label: o.label };
   });
 
+  const varId = modulePrefix + "_" + page.prefix;
+
+  const includedInSumScores = page.includedInSumScores.filter((a) => true);
+
   const variable: CodeBookQuestionVariable = {
     kind: "codebook-question-variable",
     label: page.mainText.text,
@@ -31,8 +37,8 @@ const fromPage = (
     options,
     modulePrefix,
     pagePosition,
-    questionPrefix: "",
-    varId: modulePrefix + "_" + page.prefix,
+    varId,
+    includedInSumScores: [],
   };
 
   variables.push(variable);
@@ -43,15 +49,17 @@ const fromPage = (
 /**
  * Converts a list of pages into a list of question-variables
  * @param pages
+ * @param sumScoreVariables
  * @param modulePrefix
  */
 const getPageVariablesFromPages = (
-  pages: BuilderPageDto[],
+  pages: ReadonlyArray<BuilderPageDto>,
+  sumScoreVariables: ReadonlyArray<SumScoreVariableDto>,
   modulePrefix: string,
 ): CodeBookQuestionVariable[] => {
   const variables: CodeBookQuestionVariable[] = [];
   pages.forEach((page, index) => {
-    const pageVariables = fromPage(page, index, modulePrefix);
+    const pageVariables = fromPage(page, sumScoreVariables, index, modulePrefix);
     variables.push(...pageVariables);
   });
   return variables;
@@ -59,7 +67,8 @@ const getPageVariablesFromPages = (
 
 const fromSchema = (schema: BuilderSchemaDto): Codebook => {
   const modulePrefix = schema.prefix;
-  const pageVariables = getPageVariablesFromPages(schema.pages, modulePrefix);
+  const sumScoreVariables = schema.sumScoreVariables ?? [];
+  const pageVariables = getPageVariablesFromPages(schema.pages, sumScoreVariables, modulePrefix);
   const vs = schema.predefinedVariables;
   const predefinedVariables: CodebookPredefinedVariable[] = vs ? [...vs] : [];
   return { pageVariables, predefinedVariables };

@@ -9,6 +9,10 @@ export class SumScoreVariableCollection implements Iterable<SumScoreVariable> {
     return list[Symbol.iterator]();
   }
 
+  asArray(): ReadonlyArray<SumScoreVariable> {
+    return [...this._all];
+  }
+
   public static readonly create = (
     variables?: SumScoreVariableDto[],
   ): SumScoreVariableCollection => {

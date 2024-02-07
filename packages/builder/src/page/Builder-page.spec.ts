@@ -23,6 +23,7 @@ const pxx = PagePrefix.fromStringOrThrow("pxx");
 const questionPageDto: BuilderPageDto = {
   _type: "question",
   autoplaySequence: [],
+  includedInSumScores: [],
   mainText: {
     text: "Velkommen til denne undersøkelsen.",
     audioFile: false,
@@ -66,6 +67,7 @@ const questionPageDto: BuilderPageDto = {
 
 const multiQuestionPageDto: BuilderPageDto = {
   _type: "question",
+  includedInSumScores: [],
   mainText: {
     text: "Velkommen til denne undersøkelsen.",
     audioFile: false,
