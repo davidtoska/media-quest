@@ -10,7 +10,10 @@
     "forceConsistentCasingInFileNames": true,
     "rootDir": "./src",
     "stripInternal": true,
-    "composite": true,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true,
     "outDir": "./dist"
   },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

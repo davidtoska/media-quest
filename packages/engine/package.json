@@ -1,12 +1,26 @@
 {
   "name": "@media-quest/engine",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "Rendering engine for media-quest schemas.",
-  "main": "src/public-api.ts",
+  "main": "dist/public-api.js",
+  "types": "dist/public-api.d.ts",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && tsup src/public-api.ts --sourcemap inline --format cjs,esm --dts",
+    "build:old": "npm run clean && tsup src/public-api.ts --sourcemap inline --format cjs,esm --dts",
+    "build": "tsup",
     "tsc:check:engine": "tsc --watch --noEmit"
+  },
+  "tsup": {
+    "entry": [
+      "src/public-api.ts"
+    ],
+    "splitting": false,
+    "sourcemap": true,
+    "clean": true,
+    "format": [
+      "cjs"
+    ],
+    "dts": true
   }
 }

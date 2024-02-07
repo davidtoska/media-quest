@@ -50,7 +50,7 @@ export class SumScoreVariableCollection implements Iterable<SumScoreVariable> {
   }
 
   /**
-   * @internal
+   *
    */
   _deleteVariable(id: SumScoreVariableID) {
     const initialSize = this._all.length;
