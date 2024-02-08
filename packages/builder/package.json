@@ -6,10 +6,10 @@
   "types": "dist/public-api.d.js",
   "license": "MIT",
   "scripts": {
-    "tsc:check:builder": "tsc --watch --noEmit",
     "clean": "rimraf dist",
-    "buildXXX": "npm run clean && tsup src/public-api.ts --sourcemap inline --format cjs --dts",
-    "build2": "tsup"
+    "prepublishOnly": "npm run build",
+    "build": "tsup",
+    "tsc:check:builder": "tsc --watch --noEmit"
   },
   "tsup": {
     "entry": [
