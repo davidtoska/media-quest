@@ -98,6 +98,8 @@ export class BuilderSchema {
     const rulesDto = dto.rules ?? [];
     const ruleInput = schema.getRuleInput();
     schema._rules = rulesDto.map((r) => BuilderRule.fromDto(r, ruleInput));
+
+    schema.updateSumScoreRelations();
     return schema;
   }
 
@@ -145,14 +147,25 @@ export class BuilderSchema {
     return variable;
   }
   sumScoreVariableAddToPage(sumScoreVariable: SumScoreVariable, page: BuilderPage, weight: number) {
-    // this._pages.
-    return this._pageCollection.addSumScoreVariable(sumScoreVariable, page.id, weight);
+    const added = this._pageCollection.addSumScoreVariable(sumScoreVariable, page.id, weight);
+    this.updateSumScoreRelations();
+    return added;
+  }
+
+  private updateSumScoreRelations() {
+    const sumScoreVariables = this._sumScoreCollection.asArray();
+    this._pageCollection.updateRelationShips({ sumScoreVariables });
   }
 
   sumScoreVariableUpdate(id: SumScoreVariableID, data: Partial<SumScoreVariableDto>) {
     const didUpdate = this._sumScoreCollection._updateOne(id, data);
-    this._pageCollection.updateAllData({ sumScoreVariables: this._sumScoreCollection.asArray() });
+    this.updateSumScoreRelations();
     return didUpdate;
+  }
+
+  sumScoreVariableDeleteFromPage(pageId: PageID, sumScoreVariableId: SumScoreVariableID) {
+    this._pageCollection.sumScoreVariableDeleteFromPage(pageId, sumScoreVariableId);
+    this.updateSumScoreRelations();
   }
 
   insertPage(page: BuilderPage, atIndex: number): boolean {
@@ -286,7 +299,7 @@ export class BuilderSchema {
   sumScoreVariableDelete(id: SumScoreVariableID) {
     const didDelete = this._sumScoreCollection._deleteVariable(id);
     const sumScoreVariables = [...this._sumScoreCollection];
-    this._pageCollection.updateAllData({ sumScoreVariables });
+    this._pageCollection.updateRelationShips({ sumScoreVariables });
     this._pageCollection.sumScoreVariableDelete(id);
     return didDelete;
   }

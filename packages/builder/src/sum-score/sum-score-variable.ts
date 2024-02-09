@@ -1,18 +1,14 @@
-import { SumScoreVariableID } from "../primitives/ID";
+import { PageID, SumScoreVariableID } from "../primitives/ID";
 import { BuilderObject } from "../BuilderObject";
 import { DUtil } from "@media-quest/engine";
+import { BuilderPage } from "../page/Builder-page";
 
 export interface SumScoreVariableDto {
   id: SumScoreVariableID;
   name: string;
   description: string;
   useAvg: boolean;
-  /**
-   * All variables that the sum-score should be based on.
-   */
-  // basedOn: Array<{ varId: string; varLabel: string; weight?: number }>;
 }
-
 export class SumScoreVariable extends BuilderObject<
   "builder-sum-score-variable",
   SumScoreVariableDto
@@ -23,7 +19,11 @@ export class SumScoreVariable extends BuilderObject<
   private _name = "";
   private _description = "";
   private _error = "";
+  private _usedIn: ReadonlyArray<BuilderPage> = [];
   // private _basedOn = new Map<pageId: Page>()
+  get usedIn() {
+    return [...this._usedIn];
+  }
 
   // private _basedOn: Array<{ varId: string }> = [];
   public static readonly create = (data: {
@@ -84,6 +84,10 @@ export class SumScoreVariable extends BuilderObject<
    */
   _setError(error: "" | "Duplicate name") {
     this._error = error;
+  }
+  /** @internal - used by sum-score-variable-collection */
+  _setUsedInPages(pages: BuilderPage[]) {
+    this._usedIn = [...pages];
   }
 
   get name() {

@@ -206,4 +206,14 @@ describe("Builder page collection", () => {
     expect(beforeSize).toBe(empty.size);
     expect(result).toBe(false);
   });
+  test("Will always update the page-number on every page.", () => {
+    const p1 = empty.add("question");
+    const p2 = empty.add("question");
+    const p3 = empty.add("question");
+    const beforeSize = empty.size;
+    const result = empty.insertPage(p1, 0);
+    const pages = empty.pages;
+    expect(beforeSize).toBe(empty.size);
+    expect(result).toBe(false);
+  });
 });

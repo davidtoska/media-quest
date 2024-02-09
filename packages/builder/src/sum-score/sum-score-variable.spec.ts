@@ -160,6 +160,61 @@ describe("Sum score sum-score.", () => {
       basedOn.length,
     );
   });
+  test("variable will also have copy of all questions it used in.", () => {
+    const prefix = SchemaPrefix.fromValueOrThrow("dep4");
+    const schema = BuilderSchema.create(SchemaID.create(), "testing-dep4", prefix.value);
+    const p1 = schema.addPage("question");
+    const p2 = schema.addPage("question");
+    const p3 = schema.addPage("question");
+
+    // Setting question text
+    p1.mainText.text = "q1 text";
+    p2.mainText.text = "q2 text";
+    p3.mainText.text = "q3 text";
+    const v1 = schema.sumScoreVariableCreate({
+      name: "ss1",
+      description: "ss1-desc",
+      useAvg: true,
+    });
+    const v2 = schema.sumScoreVariableCreate({
+      name: "ss2",
+      description: "ss2-desc",
+      useAvg: true,
+    });
+    const v3 = schema.sumScoreVariableCreate({
+      name: "ss3",
+      description: "ss3-desc",
+      useAvg: true,
+    });
+    schema.sumScoreVariableAddToPage(v1, p1, 1);
+    schema.sumScoreVariableAddToPage(v1, p2, 1);
+    schema.sumScoreVariableAddToPage(v2, p2, 1);
+    schema.sumScoreVariableAddToPage(v3, p1, 1);
+    schema.sumScoreVariableAddToPage(v3, p2, 1);
+    schema.sumScoreVariableAddToPage(v3, p3, 1);
+
+    expect(v1.usedIn.length).toBe(2);
+    expect(v2.usedIn.length).toBe(1);
+    expect(v3.usedIn.length).toBe(3);
+    schema.sumScoreVariableDeleteFromPage(p3.id, v3.id);
+    expect(v3.usedIn.length).toBe(2);
+
+    schema.sumScoreVariableDeleteFromPage(p2.id, v3.id);
+    expect(v3.usedIn.length).toBe(1);
+
+    const json = schema.toJson();
+    const clone = BuilderSchema.fromJson(json);
+    const clonedVariables = clone.sumScoreVariables;
+    expect(clonedVariables.length).toBe(3);
+
+    const v1Clone = clonedVariables.find((v) => v.id === v1.id) as SumScoreVariable;
+    const v2Clone = clonedVariables.find((v) => v.id === v2.id) as SumScoreVariable;
+    const v3Clone = clonedVariables.find((v) => v.id === v3.id) as SumScoreVariable;
+    expect(v1Clone.usedIn.length).toBe(2);
+    expect(v2Clone.usedIn.length).toBe(1);
+    expect(v3Clone.usedIn.length).toBe(1);
+  });
+
   test("calculateAll", () => {
     const prefix = SchemaPrefix.fromValueOrThrow("angst");
     const schema = BuilderSchema.create(SchemaID.create(), "testing", prefix.value);

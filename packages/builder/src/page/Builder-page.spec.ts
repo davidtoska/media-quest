@@ -4,7 +4,8 @@ import type { BuilderQuestionDto } from "../Builder-question";
 import { DUtil } from "@media-quest/engine";
 import { PagePrefix } from "../primitives/page-prefix";
 import { SchemaPrefix } from "../primitives/schema-prefix";
-import { OptionID, PageID, QuestionID } from "../primitives/ID";
+import { OptionID, PageID, QuestionID, SumScoreVariableID } from "../primitives/ID";
+import { SumScoreVariable } from "../sum-score/sum-score-variable";
 
 const U = DUtil;
 const deleteIdsFromPage = (page: BuilderPageDto) => {
@@ -159,5 +160,18 @@ describe("Builder Page", () => {
     // const m1 = page1.moveQuestion(newQuestion, 0);
     // expect(page1.questions.length).toBe(3);
     // expect(m1).toBe(false);
+  });
+  test("Can check if page is included in sum-score-variable", () => {
+    const prefix = PagePrefix.fromStringOrThrow("as1");
+    const page = BuilderPage.create("question", prefix);
+    const ss1 = SumScoreVariable.create({ name: "ss1", description: "ss1_desc", useAvg: true });
+    const ss2 = SumScoreVariable.create({ name: "ss1", description: "ss1_desc", useAvg: true });
+    const success1 = page.sumScoreVariableSet(ss1, 1);
+    const success2 = page.sumScoreVariableSet(ss2, 1);
+    expect(success1).toBe(true);
+    expect(success2).toBe(true);
+    expect(page._isIncludedInSumScore(ss1.id)).toBe(true);
+    expect(page._isIncludedInSumScore(ss2.id)).toBe(true);
+    expect(page._isIncludedInSumScore(SumScoreVariableID.dummy.a)).toBe(false);
   });
 });

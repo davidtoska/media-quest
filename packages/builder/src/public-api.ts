@@ -23,6 +23,6 @@ export * from "./primitives/ID";
 export * from "./code-book/codebook-variable";
 export * from "./builder-compiler";
 export * from "./sum-score/sum-score";
-export { SumScoreVariableDto } from "./sum-score/sum-score-variable";
+export { SumScoreVariableDto, SumScoreVariable } from "./sum-score/sum-score-variable";
 export { SumScoreAnswer } from "./sum-score/sum-score-answer";
 export { TagCollection } from "./tag/Tag-Collection";

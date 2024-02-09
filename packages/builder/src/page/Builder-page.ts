@@ -160,6 +160,7 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     this._prefix.value = value;
   }
 
+  /** @internal */
   sumScoreVariableSet(sumScoreVariable: SumScoreVariable, weight: number) {
     const { id, name, description } = sumScoreVariable;
 
@@ -173,7 +174,8 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     return true;
   }
 
-  sumScoreVariableUpdateData(variables: ReadonlyArray<SumScoreVariable>) {
+  /** @internal */
+  updateRelationShips(variables: ReadonlyArray<SumScoreVariable>) {
     variables.forEach((v) => {
       const sumScoreEntry = this._includedInSumScores.get(v.id);
       if (sumScoreEntry) {
@@ -232,6 +234,16 @@ export class BuilderPage extends BuilderObject<"builder-page", BuilderPageDto> {
     }
   }
 
+  /**
+   * @internal
+   */
+  _isIncludedInSumScore(sumScoreId: SumScoreVariableID) {
+    return this._includedInSumScores.has(sumScoreId);
+  }
+
+  /**
+   * @internal
+   */
   sumScoreVariableDelete(sumScoreVariableID: SumScoreVariableID) {
     this._includedInSumScores.delete(sumScoreVariableID);
   }

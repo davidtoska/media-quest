@@ -99,9 +99,18 @@ export class BuilderPageCollection implements Iterable<BuilderPage> {
     return true;
   }
 
-  updateAllData(context: { sumScoreVariables: ReadonlyArray<SumScoreVariable> }) {
+  updateRelationShips(context: { sumScoreVariables: ReadonlyArray<SumScoreVariable> }) {
+    const { sumScoreVariables } = context;
+
+    // Update all relationships in pages.
     this._all.forEach((p) => {
-      p.sumScoreVariableUpdateData(context.sumScoreVariables);
+      p.updateRelationShips(context.sumScoreVariables);
+    });
+
+    // Set the used in pages array on every variable.
+    sumScoreVariables.forEach((v) => {
+      const usedInPages = this._all.filter((p) => p._isIncludedInSumScore(v.id));
+      v._setUsedInPages(usedInPages);
     });
   }
 
@@ -109,5 +118,12 @@ export class BuilderPageCollection implements Iterable<BuilderPage> {
     this._all.forEach((p) => {
       p.sumScoreVariableDelete(sumScoreVariableID);
     });
+  }
+
+  sumScoreVariableDeleteFromPage(pageId: PageID, sumScoreVariableId: SumScoreVariableID) {
+    const maybePage = this.getPageById(pageId);
+    if (!maybePage) return false;
+    maybePage.sumScoreVariableDelete(sumScoreVariableId);
+    return true;
   }
 }

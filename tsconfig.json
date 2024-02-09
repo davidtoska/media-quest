@@ -12,7 +12,8 @@
     "rootDir": ".",
     "outDir": "dist"
   },
-  "include": ["example/src/*/**.ts", "packages/*"],
+  "include": ["example/src/*/**.ts"],
+  "exclude": ["node_modules"],
   "references": [
     {
       "path": "./packages/builder"
