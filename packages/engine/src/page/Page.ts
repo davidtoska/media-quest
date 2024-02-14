@@ -10,13 +10,9 @@ import { DElementDto } from "../Delement/DElement.dto";
 import { Fact } from "../rules/fact";
 import { DTimestamp } from "../common/DTimestamp";
 import { PageResult } from "./page-result";
-import { TaskState, TaskStateDiff } from "./task-state";
-import {
-  MqEvent,
-  MqEventPageEnter,
-  MqEventPageLeave,
-  MqEventUserClicked,
-} from "../events/mq-events";
+import { TaskState } from "./task-state";
+import { MqEvent } from "../events/mq-events";
+import { PageLayoutComponent, PageLayoutComponentDto } from "./page-layout-component";
 
 export interface VideoPlayerDto {
   playUrl: string;
@@ -30,6 +26,7 @@ export interface PageDto {
   staticElements: Array<DElementDto>;
   background: string;
   components: Array<PageComponentDto>;
+  layoutComponents: Array<PageLayoutComponentDto>;
   videoPlayer?: VideoPlayerDto;
   initialTasks: Array<Task>;
 }
@@ -42,6 +39,7 @@ export const PageDto = {
       tags: [],
       staticElements: [],
       background: "white",
+      layoutComponents: [],
       // videoList: [],
       components: [
         {
@@ -63,6 +61,7 @@ export class Page {
   private readonly TAG = "[ DPage ]: ";
   private staticElements: DElement<HTMLElement>[] = [];
   private components: PageComponent[] = [];
+  private layoutComponents: PageLayoutComponent[] = [];
   private pageEntered: DTimestamp = DTimestamp.now();
   private previousState: TaskState | false = false;
   private eventLog = new Array<MqEvent>();
@@ -81,6 +80,13 @@ export class Page {
       this.components.push(component);
 
       return component;
+    });
+    this.layoutComponents = dto.layoutComponents.map((el) => {
+      const layoutComponent = new PageLayoutComponent(el, scaleService);
+      this.layoutComponents.push(layoutComponent);
+
+      // layoutComponent
+      return layoutComponent;
     });
     dto.staticElements.forEach((el) => {
       const element = createDElement(el, scaleService);
@@ -163,6 +169,9 @@ export class Page {
     });
 
     this.components.forEach((comp) => {
+      comp.appendToParent(parent);
+    });
+    this.layoutComponents.forEach((comp) => {
       comp.appendToParent(parent);
     });
   }

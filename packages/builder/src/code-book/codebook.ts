@@ -26,8 +26,16 @@ const fromPage = (
   });
 
   const varId = modulePrefix + "_" + page.prefix;
+  const pageIncludedInSumScoresArray = page.includedInSumScores ?? [];
 
-  const includedInSumScores = page.includedInSumScores.filter((a) => true);
+  const includedInSumScores: SumScoreVariableDto[] = [];
+  pageIncludedInSumScoresArray.forEach((p) => {
+    sumScoreVariables.forEach((ssv) => {
+      if (p.sumScoreVariableId === ssv.id) {
+        includedInSumScores.push(ssv);
+      }
+    });
+  });
 
   const variable: CodeBookQuestionVariable = {
     kind: "codebook-question-variable",
@@ -38,7 +46,7 @@ const fromPage = (
     modulePrefix,
     pagePosition,
     varId,
-    includedInSumScores: [],
+    includedInSumScores,
   };
 
   variables.push(variable);

@@ -21,6 +21,9 @@ type BasedOnEntry =
   | { kind: "has-value"; varId: string; value: number; weight: number; varLabel: string };
 
 export interface SumScore {
+  readonly sumScoreVariableId: SumScoreVariableID;
+  readonly name: string;
+  readonly description: string;
   sumScore: number;
   avg: number; // Alle besvarte spørsmål som ikke er 9.
   useAvg: boolean;
@@ -81,7 +84,6 @@ const calculate = (
   const errorMessages: string[] = [];
   const basedOn: SumScore["basedOn"] = [];
   const useAvg = sumScoreVariable.useAvg;
-
   const basedOnEntries: BasedOnEntry[] = basedOnVariables.map((scv) => {
     const maybeAnswer = answers.find((v) => v.varId === scv.varId);
     let result: BasedOnEntry = { kind: "missing", varId: scv.varId };
@@ -129,6 +131,9 @@ const calculate = (
 
   const avg = sumScore / includedAnswerCount;
   const result: SumScore = {
+    sumScoreVariableId: sumScoreVariable.id,
+    name: sumScoreVariable.name,
+    description: sumScoreVariable.description,
     avg,
     useAvg,
     includedAnswerCount,

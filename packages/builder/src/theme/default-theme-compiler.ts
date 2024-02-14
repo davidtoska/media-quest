@@ -1,36 +1,46 @@
-import { AbstractThemeCompiler } from "./AbstractThemeCompiler";
+import { ThemeCompiler } from "./ThemeCompiler";
 import type { BuilderSchemaDto } from "../Builder-schema";
 import { BuilderSchema } from "../Builder-schema";
 import type { BuilderPageDto } from "../page/Builder-page";
 import { ThemeUtils } from "./theme-utils";
-import { DefaultTheme, type IDefaultTheme } from "./IDefaultTheme";
+import { DefaultTheme } from "./Default-theme";
 import type { BuilderMainImageDto } from "../BuilderMainImageDto";
 import type { BuilderMainVideoDto } from "../BuilderMainVideoDto";
 import {
   ButtonClickAction,
   DDivDto,
+  DelayTask,
   DElementDto,
   DImgDto,
+  DButtonDto,
   DTextDto,
-  PageDto,
   PageComponentDto,
-  RuleActionPageQue,
+  PageDto,
   PlayAudioTask,
   PlayVideoTask,
   Rule,
+  RuleActionPageQue,
   SchemaDto,
-  DelayTask,
 } from "@media-quest/engine";
 
 import { AudioFile } from "../media-files";
 import { BuilderRule } from "../rulebuilder";
+import { IDefaultTheme } from "./IDefault-theme";
+import { Theme2 } from "./theme2";
 
-export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
+export class DefaultThemeCompiler implements ThemeCompiler<IDefaultTheme> {
   readonly name = "Ispe default theme.";
+  readonly defaultTheme = DefaultTheme;
+  readonly theme2 = Theme2;
+  currentTheme = DefaultTheme;
+  allThemes = [DefaultTheme, Theme2];
   private readonly TAG = "[ DEFAULT_THEME_COMPILER ]: ";
-  constructor() {
-    super(DefaultTheme);
+
+  setTheme(theme: IDefaultTheme) {
+    this.currentTheme = theme;
   }
+
+  constructor() {}
 
   private compileRules(source: BuilderSchemaDto): Rule<RuleActionPageQue, never>[] {
     const builderSchema = BuilderSchema.fromJson(source);
@@ -48,7 +58,11 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   }
 
   compile(source: BuilderSchemaDto): SchemaDto {
-    const pages = source.pages.map((p) => this.compilePage(p, source.prefix));
+    const numberOfPages = source.pages.length;
+    const pages = source.pages.map((p, index) => {
+      return this.compilePage(p, index, numberOfPages, source.prefix);
+    });
+
     const rules = this.compileRules(source);
 
     const dto: SchemaDto = {
@@ -64,9 +78,18 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     return dto;
   }
 
-  private compilePage(page: BuilderPageDto, modulePrefix: string): PageDto {
+  private compilePage(
+    page: BuilderPageDto,
+    pageIndex: number,
+    totalNumberOfPages: number,
+    modulePrefix: string,
+  ): PageDto {
+    const pageNumber = pageIndex + 1;
     const tags = page.tags ?? [];
     const { nextButton, mainText, id, mainMedia, _type, prefix } = page;
+    const t = this.currentTheme;
+
+    const hasMainMedia = !!mainMedia;
     const staticElements: DElementDto[] = [];
     let initialAudioTasks: Array<PlayAudioTask | DelayTask> = [];
     let initialVideoTaskList: Array<PlayVideoTask | DelayTask> = [];
@@ -76,14 +99,67 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       staticElements,
       id,
       prefix,
+      layoutComponents: [{ el: { _tag: "div", children: [], style: {} }, children: [] }],
       initialTasks: [],
       tags: [...tags],
     };
+    const bg = this.currentTheme.pageBackGround;
+    if (bg) {
+      const pageBackGround: DDivDto = {
+        style: bg.style,
+        _tag: "div",
+        children: [],
+      };
 
+      staticElements.push(pageBackGround);
+    }
+    if (t.progressBar) {
+      console.log("ADDED PROGRESS.");
+      const progressInPercent = pageNumber / totalNumberOfPages;
+      // const a =
+      const baseStyles = {
+        x: t.progressBar.x,
+        y: t.progressBar.y,
+        h: t.progressBar.h,
+        w: t.progressBar.w,
+      };
+      const progressBackGround: DDivDto = {
+        style: {
+          ...baseStyles,
+          ...t.progressBar.backgroundStyles,
+        },
+        _tag: "div",
+        children: [],
+      };
+
+      const currentProgress = t.progressBar.w * progressInPercent;
+      const progressIndicator: DDivDto = {
+        style: { ...baseStyles, ...t.progressBar.progressStyles, w: currentProgress },
+        _tag: "div",
+        children: [],
+      };
+      const pText = t.progressBar.text;
+
+      staticElements.push(progressBackGround);
+      staticElements.push(progressIndicator);
+      if (pText) {
+        const progressText: DTextDto = {
+          _tag: "p",
+          innerText: "side " + pageNumber + " av " + totalNumberOfPages + " sider",
+          style: pText.style,
+        };
+        staticElements.push(progressText);
+      }
+    }
     if (page.mainText.audioFile) {
       const autoPlay = page.mainText.autoplay;
       const autoPlayDelay = page.mainText.autoplayDelay;
-      const res = this.compileMainTextAudio(page.mainText.audioFile, autoPlay, autoPlayDelay);
+      const res = this.compileMainTextAudio(
+        page.mainText.audioFile,
+        autoPlay,
+        autoPlayDelay,
+        hasMainMedia,
+      );
       initialAudioTasks = [...res.initialTasks];
       newPage.components.push(...res.components);
     }
@@ -103,9 +179,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
         kind: "next-button",
       });
 
-      const textStyle = mainMedia
-        ? DefaultTheme.mainText.withMedia.text.css
-        : DefaultTheme.mainText.noMedia.text.css;
+      const textStyle = mainMedia ? t.mainText.withMedia.text.css : t.mainText.noMedia.text.css;
       const infoTextElement: DElementDto = {
         innerText: infoText,
         _tag: "p",
@@ -136,7 +210,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
   private compileImage(image: BuilderMainImageDto) {
     const img: DImgDto = {
       _tag: "img",
-      style: this.theme.image.style,
+      style: this.currentTheme.image.style,
       url: image.file.downloadUrl,
     };
     return img;
@@ -146,19 +220,22 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     audioFile: AudioFile,
     autoPlay: boolean,
     autoPlayDelay: number,
+    hasMainMedia: boolean,
   ): {
     components: PageComponentDto[];
     initialTasks: Array<PlayAudioTask | DelayTask>;
   } {
-    const t = this.theme.mainText;
+    const t = this.currentTheme.mainText;
     const audioId = audioFile.id;
     const iconUrl =
       "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/public-assets%2Fvolume_up-24px.svg?alt=media&token=551bd0a6-a515-4f87-a245-da433f4833f9";
 
+    // console.log(t);
+    const audioIconStyle = hasMainMedia ? t.withMedia.audio.css : t.noMedia.audio.css;
     const playMainTextAudio: DImgDto = {
       _tag: "img",
       url: iconUrl,
-      style: { ...t.withMedia.audio.css },
+      style: { ...audioIconStyle },
     };
 
     const task: PlayAudioTask = {
@@ -203,7 +280,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     components: PageComponentDto[];
     autoPlayTasks: Array<PlayVideoTask | DelayTask>;
   } {
-    const t = this.theme.videoPlayer;
+    const t = this.currentTheme.videoPlayer;
     const mode = video.mode;
     const components: PageComponentDto[] = [];
 
@@ -282,15 +359,17 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     variableId: string,
   ): {
     question: DTextDto;
+    buttonBar: DDivDto;
     components: PageComponentDto[];
   } {
     // TODO REFACTORE DEFAULT QUESTION TO - (REMOVE USE TEXT1)
     // console.log(page);
+    const t = this.currentTheme;
     const q = page.defaultQuestion;
     const text = page.mainText.text;
     const questionStyle = page.mainMedia
-      ? DefaultTheme.mainText.withMedia.text.css
-      : DefaultTheme.mainText.noMedia.text.css;
+      ? t.mainText.withMedia.text.css
+      : t.mainText.noMedia.text.css;
     const question: DTextDto = {
       _tag: "p",
       innerText: text,
@@ -306,7 +385,12 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
     });
     const rootElements = buttons.map((b) => b.el);
     ThemeUtils.spaceEvenlyX(rootElements);
-    return { question, components: buttons };
+    const buttonElements = buttons.map((b) => b.el);
+    return {
+      question,
+      buttonBar: { _tag: "div", children: [], style: {} },
+      components: buttons,
+    };
   }
 
   private compileButton(
@@ -316,6 +400,7 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
       | { kind: "next-button" },
   ): PageComponentDto {
     const { id, value, label } = buttonDto;
+    const t = this.currentTheme;
     const onclickAction: ButtonClickAction =
       options.kind === "response-button"
         ? {
@@ -330,25 +415,29 @@ export class DefaultThemeCompiler extends AbstractThemeCompiler<IDefaultTheme> {
           }
         : { kind: "next-page" };
 
-    const btnStyles =
-      value === 9 ? DefaultTheme.responseButtons.dontKnow : DefaultTheme.responseButtons.normal;
-    const btn: DDivDto = {
-      _tag: "div",
-      children: [
-        {
-          _tag: "p",
-          innerText: label,
-          style: btnStyles.text1,
-        },
-      ],
+    const btnStyles = value === 9 ? t.responseButtons.dontKnow : t.responseButtons.normal;
+    // const btn: DDivDto = {
+    //   _tag: "div",
+    //   children: [
+    //     {
+    //       _tag: "p",
+    //       innerText: label,
+    //       style: btnStyles.text1,
+    //     },
+    //   ],
+    //   style: { ...btnStyles.btn.css, ...btnStyles.btn.cssEnabled },
+    // };
+    const btn: DButtonDto = {
+      _tag: "button",
+      innerText: label,
       style: { ...btnStyles.btn.css, ...btnStyles.btn.cssEnabled },
     };
 
-    if (options.kind === "next-button") {
-      btn.style.x = 50;
-      btn.style.y = 8;
-      btn.style.transform = "translate(-50%, 0%)";
-    }
+    // if (options.kind === "next-button") {
+    // btn.style.x = 50;
+    // btn.style.y = 8;
+    // btn.style.transform = "translate(-50%, 0%)";
+    // }
     const component: PageComponentDto = {
       el: btn,
       onClick: onclickAction,

@@ -1,6 +1,4 @@
 import { BuilderObject } from "./BuilderObject";
-import type { BuilderOptionTheme } from "./theme/IDefaultTheme";
-import { DefaultTheme } from "./theme/IDefaultTheme";
 import { AudioFile } from "./media-files";
 import { OptionID } from "./primitives/ID";
 

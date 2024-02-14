@@ -1,58 +1,6 @@
-import type { CssTheme } from "./css-theme";
-import { DStyle, DCss } from "@media-quest/engine";
+import { DCss, DStyle } from "@media-quest/engine";
 import { IconUrls } from "./icon-urls";
-
-type PStyle = Partial<DStyle>;
-export interface IDefaultTheme {
-  name: string;
-  image: { style: PStyle };
-  videoPlayer: {
-    playButton: {
-      iconUrl: string;
-      css: PStyle;
-      cssDisabled: PStyle;
-      cssEnabled: PStyle;
-    };
-    pauseButton: {
-      iconUrl: string;
-      css: PStyle;
-      cssDisabled: PStyle;
-      cssEnabled: PStyle;
-    };
-    videoElement: {
-      css: PStyle;
-    };
-  };
-  mainText: {
-    noMedia: {
-      text: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle };
-      audio: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle };
-    };
-    withMedia: {
-      text: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle };
-      audio: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle };
-    };
-  };
-  // mainTextTheme: BuilderTextTheme;
-  responseButtons: BuilderOptionTheme;
-  nextButtonTheme: BuilderOptionTheme;
-  // mainQuestionText: BuilderTextTheme;
-  // dontKnowButtonTheme: BuilderOptionTheme;
-  buttonThemes?: Array<BuilderOptionTheme>;
-}
-
-export interface BuilderOptionTheme {
-  name: string;
-  normal: ButtonTheme;
-  dontKnow: ButtonTheme;
-}
-
-interface ButtonTheme {
-  btn: CssTheme;
-  divider: PStyle;
-  text1: PStyle;
-  text2: PStyle;
-}
+import { BuilderOptionTheme, IDefaultTheme } from "./IDefault-theme";
 
 namespace BuilderOptionTheme {
   const GREEN = "#70AD47";
@@ -155,12 +103,14 @@ export const DefaultTheme: IDefaultTheme = {
       css: { w: 5, h: 5, y: 48, x: 4 },
       cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
       cssEnabled: { opacity: 0.8, cursor: "pointer" },
+      hideOnPlay: true,
     },
     pauseButton: {
       iconUrl: IconUrls.pauseSvg,
       css: { w: 5, h: 5, y: 48, x: 4 },
       cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
       cssEnabled: { opacity: 0.8, cursor: "pointer" },
+      hideOnPause: true,
     },
     videoElement: { css: { w: 100, h: 45, y: 55, x: 0 } },
   },
@@ -184,7 +134,7 @@ export const DefaultTheme: IDefaultTheme = {
           h: 6,
           w: 6,
           x: 4,
-          y: 32,
+          y: 70,
           cursor: "pointer",
           opacity: 0.8,
           visibility: "visible",

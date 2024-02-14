@@ -48,6 +48,28 @@ export interface DStyle {
   fontWeight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
   textAlign: "right" | "left" | "center";
   letterSpacing: DCss.Px;
+
+  // LAYOUT & POSITIONING OVERRIDE
+  position: "absolute" | "relative";
+  display: "flex" | "block";
+  flexDirection: "row" | "colum";
+  flexWrap: "nowrap" | "wrap";
+  justifyContent:
+    | "flex-start"
+    | "flex-end"
+    | "center"
+    | "space-around"
+    | "space-evenly"
+    | "space-between";
+  alignItems: "stretch" | "baseline" | "center" | "flex-start" | "flex-end";
+  alignContent:
+    | "stretch"
+    | "center"
+    | "flex-start"
+    | "flex-end"
+    | "space-around"
+    | "space-evenly"
+    | "space-between";
 }
 
 export namespace DStyle {
@@ -59,7 +81,11 @@ export namespace DStyle {
     return el;
   };
 
-  export const applyStyles = <T extends HTMLElement>(el: T, style: Partial<DStyle>, scale: number): T => {
+  export const applyStyles = <T extends HTMLElement>(
+    el: T,
+    style: Partial<DStyle>,
+    scale: number,
+  ): T => {
     // const scalePx = DCss.toStringCre(this.scale);
     const {
       x,
@@ -83,7 +109,37 @@ export namespace DStyle {
       h,
       transform,
       visibility,
+      justifyContent,
+      alignContent,
+      flexWrap,
+      display,
+      flexDirection,
+      alignItems,
+      position,
     } = style;
+
+    if (position) {
+      el.style.position = position;
+    }
+    if (justifyContent) {
+      el.style.justifyContent = justifyContent;
+    }
+
+    if (alignContent) {
+      el.style.alignContent = alignContent;
+    }
+    if (flexWrap) {
+      el.style.flexWrap = flexWrap;
+    }
+    if (display) {
+      el.style.display = display;
+    }
+    if (flexDirection) {
+      el.style.flexDirection = flexDirection;
+    }
+    if (alignItems) {
+      el.style.alignItems = alignItems;
+    }
 
     // this.el.style.fontWeight = '900';
     if (backgroundColor) {

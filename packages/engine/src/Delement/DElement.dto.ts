@@ -1,5 +1,6 @@
-import { DImgDto } from "../Delement/DImg";
-import { DTextDto } from "../Delement/DText";
-import { DDivDto } from "../Delement/Ddiv";
+import { DImgDto } from "./DImg";
+import { DTextDto } from "./DText";
+import { DDivDto } from "./Ddiv";
+import { DButtonDto } from "./DButton";
 
-export type DElementDto = DTextDto | DImgDto | DDivDto;
+export type DElementDto = DTextDto | DImgDto | DDivDto | DButtonDto;

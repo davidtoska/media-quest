@@ -9,7 +9,7 @@ export interface DElementBaseDto {
   readonly onMouseUp?: PStyle;
   readonly innerText?: string;
 }
-
+type DRawStyles = Pick<CSSStyleDeclaration, "length" | "parentRule">;
 export abstract class DElement<T extends HTMLElement> {
   protected currStyle: Partial<DStyle> = {
     fontSize: { _unit: "px", value: 100 },
@@ -66,6 +66,10 @@ export abstract class DElement<T extends HTMLElement> {
 
   setStyle(style: PStyle) {
     this.updateStyles(style);
+  }
+
+  getElementByDangerousReference() {
+    return this.el;
   }
 
   appendYourself(parent: { append: (el: HTMLElement) => void }) {

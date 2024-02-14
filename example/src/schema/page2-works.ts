@@ -2,8 +2,6 @@ import { IExampleSchema } from "./IExample-schema";
 import * as E from "@media-quest/engine";
 import * as B from "@media-quest/builder";
 import { dummyAudioFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
-// import { PlayAudioTask, PlayVideoTask, Task } from "../../../packages/engine/src/page/task";
-// import { PageComponentDto } from "../../../packages/engine/src/page/page-component";
 
 const playVideoTask0 = (
   priority: E.PlayVideoTask["priority"],
@@ -153,7 +151,40 @@ export const Page2Works: IExampleSchema = {
         background: "white",
         prefix: B.PagePrefix.create().value,
         tags: [],
-        staticElements: [],
+        staticElements: [
+          {
+            _tag: "div",
+            children: [
+              {
+                _tag: "button",
+                innerText: "Button1",
+                style: { backgroundColor: "blue", display: "block", position: "relative" },
+              },
+              {
+                _tag: "button",
+                innerText: "B2",
+                style: {
+                  backgroundColor: "blue",
+                  display: "block",
+                  position: "relative",
+                  borderColor: "",
+                  borderRadius: { _unit: "px", value: 50 },
+                },
+              },
+            ],
+            style: {
+              x: 5,
+              y: 40,
+              h: 10,
+              w: 90,
+              backgroundColor: "red",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+            },
+          },
+        ],
         components: [
           playVideoBtn(playVideoTask0("replace-all")),
           createNextButton(),

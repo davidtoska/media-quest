@@ -5,11 +5,17 @@ import { IExampleSchema } from "./schema/IExample-schema";
 import { infopageWorks } from "./schema/infopage-works";
 import { gifModeWorks } from "./schema/gif-mode-works";
 import { Page2Works } from "./schema/page2-works";
-import { SchemaDto, SchemaEngine } from "../../packages/engine";
+import * as E from "../../packages/engine/src/public-api";
+import * as B from "../../packages/builder/src/public-api";
 import { autoplayOverrideWorks } from "./schema/autoplay-override-works";
+import { redesignWorks } from "./schema/redesign-info-page";
 console.log("DEV APP");
 
-const initialSchema: IExampleSchema = excludeByTagWorks;
+console.log(B);
+console.log(E);
+
+// const initialSchema: IExampleSchema = Page2Works;
+const initialSchema: IExampleSchema = autoplayWorks;
 // console.log(initialSchema);
 
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
@@ -20,8 +26,8 @@ nameElement.innerText = initialSchema.menuLabel;
 nameElement.style.textAlign = "center";
 engineRoot.style.margin = "60px auto";
 
-const createEngine = (schema: SchemaDto) => {
-  const engine = new SchemaEngine(engineRoot, 600, 1024, schema);
+const createEngine = (schema: E.SchemaDto) => {
+  const engine = new E.SchemaEngine(engineRoot, 600, 1024, schema);
   engine.onProgress((result) => {
     console.log(result);
     console.log("EVENTS: " + result.eventLog.length);
@@ -58,6 +64,7 @@ const menu = createMenu([
   toMenuItem(Page2Works),
   toMenuItem(gifModeWorks),
   toMenuItem(autoplayWorks),
+  toMenuItem(redesignWorks),
   toMenuItem(autoplayOverrideWorks),
   toMenuItem(infopageWorks),
   toMenuItem(excludeByPageIdRuleWorks),
