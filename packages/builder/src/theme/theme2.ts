@@ -26,6 +26,8 @@ const Colors = {
   // yellow: "yellow",
 };
 
+const MAIN_TEXT_FONT_SIZE = 35;
+const MAIN_TEXT_LINE_HEIGHT = 1.2;
 const fraction = 472.6 / 600;
 
 const LAYER_0 = 0;
@@ -90,6 +92,7 @@ const btnTextBase: PStyle = {
   width: VIDEO_CONTROLS_WIDTH / 2,
   textAlign: "center",
   visibility: "hidden",
+  margin: { _unit: "px", value: 0 },
   // backgroundColor: Colors.yellow,
 };
 
@@ -147,8 +150,9 @@ const buttonBaseCss = (): CssTheme => ({
     borderColor: Colors.primary,
     textColor: Colors.white,
     fontWeight: 600,
-    fontSize: { _unit: "px", value: 45 },
-    letterSpacing: { _unit: "px", value: 2 },
+    fontSize: { _unit: "px", value: 35 },
+    lineHeight: 1,
+    // letterSpacing: { _unit: "px", value: 2 },
     paddingLeft: { _unit: "px", value: 30 },
     paddingTop: { _unit: "px", value: 10 },
     paddingBottom: { _unit: "px", value: 10 },
@@ -316,7 +320,8 @@ export const Theme2: IDefaultTheme = {
         backgroundColor: Colors.white,
         textAlign: "left",
         textColor: "black",
-        fontSize: { _unit: "px", value: 40 },
+        fontSize: { _unit: "px", value: 35 },
+        lineHeight: 1.2,
       },
       audio: {
         iconUrl: THEME_2_ICONS.audioPlay.dataUrl,

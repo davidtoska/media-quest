@@ -1,6 +1,6 @@
 {
   "name": "@media-quest/builder",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "Builder library for Media-quest schemas",
   "main": "dist/public-api.js",
   "types": "dist/public-api.d.js",
@@ -24,6 +24,6 @@
     "dts": true
   },
   "peerDependencies": {
-    "@media-quest/engine": "0.0.31"
+    "@media-quest/engine": "0.0.32"
   }
 }

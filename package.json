@@ -21,8 +21,8 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@media-quest/builder": "0.0.31",
-    "@media-quest/engine": "0.0.31",
+    "@media-quest/builder": "0.0.32",
+    "@media-quest/engine": "0.0.32",
     "@types/jest": "29.5.12",
     "@types/shelljs": "^0.8.15",
     "esbuild": "0.20.0",

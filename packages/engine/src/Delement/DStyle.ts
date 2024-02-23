@@ -63,6 +63,7 @@ export interface DStyle {
   fontWeight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
   textAlign: "right" | "left" | "center";
   letterSpacing: DCss.Px;
+  lineHeight: number;
 
   // LAYOUT & POSITIONING OVERRIDE
   position: "absolute" | "relative";
@@ -92,10 +93,39 @@ export namespace DStyle {
   import isNumber = DUtil.isNumber;
   import isLengthUnit = DCss.isLengthUnit;
   export const normalize = <T extends HTMLElement>(el: T): T => {
-    el.style.padding = "0";
-    el.style.margin = "0";
-    el.style.position = "absolute";
-    el.style.boxSizing = "border-box";
+    const s = el.style;
+    // el.style.padding = "";
+    // el.style.margin = "";
+    // el.style.position = "absolute";
+    // el.style.boxSizing = "border-box";
+    s.position = "absolute";
+    s.boxSizing = "border-box";
+    s.bottom = "";
+    s.top = "";
+    s.left = "";
+    s.right = "";
+    s.boxShadow = "";
+    s.padding = "0px";
+    s.margin = "0px";
+    s.fontSize = "12px";
+    s.lineHeight = "1";
+    s.textAlign = "center";
+    s.textDecoration = "none";
+    s.boxShadow = "";
+    s.boxSizing = "border-box";
+    s.fontWeight = "500";
+    s.borderStyle = "";
+    s.borderRadius = "";
+    s.borderWidth = "";
+    s.borderWidth = "10px";
+    s.borderColor = "black";
+    s.backgroundColor = "";
+    s.border = "";
+    s.borderStyle = "none";
+    s.outline = "";
+    s.wordSpacing = "";
+    s.userSelect = "none";
+    s.textShadow = "";
     return el;
   };
 
@@ -122,6 +152,7 @@ export namespace DStyle {
       cursor,
       fontSize,
       fontWeight,
+      lineHeight,
       textColor,
       textAlign,
       translate,
@@ -165,6 +196,10 @@ export namespace DStyle {
 
     if (DCss.isLengthUnit(maxWidth)) {
       el.style.maxWidth = DCss.toString(maxWidth, scale);
+    }
+
+    if (typeof lineHeight === "number") {
+      el.style.lineHeight = "" + lineHeight;
     }
 
     if (DCss.isLengthUnit(minHeight)) {
@@ -327,6 +362,7 @@ export namespace DStyle {
     }
     return el;
   };
+
   // const propNames = new Set(...ElementKeyNames);
   // export const validKey = (keyName: string) => propNames.has(keyName);
 }

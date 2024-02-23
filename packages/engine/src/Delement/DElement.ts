@@ -1,7 +1,6 @@
 import { DStyle, PStyle } from "./DStyle";
 import { ScaleService } from "../engine/scale";
 import { ButtonClickAction } from "./button-click-action";
-import { DElementDto } from "./DElement.dto";
 import { TaskState, TaskStateDiff } from "../page/task-state";
 
 export interface DElementBaseDto {
@@ -57,7 +56,7 @@ export abstract class DElement<T extends HTMLElement> {
       this.el.innerText = dto.innerText;
     }
     this.setStyle = this.setStyle.bind(this);
-    this.normalize = this.normalize.bind(this);
+    // this.normalize = this.normalize.bind(this);
     this.appendYourself = this.appendYourself.bind(this);
     this.updateStyles = this.updateStyles.bind(this);
     const { onMouseEnter, onMouseLeave } = dto;
@@ -73,7 +72,7 @@ export abstract class DElement<T extends HTMLElement> {
       };
     }
 
-    this.normalize();
+    DStyle.normalize(this.el);
 
     if (dto) {
       this.updateStyles(dto?.style);
@@ -174,12 +173,12 @@ export abstract class DElement<T extends HTMLElement> {
     }
   }
 
-  private normalize() {
-    this.el.style.padding = "0";
-    this.el.style.margin = "0";
-    this.el.style.position = "absolute";
-    this.el.style.boxSizing = "border-box";
-  }
+  // private normalize() {
+  // this.el.style.padding = "0";
+  // this.el.style.margin = "0";
+  // this.el.style.position = "absolute";
+  // this.el.style.boxSizing = "border-box";
+  // }
 
   abstract registerClickHandler(clickHandler: (action: ButtonClickAction) => void): void;
 
