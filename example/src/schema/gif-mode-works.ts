@@ -1,4 +1,4 @@
-import * as B from "@media-quest/builder";
+import * as B from "../../../packages/builder/src/public-api";
 import { IExampleSchema } from "./IExample-schema";
 import { addPage } from "./helpers";
 
@@ -21,7 +21,7 @@ addPage(s, "p4", "question")
 // s.pages.forEach(page)
 const compiled = s.compile().schema;
 compiled.pages.forEach((page, index) => {
-  console.log("PageNr: " + index + ", autoplay-tasks: " + page.initialTasks.length);
+  // console.log("PageNr: " + index + ", autoplay-tasks: " + page.initialTasks.length);
 });
 
 // console.log(compiled.pages[1].initialTasks);

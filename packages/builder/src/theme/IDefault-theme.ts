@@ -4,12 +4,27 @@ import type { CssTheme } from "./css-theme";
 type PStyle = Partial<DStyle>;
 export interface IDefaultTheme {
   name: string;
+  schemaBackgroundColor: string;
+  dimensions: {
+    baseHeight: number;
+    baseWidth: number;
+  };
+
+  pageBackGroundImage?: { url: string; style: PStyle };
+
   pageBackGround?: { style: PStyle };
+
+  backGroundArea1?: { style: PStyle };
+
+  backGroundArea2?: { style: PStyle };
+
+  backGroundArea3?: { style: PStyle };
+
   progressBar?: {
-    w: number;
-    h: number;
-    x: number;
-    y: number;
+    width: number;
+    height: number;
+    bottom: number;
+    left: number;
     backgroundStyles: PStyle;
     progressStyles: PStyle;
     text?: {
@@ -25,33 +40,75 @@ export interface IDefaultTheme {
       css: PStyle;
       cssDisabled: PStyle;
       cssEnabled: PStyle;
-      hideOnPlay: boolean;
+      text?: { text: string; css: PStyle };
     };
+
+    buttonBar?: PStyle;
 
     pauseButton: {
       iconUrl: string;
       css: PStyle;
       cssDisabled: PStyle;
       cssEnabled: PStyle;
-      hideOnPause: boolean;
+      text?: { text: string; css: PStyle };
     };
+
+    replayButton?: {
+      iconUrl: string;
+      css: PStyle;
+      cssDisabled: PStyle;
+      cssEnabled: PStyle;
+      text?: { text: string; css: PStyle };
+    };
+
+    muteButton?: {
+      iconUrl: string;
+      css: PStyle;
+      text?: { text: string; css: PStyle };
+    };
+
+    unMuteButton?: {
+      iconUrl: string;
+      css: PStyle;
+      text?: { text: string; css: PStyle };
+    };
+
     videoElement: {
       css: PStyle;
     };
   };
   mainText: {
-    noMedia: {
-      text: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle };
-      audio: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle };
+    base: {
+      text: PStyle;
+      audio: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle; iconUrl: string };
     };
-    withMedia: {
-      text: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle };
-      audio: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle };
+
+    notMediaNotAudio: {
+      text: PStyle;
+    };
+
+    hasMediaNotAudio: {
+      text: PStyle;
+    };
+
+    hasMediaHasAudio: {
+      text: PStyle;
+      audio: PStyle;
+    };
+
+    notMediaHasAudio: {
+      text: PStyle;
+      audio: PStyle;
     };
   };
-  responseButtons: BuilderOptionTheme;
-  nextButtonTheme: BuilderOptionTheme;
-  buttonThemes?: Array<BuilderOptionTheme>;
+
+  buttonBar: {
+    vibrateMs: number | false;
+    container: { base: PStyle; whenSingle: PStyle; whenMany: PStyle };
+    responseButtons: BuilderOptionTheme;
+    nextButtonTheme: BuilderOptionTheme;
+  };
+  // buttonThemes?: Array<BuilderOptionTheme>;
 }
 
 interface ButtonTheme {

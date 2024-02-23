@@ -5,14 +5,12 @@ import { ScaleService } from "../engine/scale";
 import { Task } from "./task";
 import { PStyle } from "../Delement/DStyle";
 import { ButtonClickAction } from "../Delement/button-click-action";
-import { PageComponent, PageComponentDto } from "./page-component";
 import { DElementDto } from "../Delement/DElement.dto";
 import { Fact } from "../rules/fact";
 import { DTimestamp } from "../common/DTimestamp";
 import { PageResult } from "./page-result";
 import { TaskState } from "./task-state";
 import { MqEvent } from "../events/mq-events";
-import { PageLayoutComponent, PageLayoutComponentDto } from "./page-layout-component";
 
 export interface VideoPlayerDto {
   playUrl: string;
@@ -23,10 +21,8 @@ export interface PageDto {
   readonly id: string;
   readonly prefix: string;
   readonly tags: string[];
-  staticElements: Array<DElementDto>;
   background: string;
-  components: Array<PageComponentDto>;
-  layoutComponents: Array<PageLayoutComponentDto>;
+  elements: Array<DElementDto>;
   videoPlayer?: VideoPlayerDto;
   initialTasks: Array<Task>;
 }
@@ -37,18 +33,13 @@ export const PageDto = {
       id: "id" + id,
       prefix: "prefix" + id,
       tags: [],
-      staticElements: [],
       background: "white",
-      layoutComponents: [],
-      // videoList: [],
-      components: [
+      elements: [
         {
-          el: {
-            _tag: "div",
-            style: { x: 10, y: 0, w: 40, h: 20, backgroundColor: "red" },
-            children: [],
-            innerText: "Next btn " + id,
-          },
+          _tag: "div",
+          style: { x: 10, y: 0, w: 40, h: 20, backgroundColor: "red" },
+          children: [],
+          innerText: "Next btn " + id,
         },
       ],
 
@@ -59,9 +50,9 @@ export const PageDto = {
 
 export class Page {
   private readonly TAG = "[ DPage ]: ";
-  private staticElements: DElement<HTMLElement>[] = [];
-  private components: PageComponent[] = [];
-  private layoutComponents: PageLayoutComponent[] = [];
+  private elements: DElement<HTMLElement>[] = [];
+  // private elements: PageComponent[] = [];
+  // private layoutComponents: PageLayoutComponent[] = [];
   private pageEntered: DTimestamp = DTimestamp.now();
   private previousState: TaskState | false = false;
   private eventLog = new Array<MqEvent>();
@@ -72,25 +63,22 @@ export class Page {
     private readonly scaleService: ScaleService,
     private readonly onCompleted: (result: PageResult) => void,
   ) {
-    this.components = dto.components.map((el) => {
-      const component = new PageComponent(el, scaleService);
-      component.onClick = (action) => {
-        this.handleButtonAction(action);
-      };
-      this.components.push(component);
-
-      return component;
-    });
-    this.layoutComponents = dto.layoutComponents.map((el) => {
-      const layoutComponent = new PageLayoutComponent(el, scaleService);
-      this.layoutComponents.push(layoutComponent);
-
-      // layoutComponent
-      return layoutComponent;
-    });
-    dto.staticElements.forEach((el) => {
+    dto.elements.forEach((el) => {
       const element = createDElement(el, scaleService);
-      this.staticElements.push(element);
+      // if (element instanceof DDiv) {
+      // }
+      element.registerClickHandler((action) => {
+        this.handleButtonAction(action);
+      });
+
+      this.elements.push(element);
+
+      // if(element.)
+      // element= (action) => {
+      //   console.log("TODO ONCLICK ");
+      //   this.handleButtonAction(action);
+      // };
+      // this.elements.push(element);
     });
 
     if (dto.videoPlayer) {
@@ -127,6 +115,11 @@ export class Page {
       descriptions: ButtonClickAction.describe(a),
     });
     this.eventLog.push(event);
+    navigator.vibrate(200);
+    const { vibrateMs } = a;
+    if (vibrateMs) {
+      navigator.vibrate(vibrateMs);
+    }
 
     switch (a.kind) {
       case "next-page":
@@ -144,6 +137,12 @@ export class Page {
         break;
       case "pause-audio":
         this.taskManager.pauseAudio();
+        break;
+      case "mute-video":
+        this.taskManager.muteVideo();
+        break;
+      case "un-mute-video":
+        this.taskManager.unMuteVideo();
         break;
       case "submit-fact":
         const submitFactResult = this.createPageResult([a.fact]);
@@ -164,16 +163,16 @@ export class Page {
     const pageEnterEvent = MqEvent.pageEnter(this.dto.id, this.dto.prefix);
     this.pageEntered = DTimestamp.now();
     this.eventLog.push(pageEnterEvent);
-    this.staticElements.forEach((el) => {
+    this.elements.forEach((el) => {
       el.appendYourself(parent);
     });
 
-    this.components.forEach((comp) => {
-      comp.appendToParent(parent);
-    });
-    this.layoutComponents.forEach((comp) => {
-      comp.appendToParent(parent);
-    });
+    // this.components.forEach((comp) => {
+    //   comp.appendToParent(parent);
+    // });
+    // this.layoutComponents.forEach((comp) => {
+    //   comp.appendToParent(parent);
+    // });
   }
 
   destroy() {
@@ -184,8 +183,8 @@ export class Page {
     const prev = this.previousState;
     const curr = this.taskManager.getState();
     const diff = TaskState.getDiff(curr, prev);
-    this.components.forEach((comp) => {
-      comp.updateState(diff);
+    this.elements.forEach((element) => {
+      element.updateState(diff);
     });
   }
 }

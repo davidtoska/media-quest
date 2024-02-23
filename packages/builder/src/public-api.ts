@@ -26,3 +26,4 @@ export * from "./sum-score/sum-score";
 export { SumScoreVariableDto, SumScoreVariable } from "./sum-score/sum-score-variable";
 export { SumScoreAnswer } from "./sum-score/sum-score-answer";
 export { TagCollection } from "./tag/Tag-Collection";
+export * from "./theme/Default-theme";

@@ -8,9 +8,9 @@ const p = (id: number): PageDto => {
   return {
     id: DUtil.randomObjectId(),
     prefix: "prefix" + id,
-    components: [],
+    elements: [],
     initialTasks: [],
-    staticElements: [],
+    // staticElements: [],
     background: "",
     tags: [],
   };

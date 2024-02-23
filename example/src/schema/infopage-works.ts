@@ -1,4 +1,4 @@
-import * as B from "@media-quest/builder";
+import * as B from "../../../packages/builder/src/public-api";
 import { IExampleSchema } from "./IExample-schema";
 import { addPage } from "./helpers";
 

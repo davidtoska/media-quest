@@ -46,6 +46,8 @@ export interface BuilderSchemaDto {
 
 export class BuilderSchema {
   readonly prefix: SchemaPrefix;
+  public readonly compiler = new DefaultThemeCompiler();
+
   baseHeight = 1300;
   baseWidth = 1024;
   backgroundColor = "#000000";
@@ -287,10 +289,10 @@ export class BuilderSchema {
       }
     });
     const moduleDto = builderSchema.toJson();
-    const imp = new DefaultThemeCompiler();
+    // const imp = new DefaultThemeCompiler();
 
     const codebook = CodeBook.fromSchema(moduleDto);
-    const schema = imp.compile(moduleDto);
+    const schema = this.compiler.compile(moduleDto);
     const schemaConfig = SchemaConfig.fromSchema(moduleDto);
     const output: CompilerOutput = { codebook, schema, schemaConfig };
     return output;

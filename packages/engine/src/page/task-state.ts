@@ -1,7 +1,16 @@
+import { DTimestamp } from "../common/DTimestamp";
+import diff = DTimestamp.diff;
+
 export type TaskState = {
   audioIsPlaying: boolean;
   isGifMode: boolean;
-  videoIsPlaying: boolean;
+  videoPlayState:
+    | "playing"
+    | "paused"
+    | "ended"
+    | "playing-and-muted"
+    | "paused-and-muted"
+    | "ended-and-muted";
   blockFormInput: boolean;
   blockResponseButton: boolean;
   blockAudio: boolean;
@@ -14,7 +23,7 @@ export const TaskState = {
     return (
       a.audioIsPlaying === b.audioIsPlaying &&
       a.isGifMode === b.isGifMode &&
-      a.videoIsPlaying === b.videoIsPlaying &&
+      a.videoPlayState === b.videoPlayState &&
       a.blockFormInput === b.blockFormInput &&
       a.blockResponseButton === b.blockResponseButton &&
       a.blockAudio === b.blockAudio &&
@@ -35,9 +44,10 @@ export const TaskState = {
     if (curr.isGifMode !== prev.isGifMode) {
       diff.isGifMode = curr.isGifMode;
     }
-    if (curr.videoIsPlaying !== prev.videoIsPlaying) {
-      diff.videoIsPlaying = curr.videoIsPlaying;
+    if (curr.videoPlayState !== prev.videoPlayState) {
+      diff.videoPlayState = curr.videoPlayState;
     }
+
     if (curr.blockFormInput !== prev.blockFormInput) {
       diff.blockFormInput = curr.blockFormInput;
     }

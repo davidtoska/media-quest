@@ -1,4 +1,4 @@
-import * as B from "@media-quest/builder";
+import * as B from "../../../packages/builder/src/public-api";
 import { IExampleSchema } from "./IExample-schema";
 import { addQuestionPage109 } from "./helpers";
 
@@ -33,7 +33,6 @@ const questionAutoPlayPage = addQuestionPage109(s, "Q3:\n (audio-autoplay=true)"
   audio: true,
   autoplayAudio: true,
   audioDelay: 0,
-
   video: false,
   autoplayVideo: false,
   videoDelay: 0,
@@ -54,7 +53,7 @@ const autoplayVideoAndAudio = addQuestionPage109(
 );
 addQuestionPage109(
   s,
-  "Q4:\n (audio-autoplay=true, delay: 2000) \n (video-autoplay=true), delay: 2000",
+  "Q5:\n (audio-autoplay=true, delay: 2000) \n (video-autoplay=true), delay: 2000",
   "q4",
   {
     audio: true,
@@ -68,5 +67,5 @@ addQuestionPage109(
 
 export const autoplayWorks: IExampleSchema = {
   menuLabel: "autoplay",
-  schema: s.compile({ blockAutoplayQuestion: true, blockAutoplayVideo: false }).schema,
+  schema: s.compile({ blockAutoplayQuestion: false, blockAutoplayVideo: false }).schema,
 };

@@ -1,4 +1,10 @@
-import { BuilderPage, BuilderSchema, PagePrefix, PagePrefixValue } from "@media-quest/builder";
+import {
+  BuilderPage,
+  BuilderSchema,
+  PagePrefix,
+  PagePrefixValue,
+} from "../../../packages/builder/src/public-api";
+
 import { dummyAudioFiles, dummyImageFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
 const audio = dummyAudioFiles[0];
 const video = dummyVideoFiles[1];
@@ -87,6 +93,7 @@ export const addQuestionPage109 = (
     questionPage.mainText.autoplay = options.autoplayAudio;
     questionPage.mainText.autoplayDelay = options.audioDelay;
   }
+
   if (options?.video) {
     questionPage.mainMedia = {
       kind: "main-video",

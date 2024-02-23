@@ -11,8 +11,6 @@ export * from "./utils/DUtil";
 
 export * from "./events/mq-events";
 
-export * from "./page/page-component";
-
 // ELEMENTS
 export * from "./Delement/css";
 export * from "./Delement/DStyle";
@@ -25,4 +23,3 @@ export * from "./Delement/DElement";
 export * from "./Delement/DElement.dto";
 export { PageDto } from "./page/Page";
 export * from "./page/task";
-export { PageLayoutComponent, PageLayoutComponentDto } from "./page/page-layout-component";

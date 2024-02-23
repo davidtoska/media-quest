@@ -1,194 +1,372 @@
-import { DCss, DStyle } from "@media-quest/engine";
-import { IconUrls } from "./icon-urls";
+// import { IconUrls } from "./icon-urls";
 import { BuilderOptionTheme, IDefaultTheme } from "./IDefault-theme";
+import { CssTheme } from "./css-theme";
+import { PStyle } from "@media-quest/engine";
+import { THEME_2_ICONS } from "./icons";
+
+const translate = (pos: { x?: number; y?: number }) => {
+  const x = pos.x || 0;
+  const y = pos.y || 0;
+  return `translate(${x}%, ${y}%)`;
+};
+export const translateY50 = translate({ y: 50 });
+export const translateX50 = translate({ x: -50 });
+const translateX50Y50 = translate({ x: -50, y: 50 });
 
 const Colors = {
   primary: "#164AC4",
   secondary: "#E8F0FE",
   text: "#0D1E45",
   white: "#ffffff",
+  backgroundGray: "#F0F0F0",
+  backgroundWhite: "white",
+  progressBackGround: "#164AC4",
+  progressForGround: "#F5F5F5",
+  // red: "red",
+  // yellow: "yellow",
 };
 
-namespace Button {
-  const LIGHT_BLUE = "#42719C";
-  const BTN_WIDTH = 18.5;
-  const BTN_BORDER_WIDTH = 3;
-  const BTN_BORDER_RADIUS = 10;
-  const BTN_BORDER_STYLE: DStyle["borderStyle"] = "solid";
-  const BTN_HEIGHT = 9.2;
-  const BTN_SHORT_WIDTH = 13.7;
-  const FONT_WEIGHT: DStyle["fontWeight"] = 600;
-  const FONT_SIZE: DCss.Px["value"] = 35;
+const fraction = 472.6 / 600;
 
-  export const primaryButton = (): BuilderOptionTheme => {
-    console.log("PRIMACY PU");
+const LAYER_0 = 0;
+const LAYER_1 = 1;
+const LAYER_2 = 2;
+const LAYER_3 = 3;
+const LAYER_4 = 4;
+const LAYER_5 = 5;
+const W_M1 = 6;
+const W_M2 = 4.5;
+const W_M3 = 3;
 
-    const optionTheme: BuilderOptionTheme = {
-      name: "primary-button",
-      normal: {
-        btn: {
-          css: {
-            backgroundColor: Colors.primary,
-            borderColor: Colors.primary,
-            textColor: Colors.white,
-            // fontSize: { _unit: "px", value: FONT_SIZE },
-            // borderWidth: { _unit: "px", value: BTN_BORDER_WIDTH },
-            // borderStyle: BTN_BORDER_STYLE,
-            // borderRadius: { value: BTN_BORDER_RADIUS, _unit: "px" },
-            padding: { _unit: "px", value: 20 },
-            // h: BTN_HEIGHT,
-            // w: BTN_WIDTH,
-            x: 10,
-            y: 8,
-            textAlign: "center",
-          },
-          cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
-          cssEnabled: { opacity: 1, cursor: "pointer" },
-        },
-        divider: {},
-        text1: {
-          y: 50,
-          transform: "translate(0%, 50%)",
+const W_M4 = 1.5;
+
+const H_M1 = 5;
+const H_M2 = 3.75;
+const H_M3 = 2.5;
+
+const H_M4 = 1.25;
+
+const W_MAX = 100 - W_M1 * 2;
+
+const PROGRESS_BAR_HEIGHT = 2;
+
+const AUDIO_ICON_WIDTH = 10;
+const AUDIO_ICON_HEIGHT = AUDIO_ICON_WIDTH * fraction;
+// const AUDIO_ICON_HEIGHT = AUDIO_ICON_WIDTH * fraction;
+const AUDIO_ICON_LEFT = W_M1 + W_M2 + W_M3;
+
+const Q_AREA_HEIGHT = 32;
+const Q_AREA_BOTTOM = 2 * H_M1 + H_M2;
+const Q_AREA_LEFT = W_M1 + W_M2;
+const Q_AREA_WIDTH = W_MAX - W_M2 - W_M2;
+const Q_AREA_TOP = 100 - Q_AREA_HEIGHT - Q_AREA_BOTTOM;
+
+const MEDIA_HEIGHT = 34;
+// const MEDIA_WIDTH = 100 - 2 * W_M1 - 2 * W_M2;
+const MEDIA_TOP = H_M1 + H_M2;
+const MEDIA_BOTTOM = MEDIA_TOP + MEDIA_HEIGHT;
+
+const MEDIA_LEFT = W_M1 + W_M2;
+
+const VIDEO_BUTTONS_WIDTH = 8;
+const VIDEO_BUTTONS_HEIGHT = VIDEO_BUTTONS_WIDTH * fraction;
+const VIDEO_CONTROLS_WIDTH = VIDEO_BUTTONS_WIDTH * 2 + 4 * W_M4;
+const VIDEO_CONTROLS_HEIGHT = VIDEO_BUTTONS_HEIGHT + 2 * H_M4 + 2;
+const VIDEO_CONTROLS_LEFT = 50 - VIDEO_CONTROLS_WIDTH / 2;
+const VIDEO_CONTROLS_RIGHT = 50 - VIDEO_CONTROLS_WIDTH / 2;
+const VIDEO_CONTROLS_TOP = MEDIA_BOTTOM - 1;
+const VIDEO_CONTROLS_BOTTOM = 100 - VIDEO_CONTROLS_HEIGHT - VIDEO_CONTROLS_TOP;
+
+const PAGE_BACKGROUND_BOTTOM = H_M1 + H_M1;
+const PAGE_BACKGROUND_HEIGHT = 100 - PAGE_BACKGROUND_BOTTOM - H_M1;
+const BUTTON_BAR_WIDTH = Q_AREA_WIDTH - 2 * W_M3;
+const MAIN_TEXT_WIDE = Q_AREA_WIDTH - 2 * W_M3;
+const MAIN_TEXT_NARROW = MAIN_TEXT_WIDE - AUDIO_ICON_WIDTH - W_M3;
+
+const btnTextBase: PStyle = {
+  fontSize: { _unit: "px", value: 25 },
+  bottom: VIDEO_CONTROLS_BOTTOM + 1.2,
+  zIndex: LAYER_5,
+  width: VIDEO_CONTROLS_WIDTH / 2,
+  textAlign: "center",
+  visibility: "hidden",
+  // backgroundColor: Colors.yellow,
+};
+
+const muteUnmuteText: PStyle = { ...btnTextBase, right: VIDEO_CONTROLS_RIGHT };
+const playPauseText: PStyle = { ...btnTextBase, left: VIDEO_CONTROLS_LEFT };
+const replayText: PStyle = {
+  ...btnTextBase,
+  width: VIDEO_CONTROLS_WIDTH,
+  left: VIDEO_CONTROLS_LEFT,
+  // backgroundColor: Colors.yellow,
+  visibility: "hidden",
+};
+
+const playPauseBase: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle } = {
+  css: {
+    width: VIDEO_BUTTONS_WIDTH,
+    height: VIDEO_BUTTONS_HEIGHT,
+    top: MEDIA_BOTTOM,
+    left: VIDEO_CONTROLS_LEFT + W_M4,
+    zIndex: LAYER_5,
+    visibility: "hidden",
+  },
+  cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
+  cssEnabled: { opacity: 0.8, cursor: "pointer" },
+};
+
+const replayButtonStyles: PStyle = {
+  width: VIDEO_BUTTONS_WIDTH,
+  height: VIDEO_BUTTONS_HEIGHT,
+  top: MEDIA_BOTTOM,
+  // backgroundColor: "red",
+  left: VIDEO_CONTROLS_LEFT + VIDEO_CONTROLS_WIDTH / 2,
+  transform: translateX50,
+  zIndex: LAYER_5,
+  visibility: "hidden",
+  cursor: "pointer",
+};
+
+const muteUnMuteStyles: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle } = {
+  css: {
+    width: VIDEO_BUTTONS_WIDTH,
+    height: VIDEO_BUTTONS_HEIGHT,
+    top: MEDIA_BOTTOM,
+    right: VIDEO_CONTROLS_RIGHT + W_M4,
+    zIndex: LAYER_5,
+    cursor: "pointer",
+    // transform: "translateX: 100%",
+  },
+  cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
+  cssEnabled: { opacity: 0.8, cursor: "pointer" },
+};
+const buttonBaseCss = (): CssTheme => ({
+  css: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+    textColor: Colors.white,
+    fontWeight: 600,
+    fontSize: { _unit: "px", value: 45 },
+    letterSpacing: { _unit: "px", value: 2 },
+    paddingLeft: { _unit: "px", value: 30 },
+    paddingTop: { _unit: "px", value: 10 },
+    paddingBottom: { _unit: "px", value: 10 },
+    paddingRight: { _unit: "px", value: 30 },
+    borderRadius: { _unit: "px", value: 20 },
+    borderStyle: "solid",
+    boxShadow: "3px 3px gray",
+    position: "relative",
+    display: "block",
+    cursor: "pointer",
+  },
+  cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
+  cssEnabled: { opacity: 1, cursor: "pointer" },
+});
+export const primaryButton = (overridesCss: PStyle): BuilderOptionTheme => {
+  const base = buttonBaseCss();
+  const optionTheme: BuilderOptionTheme = {
+    name: "primary-button",
+    normal: {
+      btn: {
+        css: {
+          ...base.css,
+          ...overridesCss,
+          backgroundColor: Colors.primary,
+          borderColor: Colors.primary,
           textColor: Colors.white,
-          fontSize: { _unit: "px", value: FONT_SIZE },
-          w: 84,
-          x: 8,
-          borderColor: "red",
-          fontWeight: FONT_WEIGHT,
-          textAlign: "center",
         },
-        text2: {},
+        cssDisabled: base.cssDisabled,
+        cssEnabled: base.cssEnabled,
       },
+      divider: {},
+      text1: {},
+      text2: {},
+    },
 
-      dontKnow: {
-        btn: {
-          css: {
-            backgroundColor: Colors.white,
-            borderColor: LIGHT_BLUE,
-            textColor: Colors.text,
-            fontSize: { _unit: "px", value: FONT_SIZE },
-            borderWidth: { _unit: "px", value: BTN_BORDER_WIDTH },
-            borderStyle: BTN_BORDER_STYLE,
-            borderRadius: { value: BTN_BORDER_RADIUS, _unit: "px" },
-            padding: { _unit: "px", value: 40 },
-            // h: BTN_HEIGHT,
-            // w: BTN_SHORT_WIDTH,
-            x: 10,
-            y: 8,
-            textAlign: "center",
-          },
-          cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
-          cssEnabled: { opacity: 1, cursor: "pointer" },
+    dontKnow: {
+      btn: {
+        css: {
+          ...base.css,
+          backgroundColor: Colors.secondary,
+          borderColor: Colors.secondary,
+          textColor: Colors.primary,
         },
-        text1: {
-          y: 50,
-          transform: "translate(0%, 50%)",
-          textColor: Colors.text,
-          fontSize: { _unit: "px", value: FONT_SIZE },
-          w: 84,
-          x: 8,
-
-          fontWeight: FONT_WEIGHT,
-          textAlign: "center",
-        },
-        text2: {},
-        divider: {},
+        cssEnabled: base.cssEnabled,
+        cssDisabled: base.cssDisabled,
       },
-    };
-
-    return optionTheme;
+      text1: {},
+      text2: {},
+      divider: {},
+    },
   };
-}
+
+  return optionTheme;
+};
 
 export const Theme2: IDefaultTheme = {
   name: "theme2",
-  pageBackGround: { style: { h: 85, w: 90, x: 5, y: 10, backgroundColor: "gray" } },
+  schemaBackgroundColor: Colors.white,
+  dimensions: { baseHeight: 1300, baseWidth: 1024 },
+  pageBackGround: {
+    style: {
+      height: PAGE_BACKGROUND_HEIGHT,
+      width: W_MAX,
+      bottom: PAGE_BACKGROUND_BOTTOM,
+      left: W_M1,
+      backgroundColor: Colors.backgroundGray,
+    },
+  },
+  backGroundArea1: {
+    style: {
+      height: Q_AREA_HEIGHT,
+      width: Q_AREA_WIDTH,
+      left: Q_AREA_LEFT,
+      bottom: Q_AREA_BOTTOM,
+      backgroundColor: Colors.white,
+    },
+  },
   progressBar: {
-    w: 90,
-    h: 1.5,
-    x: 5,
-    y: 5,
-    backgroundStyles: { backgroundColor: "gray", borderRadius: { _unit: "px", value: 3 } },
-    progressStyles: { backgroundColor: "blue", borderRadius: { _unit: "px", value: 3 } },
+    width: W_MAX,
+    height: PROGRESS_BAR_HEIGHT,
+    bottom: H_M1,
+    left: W_M1,
+    backgroundStyles: {
+      backgroundColor: Colors.backgroundGray,
+      borderRadius: { _unit: "px", value: 10 },
+    },
+    progressStyles: {
+      backgroundColor: Colors.primary,
+      borderRadius: { _unit: "px", value: 10 },
+    },
     text: {
       textType: "page-progress",
-      style: { fontSize: { _unit: "px", value: 20 }, x: 82, y: 3 },
+      style: { fontSize: { _unit: "px", value: 20 }, x: 81.5, y: 2.5 },
     },
   },
   videoPlayer: {
     playButton: {
-      iconUrl: IconUrls.playCircleRegular,
-      css: { w: 5, h: 5, y: 48, x: 4 },
-      cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
-      cssEnabled: { opacity: 0.8, cursor: "pointer" },
-      hideOnPlay: true,
+      text: { text: "Spill av", css: { ...playPauseText } },
+      iconUrl: THEME_2_ICONS.videoPlay.dataUrl,
+      ...playPauseBase,
     },
     pauseButton: {
-      iconUrl: IconUrls.pauseSvg,
-      css: { w: 5, h: 5, y: 48, x: 4 },
-      cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
-      cssEnabled: { opacity: 0.8, cursor: "pointer" },
-      hideOnPause: true,
+      text: { text: "Pause", css: { ...playPauseText } },
+      iconUrl: THEME_2_ICONS.videoPause.dataUrl,
+      ...playPauseBase,
     },
-    videoElement: { css: { w: 80, h: 35, y: 50, x: 10 } },
+    buttonBar: {
+      width: VIDEO_CONTROLS_WIDTH,
+      zIndex: LAYER_4,
+      top: VIDEO_CONTROLS_TOP,
+      left: VIDEO_CONTROLS_LEFT,
+      backgroundColor: Colors.white,
+      height: VIDEO_CONTROLS_HEIGHT,
+      borderRadius: { _unit: "px", value: 16 },
+    },
+    muteButton: {
+      text: { text: "Lyd av", css: { ...muteUnmuteText } },
+      iconUrl: THEME_2_ICONS.mute.dataUrl,
+      css: muteUnMuteStyles.css,
+    },
+
+    unMuteButton: {
+      iconUrl: THEME_2_ICONS.unMute.dataUrl,
+      css: muteUnMuteStyles.css,
+      text: { text: "Lyd på", css: { ...muteUnmuteText } },
+    },
+
+    replayButton: {
+      css: replayButtonStyles,
+      cssDisabled: {},
+      cssEnabled: {},
+      iconUrl: THEME_2_ICONS.videoReplay.dataUrl,
+      text: { text: "Spill av på nytt", css: replayText },
+    },
+
+    videoElement: {
+      css: {
+        height: MEDIA_HEIGHT,
+        top: MEDIA_TOP,
+        transform: translateX50,
+        left: 50,
+        width: 100,
+        zIndex: LAYER_2,
+        visibility: "visible",
+      },
+    },
   },
-  image: { style: { h: 35, w: 80, x: 10, y: 60 } },
+  image: {
+    style: {
+      height: MEDIA_HEIGHT,
+      // Center image, with dynamic width.
+      left: 50,
+      transform: translateX50,
+      top: MEDIA_TOP,
+      boxShadow: "3px 3px",
+    },
+  },
+
   mainText: {
-    noMedia: {
+    base: {
       text: {
-        css: {
-          w: 80,
-          y: 65,
-          x: 10,
-          textAlign: "center",
-          textColor: "black",
-          fontSize: { _unit: "px", value: 40 },
-        },
-        cssDisabled: {},
-        cssEnabled: {},
+        width: MAIN_TEXT_WIDE,
+        left: W_M1 + W_M2 + W_M3,
+        top: Q_AREA_TOP + H_M3,
+        backgroundColor: Colors.white,
+        textAlign: "left",
+        textColor: "black",
+        fontSize: { _unit: "px", value: 40 },
       },
       audio: {
+        iconUrl: THEME_2_ICONS.audioPlay.dataUrl,
         css: {
-          h: 6,
-          w: 6,
-          x: 4,
-          y: 70,
+          height: AUDIO_ICON_HEIGHT,
+          width: AUDIO_ICON_WIDTH,
+          top: Q_AREA_TOP + H_M3,
+          left: W_M1 + W_M2 + W_M3,
           cursor: "pointer",
+          // transform: "translateY(100%)",
           opacity: 0.8,
           visibility: "visible",
+          // backgroundColor: "green",
         },
         cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
         cssEnabled: { opacity: 0.8, cursor: "pointer" },
       },
     },
-    withMedia: {
-      text: {
-        css: {
-          w: 80,
-          y: 27,
-          x: 10,
-          textAlign: "center",
-          textColor: "black",
-          fontSize: { _unit: "px", value: 30 },
-        },
-        cssDisabled: {},
-        cssEnabled: {},
-      },
-      audio: {
-        css: {
-          h: 6,
-          w: 6,
-          x: 4,
-          y: 32,
-          cursor: "pointer",
-          opacity: 0.8,
-          visibility: "visible",
-        },
-        cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
-        cssEnabled: { opacity: 0.8, cursor: "pointer" },
-      },
+    notMediaHasAudio: {
+      text: { width: MAIN_TEXT_NARROW, left: W_M1 + W_M2 + W_M3 + AUDIO_ICON_WIDTH + W_M3 },
+      audio: {},
     },
+    hasMediaHasAudio: {
+      text: {
+        width: MAIN_TEXT_NARROW,
+        left: W_M1 + W_M2 + W_M3 + AUDIO_ICON_WIDTH + W_M3,
+      },
+      audio: {},
+    },
+    notMediaNotAudio: { text: {} },
+    hasMediaNotAudio: { text: {} },
   },
-  nextButtonTheme: Button.primaryButton(),
-  responseButtons: Button.primaryButton(),
+  buttonBar: {
+    vibrateMs: 60,
+    container: {
+      base: {
+        display: "flex",
+        justifyContent: "space-evenly",
+        width: BUTTON_BAR_WIDTH,
+        bottom: Q_AREA_BOTTOM + H_M3,
+        left: Q_AREA_LEFT + W_M3,
+        // backgroundColor: "green",
+        gap: { _unit: "px", value: 20 },
+        alignItems: "center",
+      },
+      whenSingle: { justifyContent: "space-evenly" },
+      whenMany: { justifyContent: "flex-start" },
+    },
+
+    nextButtonTheme: primaryButton({}),
+    responseButtons: primaryButton({}),
+  },
 };
