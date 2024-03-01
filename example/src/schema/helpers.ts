@@ -83,9 +83,10 @@ export const addQuestionPage109 = (
 ) => {
   const questionPage = schema.addPage("question");
   questionPage.mainText.text = question;
-  questionPage.defaultQuestion.addOption("Ja", 1);
-  questionPage.defaultQuestion.addOption("Nei", 0);
-  questionPage.defaultQuestion.addOption("Vet ikke", 9);
+  questionPage.defaultQuestion.addOption("aldri", 1);
+  questionPage.defaultQuestion.addOption("av og til", 0);
+  questionPage.defaultQuestion.addOption("somewhat å simwhat", 0);
+  questionPage.defaultQuestion.addOption("Vet ikke på to linjer", 9);
   const prefix = PagePrefix.fromStringOrThrow(pagePrefix);
   questionPage.prefix = prefix;
   if (options?.audio) {

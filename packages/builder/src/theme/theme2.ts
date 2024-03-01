@@ -20,8 +20,8 @@ const Colors = {
   white: "#ffffff",
   backgroundGray: "#F0F0F0",
   backgroundWhite: "white",
-  progressBackGround: "#164AC4",
-  progressForGround: "#F5F5F5",
+  // progressBackGround: "#164AC4",
+  // progressForGround: "#F5F5F5",
   // red: "red",
   // yellow: "yellow",
 };
@@ -144,31 +144,37 @@ const muteUnMuteStyles: { css: PStyle; cssDisabled: PStyle; cssEnabled: PStyle }
   cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
   cssEnabled: { opacity: 0.8, cursor: "pointer" },
 };
-const buttonBaseCss = (): CssTheme => ({
+
+const FONT_QUESTION = 20;
+const FONT_ = 20;
+const responseButtonBaseCss = (): CssTheme => ({
   css: {
     backgroundColor: Colors.primary,
     borderColor: Colors.primary,
     textColor: Colors.white,
     fontWeight: 600,
-    fontSize: { _unit: "px", value: 35 },
-    lineHeight: 1,
-    // letterSpacing: { _unit: "px", value: 2 },
-    paddingLeft: { _unit: "px", value: 30 },
-    paddingTop: { _unit: "px", value: 10 },
-    paddingBottom: { _unit: "px", value: 10 },
-    paddingRight: { _unit: "px", value: 30 },
+    fontSize: { _unit: "px", value: 28 },
+    lineHeight: 1.1,
+    maxWidth: 25,
+    // width: 20,
+    // flex: "0 0 auto",
+    paddingLeft: { _unit: "px", value: 10 },
+    paddingTop: { _unit: "px", value: 5 },
+    paddingBottom: { _unit: "px", value: 5 },
+    paddingRight: { _unit: "px", value: 10 },
     borderRadius: { _unit: "px", value: 20 },
     borderStyle: "solid",
     boxShadow: "3px 3px gray",
     position: "relative",
     display: "block",
     cursor: "pointer",
+    // maxWidth: { _unit: "percent", value: 10 },
   },
   cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
   cssEnabled: { opacity: 1, cursor: "pointer" },
 });
 export const primaryButton = (overridesCss: PStyle): BuilderOptionTheme => {
-  const base = buttonBaseCss();
+  const base = responseButtonBaseCss();
   const optionTheme: BuilderOptionTheme = {
     name: "primary-button",
     normal: {
@@ -192,6 +198,7 @@ export const primaryButton = (overridesCss: PStyle): BuilderOptionTheme => {
       btn: {
         css: {
           ...base.css,
+          ...overridesCss,
           backgroundColor: Colors.secondary,
           borderColor: Colors.secondary,
           textColor: Colors.primary,
@@ -359,15 +366,16 @@ export const Theme2: IDefaultTheme = {
     container: {
       base: {
         display: "flex",
-        justifyContent: "space-evenly",
+        justifyContent: "flex-start",
         width: BUTTON_BAR_WIDTH,
+        height: 6,
         bottom: Q_AREA_BOTTOM + H_M3,
         left: Q_AREA_LEFT + W_M3,
         // backgroundColor: "green",
-        gap: { _unit: "px", value: 20 },
-        alignItems: "center",
+        gap: { _unit: "px", value: 40 },
+        alignItems: "stretch",
       },
-      whenSingle: { justifyContent: "space-evenly" },
+      whenSingle: { justifyContent: "center" },
       whenMany: { justifyContent: "flex-start" },
     },
 

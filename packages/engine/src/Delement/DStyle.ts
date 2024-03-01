@@ -67,6 +67,7 @@ export interface DStyle {
 
   // LAYOUT & POSITIONING OVERRIDE
   position: "absolute" | "relative";
+  flex: string;
   display: "flex" | "block";
   flexDirection: "row" | "colum";
   flexWrap: "nowrap" | "wrap";
@@ -90,23 +91,25 @@ export interface DStyle {
 }
 
 export namespace DStyle {
-  import isNumber = DUtil.isNumber;
+  // import isNumber = DUtil.isNumber;
   import isLengthUnit = DCss.isLengthUnit;
   export const normalize = <T extends HTMLElement>(el: T): T => {
     const s = el.style;
-    // el.style.padding = "";
-    // el.style.margin = "";
-    // el.style.position = "absolute";
-    // el.style.boxSizing = "border-box";
     s.position = "absolute";
     s.boxSizing = "border-box";
+    s.padding = "0px";
+    s.margin = "0px";
+
+    s.height = "";
+    s.width = "fit-content";
+
     s.bottom = "";
     s.top = "";
     s.left = "";
     s.right = "";
+    s.flex = "none";
+
     s.boxShadow = "";
-    s.padding = "0px";
-    s.margin = "0px";
     s.fontSize = "12px";
     s.lineHeight = "1";
     s.textAlign = "center";
@@ -117,7 +120,7 @@ export namespace DStyle {
     s.borderStyle = "";
     s.borderRadius = "";
     s.borderWidth = "";
-    s.borderWidth = "10px";
+    s.borderWidth = "0px";
     s.borderColor = "black";
     s.backgroundColor = "";
     s.border = "";
@@ -134,6 +137,7 @@ export namespace DStyle {
     style: Partial<DStyle>,
     scale: number,
   ): T => {
+    const { isNumber, isString } = DUtil;
     // const scalePx = DCss.toStringCre(this.scale);
     const {
       x,
@@ -156,6 +160,7 @@ export namespace DStyle {
       textColor,
       textAlign,
       translate,
+      flex,
       margin,
       padding,
       letterSpacing,
@@ -186,8 +191,11 @@ export namespace DStyle {
       maxHeight,
     } = style;
 
-    if (typeof zIndex === "number") {
+    if (isNumber(zIndex)) {
       el.style.zIndex = "" + zIndex;
+    }
+    if (isString(flex)) {
+      el.style.flex = flex;
     }
 
     if (DCss.isLengthUnit(minWidth)) {

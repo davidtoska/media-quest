@@ -33,7 +33,7 @@ nameElement.style.textAlign = "center";
 engineRoot.style.margin = "60px auto";
 
 const createEngine = (schema: E.SchemaDto) => {
-  const engine = new E.SchemaEngine(engineRoot, 600, 1024, schema);
+  const engine = new E.SchemaEngine(engineRoot, 1300, 1024, schema);
   engine.onProgress((result) => {
     // console.log(result);
     // console.log("EVENTS: " + result.eventLog.length);
