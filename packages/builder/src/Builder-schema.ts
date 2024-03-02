@@ -1,7 +1,6 @@
-import type { BuilderPageDto, BuilderPageType } from "./page/Builder-page";
+import type { BuilderPageType } from "./page/Builder-page";
 import { BuilderPage } from "./page/Builder-page";
 import type {
-  BuilderRuleDto,
   ExcludeByPageAction,
   ExcludeByTagAction,
   JumpToPageAction,
@@ -9,12 +8,10 @@ import type {
 } from "./rulebuilder";
 import { BuilderRule, RuleInput } from "./rulebuilder";
 import type { RuleQuestionVariable } from "./rulebuilder/RuleVariable";
-import type { BuilderTagDto } from "./tag/BuilderTag";
 import { BuilderTag } from "./tag/BuilderTag";
 import { DefaultThemeCompiler } from "./theme/default-theme-compiler";
 import { ImageFile } from "./media-files";
 import { DUtil } from "@media-quest/engine";
-import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix, SchemaPrefixValue } from "./primitives/schema-prefix";
 import { CodeBook } from "./code-book/codebook";
 import { CodebookPredefinedVariable } from "./code-book/codebook-variable";
@@ -26,23 +23,11 @@ import { PageID, SchemaID, SumScoreVariableID } from "./primitives/ID";
 import { SumScoreVariableCollection } from "./sum-score/sum-score-variable-collection";
 import { TagCollection } from "./tag/Tag-Collection";
 import { BuilderPageCollection } from "./page/Builder-page-collection";
+import { BuilderMainVideoDto } from "./BuilderMainVideoDto";
+import { BuilderMainImageDto } from "./BuilderMainImageDto";
+import { BuilderSchemaDto } from "./Builder-schema-dto";
 
 const U = DUtil;
-
-export interface BuilderSchemaDto {
-  readonly id: SchemaID;
-  readonly prefix: SchemaPrefixValue;
-  readonly mainImage: ImageFile | false;
-  readonly backgroundColor: string;
-  readonly name: string;
-  readonly pages: ReadonlyArray<BuilderPageDto>;
-  readonly baseHeight: number;
-  readonly baseWidth: number;
-  readonly predefinedVariables?: Array<CodebookPredefinedVariable>;
-  readonly sumScoreVariables?: ReadonlyArray<SumScoreVariableDto>;
-  readonly rules: ReadonlyArray<BuilderRuleDto>;
-  readonly tags: ReadonlyArray<BuilderTagDto>;
-}
 
 export class BuilderSchema {
   readonly prefix: SchemaPrefix;
@@ -271,12 +256,16 @@ export class BuilderSchema {
   }
 
   compile(
-    options: CompilerOption = { blockAutoplayQuestion: false, blockAutoplayVideo: false },
+    options: CompilerOption = {
+      blockAutoplayQuestion: false,
+      blockAutoplayVideo: false,
+      mediaAssets: null,
+    },
   ): CompilerOutput {
     // const moduleDto = this.toJson();
-    const builderSchema = BuilderSchema.fromJson(this.toJson());
+    let builderSchema = BuilderSchema.fromJson(this.toJson());
 
-    // Overriding the
+    // Override with compiler options.
     builderSchema._pageCollection.pages.forEach((p) => {
       if (options.blockAutoplayQuestion) {
         p.mainText.autoplay = false;
@@ -288,8 +277,16 @@ export class BuilderSchema {
         }
       }
     });
-    const moduleDto = builderSchema.toJson();
-    // const imp = new DefaultThemeCompiler();
+
+    let moduleDto = builderSchema.toJson();
+    if (options.mediaAssets) {
+      const { videoFilesBaseUrl, audioFilesBaseUrl, imageFilesBaseUrl } = options.mediaAssets;
+      moduleDto = BuilderSchemaDto.overrideAllMediaUrls(moduleDto, {
+        videoFilesBaseUrl,
+        audioFilesBaseUrl,
+        imageFilesBaseUrl,
+      });
+    }
 
     const codebook = CodeBook.fromSchema(moduleDto);
     const schema = this.compiler.compile(moduleDto);

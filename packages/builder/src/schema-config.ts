@@ -1,5 +1,6 @@
 import { CodebookPredefinedVariable } from "./code-book/codebook-variable";
-import { BuilderSchemaDto } from "./Builder-schema";
+
+import { BuilderSchemaDto } from "./Builder-schema-dto";
 
 /**
  * This interface is ment to define all information that a schema-admin app

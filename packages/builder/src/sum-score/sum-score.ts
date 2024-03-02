@@ -2,7 +2,8 @@ import { SumScoreVariableDto } from "./sum-score-variable";
 import { SumScoreVariableID } from "../primitives/ID";
 import { SumScoreAnswer } from "./sum-score-answer";
 import { CodeBook } from "../code-book/codebook";
-import { BuilderSchemaDto } from "../Builder-schema";
+
+import { BuilderSchemaDto } from "../Builder-schema-dto";
 
 /**
  *

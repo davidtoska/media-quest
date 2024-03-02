@@ -5,7 +5,7 @@ export {
   BuilderQuestion,
   type BuilderQuestionType,
 } from "./Builder-question";
-export { BuilderSchema, type BuilderSchemaDto } from "./Builder-schema";
+export { BuilderSchema } from "./Builder-schema";
 export { BuilderText, type BuilderTextDto } from "./Builder-text";
 export { type BuilderMainImageDto } from "./BuilderMainImageDto";
 export { BuilderMainText, type BuilderMainTextDto } from "./BuilderMainText";
@@ -27,3 +27,4 @@ export { SumScoreVariableDto, SumScoreVariable } from "./sum-score/sum-score-var
 export { SumScoreAnswer } from "./sum-score/sum-score-answer";
 export { TagCollection } from "./tag/Tag-Collection";
 export * from "./theme/Default-theme";
+export { BuilderSchemaDto } from "./Builder-schema-dto";

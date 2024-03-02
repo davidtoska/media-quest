@@ -11,4 +11,10 @@ export interface CompilerOutput {
 export interface CompilerOption {
   blockAutoplayQuestion: boolean;
   blockAutoplayVideo: boolean;
+  mediaAssets: {
+    audioFilesBaseUrl: string;
+    videoFilesBaseUrl: string;
+    imageFilesBaseUrl: string;
+    fileNameStrategy: "id" | "newFileName" | "originalFileName" | "relativePath";
+  } | null;
 }

@@ -1,7 +1,7 @@
 import { BuilderPageDto } from "../page/Builder-page";
-import { BuilderSchemaDto } from "../Builder-schema";
 import { CodeBookQuestionVariable, CodebookPredefinedVariable } from "./codebook-variable";
 import { SumScoreVariableDto } from "../sum-score/sum-score-variable";
+import { BuilderSchemaDto } from "../Builder-schema-dto";
 
 export interface Codebook {
   readonly predefinedVariables: ReadonlyArray<CodebookPredefinedVariable>;

@@ -9,6 +9,7 @@ import * as E from "../../packages/engine/src/public-api";
 import * as B from "../../packages/builder/src/public-api";
 import { autoplayOverrideWorks } from "./schema/autoplay-override-works";
 import { redesignWorks } from "./schema/redesign-info-page";
+import { overrideMediaPathsWorks } from "./schema/override-media-paths-works";
 
 console.log("DEV APP");
 
@@ -23,7 +24,7 @@ if (a.name === "refresh when libs change. ") {
 // const initialSchema: IExampleSchema = Page2Works;
 const initialSchema: IExampleSchema = autoplayWorks;
 // console.log(initialSchema);
-
+console.log(overrideMediaPathsWorks.dto);
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
 const engineRoot = document.createElement("div");
 const nameElement = document.createElement("h1");

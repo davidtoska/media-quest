@@ -1,4 +1,3 @@
-import type { BuilderSchemaDto } from "./Builder-schema";
 import { BuilderSchema } from "./Builder-schema";
 import { BuilderPage } from "./page/Builder-page";
 import type { BuilderTagDto } from "./tag/BuilderTag";
@@ -8,6 +7,7 @@ import { SchemaPrefix } from "./primitives/schema-prefix";
 
 import { SumScoreVariableDto } from "./sum-score/sum-score-variable";
 import { OptionID, PageID, QuestionID, SchemaID, SumScoreVariableID } from "./primitives/ID";
+import { BuilderSchemaDto } from "./Builder-schema-dto";
 
 const tag1: BuilderTagDto = BuilderTag.create("tag1", "This tag is defined in schemaDto1").toJson();
 

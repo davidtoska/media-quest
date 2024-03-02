@@ -1,5 +1,6 @@
-import type { BuilderSchemaDto } from "../Builder-schema";
 import { SchemaDto } from "@media-quest/engine";
+import { CompilerOption } from "../builder-compiler";
+import { BuilderSchemaDto } from "../Builder-schema-dto";
 
 export interface ThemeCompiler<ThemeSchema> {
   currentTheme: ThemeSchema;

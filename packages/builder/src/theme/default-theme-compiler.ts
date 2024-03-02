@@ -1,5 +1,4 @@
 import { ThemeCompiler } from "./ThemeCompiler";
-import type { BuilderSchemaDto } from "../Builder-schema";
 import { BuilderSchema } from "../Builder-schema";
 import type { BuilderPageDto } from "../page/Builder-page";
 import { DefaultTheme } from "./Default-theme";
@@ -26,6 +25,7 @@ import { AudioFile } from "../media-files";
 import { BuilderRule } from "../rulebuilder";
 import { IDefaultTheme } from "./IDefault-theme";
 import { Theme2 } from "./theme2";
+import { BuilderSchemaDto } from "../Builder-schema-dto";
 
 export class DefaultThemeCompiler implements ThemeCompiler<IDefaultTheme> {
   readonly name = "Ispe default theme.";
