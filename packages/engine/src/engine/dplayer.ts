@@ -28,10 +28,10 @@ export class DPlayer {
     this.eventLog.push(event);
   }
 
-  saveHistory(pageHistory: PageResult) {
+  saveHistory(pageResult: PageResult) {
     // console.log("SAVE HISTORY", pageHistory);
-    this.history.addToHistory(pageHistory);
-    this.eventLog.push(...pageHistory.eventLog);
+    this.history.addToHistory(pageResult);
+    this.eventLog.push(...pageResult.eventLog);
     // Evaluate rules
     const userGeneratedFact = this.history.getFacts();
     const predefinedFacts = this.predefinedFacts;
@@ -65,8 +65,10 @@ export class DPlayer {
     const answerFacts = this.history.getFacts();
     const predefinedFacts = this.predefinedFacts;
     const eventLog = [...this.eventLog];
+    const pageResults = this.history.getPageResults();
+    // const pageResults = this.history.;
     // console.log(answerFacts);
-    return { answerFacts, predefinedFacts, eventLog, pagesLeft };
+    return { answerFacts, predefinedFacts, eventLog, pagesLeft, pageResults };
   }
 
   insertSequence(sequenceId: string) {

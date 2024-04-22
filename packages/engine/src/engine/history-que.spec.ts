@@ -8,6 +8,7 @@ const p = (id: number): PageDto => {
   return {
     id: DUtil.randomObjectId(),
     prefix: "prefix" + id,
+    pageNumber: id,
     elements: [],
     initialTasks: [],
     // staticElements: [],
@@ -16,7 +17,7 @@ const p = (id: number): PageDto => {
   };
 };
 
-const pageResult = (id: number, value: number): PageResult => {
+const pageResult = (id: number, pageNumber: number, value: number): PageResult => {
   const pageEntered = DTimestamp.now();
   const pageExited = DTimestamp.addMills(pageEntered, 1000);
   const pageTime = DTimestamp.diff(pageEntered, pageExited);
@@ -24,6 +25,7 @@ const pageResult = (id: number, value: number): PageResult => {
   const result: PageResult = {
     pageId: "_dummyId" + id,
     pagePrefix: "prefix" + id,
+    pageNumber,
     eventLog: [],
     pageTime,
     collectedFacts: [
@@ -61,7 +63,7 @@ describe("HistoryQue", () => {
   });
 
   it("Can add history, and get facts back", () => {
-    history.addToHistory(pageResult(1, 2));
+    history.addToHistory(pageResult(1, 0, 2));
     expect(history.getFacts().length).toBe(1);
   });
 });

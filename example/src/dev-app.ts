@@ -10,6 +10,8 @@ import * as B from "../../packages/builder/src/public-api";
 import { autoplayOverrideWorks } from "./schema/autoplay-override-works";
 import { redesignWorks } from "./schema/redesign-info-page";
 import { overrideMediaPathsWorks } from "./schema/override-media-paths-works";
+import { bedreKommuneSchema } from "./bedre-kommune-eksempel";
+import { defaultThemeWorks } from "./schema/default-theme-works";
 
 console.log("DEV APP");
 
@@ -22,7 +24,7 @@ if (a.name === "refresh when libs change. ") {
   console.log(a);
 }
 // const initialSchema: IExampleSchema = Page2Works;
-const initialSchema: IExampleSchema = autoplayWorks;
+const initialSchema: IExampleSchema = defaultThemeWorks;
 // console.log(initialSchema);
 console.log(overrideMediaPathsWorks.dto);
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
@@ -34,7 +36,7 @@ nameElement.style.textAlign = "center";
 engineRoot.style.margin = "60px auto";
 
 const createEngine = (schema: E.SchemaDto) => {
-  const engine = new E.SchemaEngine(engineRoot, 1300, 1024, schema);
+  const engine = new E.SchemaEngine(engineRoot, 700, 1024, schema);
   engine.onProgress((result) => {
     // console.log(result);
     // console.log("EVENTS: " + result.eventLog.length);
@@ -45,11 +47,11 @@ const createEngine = (schema: E.SchemaDto) => {
 
 // Client api
 let engine = createEngine(initialSchema.schema);
-// engine.onProgress((result) => {
-//   console.log(result);
-//   console.log("EVENTS: " + result.eventLog.length);
-//   console.log("Answers: " + result.answers.length);
-// });
+engine.onProgress((result) => {
+  console.log(result);
+  console.log("EVENTS: " + result.eventLog.length);
+  console.log("Answers: " + result.answers.length);
+});
 const toMenuItem = (example: IExampleSchema): { label: string; onclick: () => void } => {
   const label = example.menuLabel;
   return {
@@ -72,6 +74,8 @@ const menu = createMenu([
   toMenuItem(gifModeWorks),
   toMenuItem(autoplayWorks),
   toMenuItem(redesignWorks),
+  toMenuItem(defaultThemeWorks),
+  toMenuItem(bedreKommuneSchema),
   toMenuItem(autoplayOverrideWorks),
   toMenuItem(infopageWorks),
   toMenuItem(excludeByPageIdRuleWorks),

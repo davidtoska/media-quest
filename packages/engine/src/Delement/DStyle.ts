@@ -167,13 +167,16 @@ export namespace DStyle {
       h,
       height,
       width,
+
       transform,
+
       visibility,
       justifyContent,
       alignContent,
       flexWrap,
       display,
       flexDirection,
+
       alignItems,
       position,
       paddingLeft,
@@ -194,6 +197,11 @@ export namespace DStyle {
     if (isNumber(zIndex)) {
       el.style.zIndex = "" + zIndex;
     }
+
+    if (isString(translate)) {
+      el.style.transform = translate;
+    }
+
     if (isString(flex)) {
       el.style.flex = flex;
     }
@@ -245,6 +253,7 @@ export namespace DStyle {
     if (position) {
       el.style.position = position;
     }
+
     if (justifyContent) {
       el.style.justifyContent = justifyContent;
     }
@@ -252,15 +261,19 @@ export namespace DStyle {
     if (alignContent) {
       el.style.alignContent = alignContent;
     }
+
     if (flexWrap) {
       el.style.flexWrap = flexWrap;
     }
+
     if (display) {
       el.style.display = display;
     }
+
     if (flexDirection) {
       el.style.flexDirection = flexDirection;
     }
+
     if (alignItems) {
       el.style.alignItems = alignItems;
     }
@@ -281,6 +294,7 @@ export namespace DStyle {
     if (textColor) {
       el.style.color = textColor;
     }
+
     if (textAlign) {
       el.style.textAlign = textAlign;
     }
@@ -368,6 +382,7 @@ export namespace DStyle {
     if (visibility) {
       el.style.visibility = visibility;
     }
+
     return el;
   };
 

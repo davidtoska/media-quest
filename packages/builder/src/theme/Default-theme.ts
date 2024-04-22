@@ -13,15 +13,20 @@ namespace BuilderOptionTheme {
   const BLUE = "#2F5597";
   const BTN_BORDER_WIDTH = 3;
   const BTN_BORDER_RADIUS = 10;
+  const BTN_HEIGHT = 130;
+  const BTN_WIDTH_LONG: DCss.Percent = { _unit: "percent", value: 19 };
+  const BTN_WIDTH_SHORT: DCss.Percent = { _unit: "percent", value: 15 };
   const BTN_BORDER_STYLE: DStyle["borderStyle"] = "solid";
-  const FONT_WEIGHT: DStyle["fontWeight"] = 600;
-  const FONT_SIZE: DCss.Px["value"] = 50;
-  const BTN_PADDING_LEFT = 40;
-  const BTN_PADDING_TOP = 40;
+  const FONT_WEIGHT: DStyle["fontWeight"] = 500;
+  const FONT_SIZE: DCss.Px["value"] = 36;
+
+  const BTN_PADDING_LEFT = 10;
+  const BTN_PADDING_TOP = 10;
 
   const buttonBaseCss = (): CssTheme => ({
     css: {
       fontWeight: FONT_WEIGHT,
+
       fontSize: { _unit: "px", value: FONT_SIZE },
       letterSpacing: { _unit: "px", value: 2 },
       paddingLeft: { _unit: "px", value: BTN_PADDING_LEFT },
@@ -30,6 +35,8 @@ namespace BuilderOptionTheme {
       paddingRight: { _unit: "px", value: BTN_PADDING_LEFT },
       borderRadius: { _unit: "px", value: BTN_BORDER_RADIUS },
       borderWidth: { _unit: "px", value: BTN_BORDER_WIDTH },
+      width: BTN_WIDTH_LONG,
+      height: { _unit: "px", value: BTN_HEIGHT },
       borderStyle: BTN_BORDER_STYLE,
       // boxShadow: "3px 3px gray",
       position: "relative",
@@ -67,6 +74,7 @@ namespace BuilderOptionTheme {
             backgroundColor: WHITE,
             borderColor: LIGHT_BLUE,
             textColor: BLUE,
+            width: BTN_WIDTH_SHORT,
           },
           cssDisabled,
           cssEnabled,
@@ -81,19 +89,25 @@ namespace BuilderOptionTheme {
   };
 }
 
-const textHighTop = 25;
-const textLowTop = 55;
-const audioHighTop = 20;
-const audioLowTop = 55;
+const MAIN_TEXT_FONT_SIZE: DCss.Px = { _unit: "px", value: 40 };
+const MAIN_TEXT_WIDTH: DCss.Percent = { _unit: "percent", value: 76 };
+const textHighTop = 30;
+const textLowTop = 72;
+const audioHighTop = 30;
+const audioLowTop = 72;
 
 const textBase: PStyle = {
-  width: 80,
+  width: MAIN_TEXT_WIDTH,
+  // backgroundColor: "red",
   top: textHighTop,
-  left: 10,
-  textAlign: "center",
+  left: 14,
+  lineHeight: 1.2,
+  textAlign: "left",
   textColor: "black",
-  fontSize: { _unit: "px", value: 40 },
+  transform: "translate(0, -50%)",
+  fontSize: MAIN_TEXT_FONT_SIZE,
 };
+
 const textHigh: PStyle = { ...textBase, top: textHighTop };
 const textLow: PStyle = { ...textHigh, top: textLowTop };
 
@@ -104,6 +118,7 @@ const audioBase: PStyle = {
   top: audioHighTop,
   cursor: "pointer",
   opacity: 0.8,
+  transform: "translate(0, -50%)",
   visibility: "visible",
 };
 const audioHigh: PStyle = { ...audioBase, top: audioHighTop };
@@ -162,7 +177,7 @@ export const DefaultTheme: IDefaultTheme = {
         bottom: 0,
         left: 0, // h: 10,
         alignItems: "center",
-        backgroundColor: "yellow",
+        // backgroundColor: "yellow",
       },
       whenSingle: { justifyContent: "space-evenly" },
       whenMany: { justifyContent: "space-evenly" },

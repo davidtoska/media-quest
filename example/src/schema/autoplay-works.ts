@@ -11,14 +11,19 @@ const s = B.BuilderSchema.create(
 s.backgroundColor = "white";
 
 // const addPage10 =
-const p1 = addQuestionPage109(s, "Q1:\n (audio-auto-play=false)", "q1", {
-  audio: true,
-  autoplayAudio: false,
-  audioDelay: 0,
-  video: true,
-  autoplayVideo: false,
-  videoDelay: 0,
-});
+const p1 = addQuestionPage109(
+  s,
+  "Q1:\n (audio-auto-play=false) skal bare sjekke hvor stor plass denne teksten tar dersom jeg har makismalt antall tegn. ",
+  "q1",
+  {
+    audio: true,
+    autoplayAudio: false,
+    audioDelay: 0,
+    video: true,
+    autoplayVideo: false,
+    videoDelay: 0,
+  },
+);
 
 const p2 = addQuestionPage109(s, "Q2:\n (audio-autoplay=false) \n (video-autoplay=false)", "q2", {
   audio: true,
@@ -67,5 +72,6 @@ addQuestionPage109(
 
 export const autoplayWorks: IExampleSchema = {
   menuLabel: "autoplay",
-  schema: s.compile({ blockAutoplayQuestion: false, blockAutoplayVideo: false }).schema,
+  schema: s.compile({ blockAutoplayQuestion: false, blockAutoplayVideo: false, mediaAssets: null })
+    .schema,
 };

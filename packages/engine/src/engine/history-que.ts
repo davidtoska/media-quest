@@ -11,6 +11,10 @@ export class HistoryQue {
     return answers;
   }
 
+  getPageResults(): PageResult[] {
+    return [...this.history];
+  }
+
   addToHistory(result: PageResult) {
     this.history.push(result);
   }

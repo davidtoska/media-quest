@@ -1,6 +1,6 @@
 import { SchemaID } from "./primitives/ID";
 import { SchemaPrefixValue } from "./primitives/schema-prefix";
-import { ImageFile } from "./media-files";
+import { AudioFile, ImageFile } from "./media-files";
 import type { BuilderPageDto } from "./page/Builder-page";
 import { CodebookPredefinedVariable } from "./code-book/codebook-variable";
 import { SumScoreVariableDto } from "./sum-score/sum-score-variable";
@@ -34,20 +34,29 @@ const blockAutoplayVideo = (dto: BuilderPageDto): BuilderPageDto => {
 };
 
 const overrideVideoUrl = (dto: BuilderPageDto, baseUrl: string): BuilderPageDto => {
-  if (dto.mainMedia && dto.mainMedia.kind === "main-video") {
-    dto.mainMedia.file.downloadUrl = [baseUrl, dto.mainMedia.file.id].join("/");
+  const mainMedia = dto.mainMedia;
+  if (mainMedia && mainMedia.kind === "main-video") {
+    const url = [baseUrl, mainMedia.file.id].join("/");
+    const file = { ...mainMedia.file, downloadUrl: url };
+    dto.mainMedia = { ...mainMedia, file };
   }
   return dto;
 };
 const overrideImageUrl = (dto: BuilderPageDto, baseUrl: string): BuilderPageDto => {
-  if (dto.mainMedia && dto.mainMedia.kind === "main-image") {
-    dto.mainMedia.file.downloadUrl = [baseUrl, dto.mainMedia.file.id].join("/");
+  const mainMedia = dto.mainMedia;
+  if (mainMedia && mainMedia.kind === "main-image") {
+    const url = [baseUrl, mainMedia.file.id].join("/");
+    const file = { ...mainMedia.file, downloadUrl: url };
+    dto.mainMedia = { ...mainMedia, file };
   }
   return dto;
 };
 const overrideAudioUrl = (dto: BuilderPageDto, baseUrl: string): BuilderPageDto => {
-  if (dto.mainText.audioFile) {
-    dto.mainText.audioFile.downloadUrl = [baseUrl, dto.mainText.audioFile.id].join("/");
+  const newAudioFile = { ...dto };
+  const audioFile = newAudioFile.mainText.audioFile;
+  if (audioFile) {
+    const url = [baseUrl, audioFile.id].join("/");
+    dto.mainText.audioFile = { ...audioFile, downloadUrl: url };
   }
   return dto;
 };

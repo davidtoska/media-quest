@@ -20,6 +20,10 @@ export interface VideoPlayerDto {
 export interface PageDto {
   readonly id: string;
   readonly prefix: string;
+  /**
+   * Page number in the sequence (starts at 1)
+   */
+  readonly pageNumber: number;
   readonly tags: string[];
   background: string;
   elements: Array<DElementDto>;
@@ -31,6 +35,7 @@ export const PageDto = {
   createDummy: (id: number): PageDto => {
     return {
       id: "id" + id,
+      pageNumber: id,
       prefix: "prefix" + id,
       tags: [],
       background: "white",
@@ -51,8 +56,7 @@ export const PageDto = {
 export class Page {
   private readonly TAG = "[ DPage ]: ";
   private elements: DElement<HTMLElement>[] = [];
-  // private elements: PageComponent[] = [];
-  // private layoutComponents: PageLayoutComponent[] = [];
+  private readonly pageNumber: number;
   private pageEntered: DTimestamp = DTimestamp.now();
   private previousState: TaskState | false = false;
   private eventLog = new Array<MqEvent>();
@@ -63,22 +67,14 @@ export class Page {
     private readonly scaleService: ScaleService,
     private readonly onCompleted: (result: PageResult) => void,
   ) {
+    this.pageNumber = dto.pageNumber;
     dto.elements.forEach((el) => {
       const element = createDElement(el, scaleService);
-      // if (element instanceof DDiv) {
-      // }
       element.registerClickHandler((action) => {
         this.handleButtonAction(action);
       });
 
       this.elements.push(element);
-
-      // if(element.)
-      // element= (action) => {
-      //   console.log("TODO ONCLICK ");
-      //   this.handleButtonAction(action);
-      // };
-      // this.elements.push(element);
     });
 
     if (dto.videoPlayer) {
@@ -96,12 +92,13 @@ export class Page {
   private createPageResult(facts: Fact[]): PageResult {
     const pageExited = DTimestamp.now();
     const pageTime = DTimestamp.diff(this.pageEntered, pageExited);
-    const pageExit = MqEvent.pageLeave(this.dto.id, this.dto.prefix);
+    const pageExit = MqEvent.pageLeave(this.dto.id, this.dto.prefix, this.pageNumber);
     this.eventLog.push(pageExit);
     const eventLog = [...this.eventLog];
     return {
       pagePrefix: this.dto.prefix,
       pageId: this.dto.id,
+      pageNumber: this.pageNumber,
       eventLog,
       pageTime,
       collectedFacts: facts,
@@ -111,6 +108,7 @@ export class Page {
     const event = MqEvent.userClicked({
       pageId: this.dto.id,
       pagePrefix: this.dto.prefix,
+      pageNumber: this.pageNumber,
       action: a.kind,
       descriptions: ButtonClickAction.describe(a),
     });
@@ -160,19 +158,12 @@ export class Page {
   }
 
   appendYourself(parent: HTMLElement) {
-    const pageEnterEvent = MqEvent.pageEnter(this.dto.id, this.dto.prefix);
+    const pageEnterEvent = MqEvent.pageEnter(this.dto.id, this.dto.prefix, this.pageNumber);
     this.pageEntered = DTimestamp.now();
     this.eventLog.push(pageEnterEvent);
     this.elements.forEach((el) => {
       el.appendYourself(parent);
     });
-
-    // this.components.forEach((comp) => {
-    //   comp.appendToParent(parent);
-    // });
-    // this.layoutComponents.forEach((comp) => {
-    //   comp.appendToParent(parent);
-    // });
   }
 
   destroy() {

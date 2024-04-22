@@ -5,6 +5,7 @@ import { MqEvent } from "../events/mq-events";
 export interface PageResult {
   readonly pageId: string;
   readonly pagePrefix: string;
+  readonly pageNumber: number;
   readonly eventLog: ReadonlyArray<MqEvent>;
   readonly pageTime: DTimestamp.Diff;
   readonly collectedFacts: Fact[];

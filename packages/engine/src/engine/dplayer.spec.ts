@@ -72,6 +72,7 @@ describe("DPlayer", () => {
     const result: PageResult = {
       pageId: curr.id,
       pagePrefix: curr.id,
+      pageNumber: 1,
       eventLog: [],
       pageTime: DTimestamp.diff(DTimestamp.now(), DTimestamp.now()),
       collectedFacts: [

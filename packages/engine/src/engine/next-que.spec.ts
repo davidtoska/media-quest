@@ -10,6 +10,7 @@ let que = new NextQue();
 const createPage = (tags: string[]): PageDto => {
   const dto: PageDto = {
     id: DUtil.randomObjectId(),
+    pageNumber: 1,
     prefix: "prefix",
     elements: [],
     background: "white",

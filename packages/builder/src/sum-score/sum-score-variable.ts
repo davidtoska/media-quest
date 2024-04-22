@@ -68,6 +68,7 @@ export class SumScoreVariable extends BuilderObject<
   /** @internal*/
   _update(data: { name?: string; description?: string; useAvg?: boolean }) {
     const d = data ?? {};
+
     if (DUtil.isString(d.name)) {
       this._name = d.name;
     }

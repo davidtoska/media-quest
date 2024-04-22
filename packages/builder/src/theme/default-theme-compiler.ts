@@ -31,7 +31,7 @@ export class DefaultThemeCompiler implements ThemeCompiler<IDefaultTheme> {
   readonly name = "Ispe default theme.";
   readonly defaultTheme = DefaultTheme;
   readonly theme2 = Theme2;
-  currentTheme = Theme2;
+  currentTheme = DefaultTheme;
   allThemes = [DefaultTheme, Theme2];
   private readonly TAG = "[ DEFAULT_THEME_COMPILER ]: ";
 
@@ -118,6 +118,7 @@ export class DefaultThemeCompiler implements ThemeCompiler<IDefaultTheme> {
     let initialVideoTaskList: Array<PlayVideoTask | DelayTask> = [];
     const newPage: PageDto = {
       background: "white",
+      pageNumber,
       elements,
       id,
       prefix,

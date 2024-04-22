@@ -73,6 +73,7 @@ export class SchemaEngine implements ISchemaEngine {
     const currentResults = this.player.getResults();
     const a: SchemaResult = {
       schemaId: this.schema.id,
+      pageResults: currentResults.pageResults,
       pagesLeft: currentResults.pagesLeft,
       predefinedFacts: currentResults.predefinedFacts,
       eventLog: currentResults.eventLog,
@@ -128,6 +129,7 @@ export class SchemaEngine implements ISchemaEngine {
     const newPage = new Page(nextPage, this.taskManager, this.scale, (result) => {
       this.handlePageCompleted(result);
     });
+
     this.currentPage = newPage;
     newPage.appendYourself(this.uiLayer);
     return true;
@@ -137,6 +139,9 @@ export class SchemaEngine implements ISchemaEngine {
     if (this.currentPage) {
       this.currentPage.destroy();
       this.uiLayer.innerHTML = "";
+    }
+    if (this.tickerRef) {
+      window.clearInterval(this.tickerRef);
     }
   }
 

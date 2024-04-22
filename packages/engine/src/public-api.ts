@@ -7,6 +7,7 @@ export * from "./rules/fact";
 export * from "./rules/rule-engine";
 export * from "./rules/condition";
 export * from "./utils/DUtil";
+export { SchemaResult } from "./engine/SchemaResult";
 // export * from "./utils/ID";
 
 export * from "./events/mq-events";

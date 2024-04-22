@@ -279,6 +279,7 @@ export class BuilderSchema {
     });
 
     let moduleDto = builderSchema.toJson();
+    console.log(options.mediaAssets);
     if (options.mediaAssets) {
       const { videoFilesBaseUrl, audioFilesBaseUrl, imageFilesBaseUrl } = options.mediaAssets;
       moduleDto = BuilderSchemaDto.overrideAllMediaUrls(moduleDto, {

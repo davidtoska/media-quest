@@ -5,11 +5,16 @@ import {
   PagePrefixValue,
 } from "../../../packages/builder/src/public-api";
 
-import { dummyAudioFiles, dummyImageFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
-const audio = dummyAudioFiles[0];
+import {
+  getDummyAudioFiles,
+  dummyImageFiles,
+  dummyVideoFiles,
+} from "../dummy-data/hardcoded-media";
+const audio = Object.freeze(getDummyAudioFiles()[0]);
 const video = dummyVideoFiles[1];
 const image = dummyImageFiles[0];
 
+console.log(audio);
 export const addPage = (
   schema: BuilderSchema,
   prefix: string,
@@ -35,6 +40,9 @@ class PageBuilder {
     }
   }
   addAudio(autoplay = false, delay = 1000) {
+    console.log(audio);
+    console.log(audio);
+    console.log(audio);
     this.page.mainText.audioFile = audio;
     this.page.mainText.autoplay = autoplay;
     this.page.mainText.autoplayDelay = delay;

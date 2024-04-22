@@ -1,8 +1,9 @@
 import { IExampleSchema } from "./IExample-schema";
 import * as E from "../../../packages/engine/src/public-api";
 import * as B from "../../../packages/builder/src/public-api";
-import { dummyAudioFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
+import { getDummyAudioFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
 
+const dummyAudioFiles = getDummyAudioFiles();
 const playVideoTask0 = (
   priority: E.PlayVideoTask["priority"],
   mode: "gif" | "normal" = "normal",
@@ -134,6 +135,7 @@ export const Page2Works: IExampleSchema = {
       {
         id: B.PageID.create(),
         background: "white",
+        pageNumber: 0,
         prefix: B.PagePrefix.create().value,
         tags: [],
         elements: [
@@ -178,6 +180,7 @@ export const Page2Works: IExampleSchema = {
       },
       {
         id: B.PageID.create(),
+        pageNumber: 1,
         background: "white",
         prefix: B.PagePrefix.create().value,
         elements: [
@@ -191,6 +194,7 @@ export const Page2Works: IExampleSchema = {
       },
       {
         id: B.PageID.create(),
+        pageNumber: 2,
         background: "white",
         prefix: B.PagePrefix.create().value,
         tags: [],
@@ -206,6 +210,7 @@ export const Page2Works: IExampleSchema = {
       },
       {
         id: B.PageID.create(),
+        pageNumber: 3,
         prefix: B.PagePrefix.create().value,
         tags: [],
         elements: [
@@ -221,6 +226,7 @@ export const Page2Works: IExampleSchema = {
       },
       {
         id: B.PageID.create(),
+        pageNumber: 4,
         prefix: B.PagePrefix.create().value,
         tags: [],
         elements: [

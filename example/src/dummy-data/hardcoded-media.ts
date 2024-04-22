@@ -80,258 +80,259 @@ export const dummyVideoFiles = [
   },
 ] as Array<VideoFile>;
 
-export const dummyAudioFiles = [
-  {
-    id: "0UBwDUDo2VzqJzJfLNK0",
-    originalFileName:
-      "rbBJYzQgSbCRuqLorfkysAAgzYUfsxFVYdpxFdyxmOsdEnxPGYlgNFRCZPIFHQIuojiSCvuOhQQKSyQO",
-    name: "føle nok glede",
-    duration: 3.192,
-    size: 25773,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F0UBwDUDo2VzqJzJfLNK0?alt=media&token=ba1e784a-6ab3-4ea5-990e-c2d01b767cf6",
-  },
-  {
-    id: "0fW8PUbeVBR1N0mHC1BE",
-    originalFileName:
-      "IcAcnxmPJTHDhyKqSCyOgIogJEFkLsExONggqKubBLxbKrbUEEVJngbIOiDobbxgXlOhEOpTDSCSzQQl",
-    name: "gi opp",
-    duration: 4.032,
-    size: 32493,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F0fW8PUbeVBR1N0mHC1BE?alt=media&token=d98ad4a4-3a8d-4fe2-8775-d809229e6562",
-  },
-  {
-    id: "4Dn5Egd0pym5ZtghStit",
-    originalFileName:
-      "nuoYSykNkbFCkvFgSOxkdNcjfRJoOEnTTPeTRgDMeBNMykILJuyqKKVMqBUjjCNvazueXyVBADoKxmqn",
-    name: "hjelp til å finne noen å snakke med",
-    duration: 3.72,
-    size: 29997,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F4Dn5Egd0pym5ZtghStit?alt=media&token=7b9e6964-68e4-4e60-a696-33bae73eed20",
-  },
-  {
-    id: "5WCsQIj8n4XgtPtthU3z",
-    originalFileName:
-      "XRYDuhPvLReCQPnJmIaqNaZtjXHpMQHUnaSBNFbmpEnVKQrxzeGmLckLUnNBlNSJoIqxuCZdiKAFrAdR",
-    name: "aktiviteter du liker",
-    duration: 4.224,
-    size: 34029,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F5WCsQIj8n4XgtPtthU3z?alt=media&token=4f6f2850-bdb0-4242-a575-03b6c05bc678",
-  },
-  {
-    id: "7ba2iilOo8q0rbCHZDiT",
-    originalFileName:
-      "JtkGnjOnVfRlxLGxYjhHmMBjruocxNqZHPrFuDbyNQEOlykDtVuMJBkFiHeymGnfIuHjsSDqHNhecsDE",
-    name: "aktiviteter du må",
-    duration: 4.896,
-    size: 39405,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F7ba2iilOo8q0rbCHZDiT?alt=media&token=1e82b7b3-a25f-44de-a525-b5cc750068bc",
-  },
-  {
-    id: "7xfk0nk9u9k3fJm5xwj2",
-    originalFileName:
-      "FxeyAXBquddafbAQjDlqjYqdoUdQkGRxQMkYGYsuNJNIusVClnbgicOiCSgRaGAKJCVkILqdIyKCgeGt",
-    name: "blir glad",
-    duration: 3.432,
-    size: 27693,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F7xfk0nk9u9k3fJm5xwj2?alt=media&token=76d6b521-a33d-4657-afb1-367b273ad5a5",
-  },
-  {
-    id: "9iM20PWHgv2TviLsHxXA",
-    originalFileName:
-      "LOImhQQFOyBfcBDBScSysXCtKMxdHOyicOCnffZeCCzmsrtVtjnjnMIIJIoFBmKXhLSomoFffCOqEpJZ",
-    name: "asdfasdfasdf",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F9iM20PWHgv2TviLsHxXA?alt=media&token=afb04c8a-0e34-4a9c-aca4-732a3b27c5c3",
-  },
-  {
-    id: "Asxvf46UEDNkIJiwybOQ",
-    originalFileName:
-      "BcYUgPmnUaHzENKZGNXfaVJvgVxHFYgDCMQYxazzOZYYSEVGjSYKIjYxUIVCFLSKdTgMqGBEpEhQEjuA",
-    name: "ny lydfil",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FAsxvf46UEDNkIJiwybOQ?alt=media&token=da8d2cf5-586a-46f0-a12d-fd4e2ceebef9",
-  },
-  {
-    id: "H4gOoknUZ7gWWDyTnOfi",
-    originalFileName:
-      "dNcOlktKIsrIyVGFerEzboZDItgvGHJPdRgSIdNTizSXTTXsMBzcGqDhueRoMeMUYDeRrpepTKtPokbP",
-    name: "snakke med",
-    duration: 3.432,
-    size: 27693,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FH4gOoknUZ7gWWDyTnOfi?alt=media&token=1fa844de-fea3-4664-9e43-67fe0a5fa1ad",
-  },
-  {
-    id: "J4EfWCzM46dKHkM0DGZe",
-    originalFileName:
-      "DXsLmsVgsafqQMhpcJGCQttGQIvNaOYVdMtYHizkVOfGUklzGviVSluZLOqRJQkmPfYdVHEtGLOrVoDa",
-    name: "Hel på deg. Dette er en ny lydfile",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FJ4EfWCzM46dKHkM0DGZe?alt=media&token=252fc7cb-46ea-4887-89cd-5ff01eff800c",
-  },
-  {
-    id: "Kb5xgkhuB1lizF3YmJfl",
-    originalFileName:
-      "KXefHVbqSUsKuFsmzgPmPqQkogidTTVVgNAluVhRgtTbKOTlPmTVqVjdDllviaqNPsPPDcsDiNIcRfCg",
-    name: "David sin lysfil",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FKb5xgkhuB1lizF3YmJfl?alt=media&token=a16bec25-0eb6-47cb-a318-4f4bd6e02dd9",
-  },
-  {
-    id: "Q2ijBNAtntvYhPPp0WHC",
-    originalFileName:
-      "GDkitrJpigGpXQpXtFssXjfhylIAGgplgJAOLsiOIPPsBgYbThMqMfyBEcevCNteHCoZYQvMiaDjehqp",
-    name: "glede andre",
-    duration: 2.688,
-    size: 21741,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FQ2ijBNAtntvYhPPp0WHC?alt=media&token=a6e11c5b-9923-4c83-9682-cc58663725de",
-  },
-  {
-    id: "QQxsBi3Xb3LwESWT8JWU",
-    originalFileName:
-      "CUlMCHauKFdACtUrmPeeNypGySHclQhOlNxfRaaKDfmFAeELMjovvkkSLHsnJEUOaOgEDtHhPDxHIBME",
-    name: "ASdaSDASD",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FQQxsBi3Xb3LwESWT8JWU?alt=media&token=2fe44195-1b0e-48cc-8ed6-b74ff6691eb6",
-  },
-  {
-    id: "QdR8LQV3d4875cU9tTbv",
-    originalFileName:
-      "czCTTQbdExQkRFdQtoVDfRVOCjdUzbJOLAxpVJbGcdgczXVlHMtGnckGDrhDlCMqIeZOVJbscRBEeIJq",
-    name: "øver for å bli bedre",
-    duration: 2.592,
-    size: 20973,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FQdR8LQV3d4875cU9tTbv?alt=media&token=c1eb6ce4-6306-442e-98d0-58f9d8bb2cb0",
-  },
-  {
-    id: "Zq45MDcHTeasdYc4EniO",
-    originalFileName:
-      "cAXVFgbMGaYzFdjUxnoOlCCUviZXevDfuSLrVYdkTGDCRtfYiClHEFIEgpcorIJlrYpMCmqLbhjcYRUy",
-    name: "asdasdfasdf",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FZq45MDcHTeasdYc4EniO?alt=media&token=2a8ff70c-a3ab-4b4b-9cab-efd4381b1a96",
-  },
-  {
-    id: "eJcQ8VsCoiU8Etq9DnJ4",
-    originalFileName:
-      "TsjiNrqCHTHoHafKTtySjhAFVpEYfYqzqKIXzdSAllmIZkXvLLaaUjhOhKiaUNdOjskPDikNAgzcCBiS",
-    name: "jkhgjgh",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FeJcQ8VsCoiU8Etq9DnJ4?alt=media&token=82bc0cf7-2cb7-4134-a672-d180bb088f00",
-  },
-  {
-    id: "lLoZedecHmDLM4i6jqIW",
-    originalFileName:
-      "iiymgneiKOfNrONKzDalFDQjrdVUDfCECTgeLTFILTGAyeZPJAmZsGZoNYNFGJzQiUqaVJgumuQMlIBm",
-    name: "asldfajsldfja",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FlLoZedecHmDLM4i6jqIW?alt=media&token=bebaf877-7dc1-44da-bc58-506582285166",
-  },
-  {
-    id: "pLR8ezaEJzdQcbJX6Oso",
-    originalFileName:
-      "SfFrBfyGunEivIUIMxyjXhGYqlUlEbvtfVqUIukqzuvryGxMBosCPEAYuzIGSXtKSTArrzjZaBUTjQCJ",
-    name: "se film",
-    duration: 5.52,
-    size: 44397,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FpLR8ezaEJzdQcbJX6Oso?alt=media&token=5a6b1521-1fe6-41ec-8a4d-07d6767a7d14",
-  },
-  {
-    id: "qEYp6oIlVHfH4cnJNMxU",
-    originalFileName:
-      "yGNzzkdakENSkmTVLkKlxFgkGaCDNvVOAdFAtpsmMNyibIlUrrQESOJIcvKbgfxOXOeaTQnnCtHXRkRe",
-    name: "End",
-    duration: 3.672,
-    size: 29613,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FqEYp6oIlVHfH4cnJNMxU?alt=media&token=a149c712-a8de-4329-abe9-64a4db125e80",
-  },
-  {
-    id: "qZXbiKemy4WtbNWFgRgb",
-    originalFileName:
-      "ZijdadfmDqvaTLQcqkPJBHBdpDuIHlDBLuHssCyHCkEAhaEYuGrNBEIrAtOYlSnLincmLCHYbabxUjQM",
-    name: "ASASDASD",
-    duration: 12.826122,
-    size: 205470,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FqZXbiKemy4WtbNWFgRgb?alt=media&token=4b45ecf7-5f76-42ac-a2d6-1dbb2ee739c3",
-  },
-  {
-    id: "qy0s4gHKBp8sEbQdDniS",
-    originalFileName:
-      "hhKFDGjnszTYEvERLPAZrHBISFvAYAvOqemrloVZexgOJFNqGKeIGpTGiJitxRohnzHXOIvvHTrFohzQ",
-    name: "takk",
-    duration: 3.672,
-    size: 29613,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2Fqy0s4gHKBp8sEbQdDniS?alt=media&token=af3a6a87-a7e3-4055-910e-25f1f1fd371e",
-  },
-  {
-    id: "sOxsH61myMOSQ0sYM3Ns",
-    originalFileName:
-      "spzsHaneaybCJRcQjMQYFjDJgniUIasFcRZhhvNjYkTditberanHiyaoqnMcvLkbgByIsgGJzDbJlXqo",
-    name: "hjelp til å ikke gi opp",
-    duration: 3.816,
-    size: 30765,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FsOxsH61myMOSQ0sYM3Ns?alt=media&token=4dd586e7-4be3-42e4-8c57-91316e654889",
-  },
-  {
-    id: "ssIDQqrkQnjlmiJcmMmg",
-    originalFileName:
-      "gqZTMDMQpoASfkRKSZlRMlCSQynSNPErghMKNfPaHKaSfGTLmxhaKZHJYyMhpsSloaxaNeBtDHVolsAC",
-    name: "kjekke ting",
-    duration: 2.928,
-    size: 23661,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FssIDQqrkQnjlmiJcmMmg?alt=media&token=4d407aa1-a08e-42bf-bbdb-09ba9ccdb7d7",
-  },
-  {
-    id: "wlPMt6SjK75hVZKUQwt3",
-    originalFileName:
-      "VkBkEMIDrxlviRzVMgksLZuDFJFJKAzGzxqtJjfnogdxFCDZfefxMfIrgMGZeRbhfSPYmgSHVXuLNrmr",
-    name: "undersøkelse om mestring",
-    duration: 12.168,
-    size: 97581,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FwlPMt6SjK75hVZKUQwt3?alt=media&token=fa00e222-abd3-4cb9-8eb9-fcd617174945",
-  },
-  {
-    id: "xXphpAFKhVP0XSVknFMC",
-    originalFileName:
-      "qFfyHjhrIGyDnkaxUcshvZIoKZoHpVhHkQGhmdcpYsksDcxmKmkmKGqmPHnuTqKeFuiCuTmtjaFbNHrK",
-    name: "mestring",
-    duration: 2.928,
-    size: 23661,
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FxXphpAFKhVP0XSVknFMC?alt=media&token=f02d5b95-289a-426a-b350-1e76c1eb213c",
-  },
-] as Array<AudioFile>;
+export const getDummyAudioFiles = () =>
+  [
+    {
+      id: "0UBwDUDo2VzqJzJfLNK0",
+      originalFileName:
+        "rbBJYzQgSbCRuqLorfkysAAgzYUfsxFVYdpxFdyxmOsdEnxPGYlgNFRCZPIFHQIuojiSCvuOhQQKSyQO",
+      name: "føle nok glede",
+      duration: 3.192,
+      size: 25773,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F0UBwDUDo2VzqJzJfLNK0?alt=media&token=ba1e784a-6ab3-4ea5-990e-c2d01b767cf6",
+    },
+    {
+      id: "0fW8PUbeVBR1N0mHC1BE",
+      originalFileName:
+        "IcAcnxmPJTHDhyKqSCyOgIogJEFkLsExONggqKubBLxbKrbUEEVJngbIOiDobbxgXlOhEOpTDSCSzQQl",
+      name: "gi opp",
+      duration: 4.032,
+      size: 32493,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F0fW8PUbeVBR1N0mHC1BE?alt=media&token=d98ad4a4-3a8d-4fe2-8775-d809229e6562",
+    },
+    {
+      id: "4Dn5Egd0pym5ZtghStit",
+      originalFileName:
+        "nuoYSykNkbFCkvFgSOxkdNcjfRJoOEnTTPeTRgDMeBNMykILJuyqKKVMqBUjjCNvazueXyVBADoKxmqn",
+      name: "hjelp til å finne noen å snakke med",
+      duration: 3.72,
+      size: 29997,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F4Dn5Egd0pym5ZtghStit?alt=media&token=7b9e6964-68e4-4e60-a696-33bae73eed20",
+    },
+    {
+      id: "5WCsQIj8n4XgtPtthU3z",
+      originalFileName:
+        "XRYDuhPvLReCQPnJmIaqNaZtjXHpMQHUnaSBNFbmpEnVKQrxzeGmLckLUnNBlNSJoIqxuCZdiKAFrAdR",
+      name: "aktiviteter du liker",
+      duration: 4.224,
+      size: 34029,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F5WCsQIj8n4XgtPtthU3z?alt=media&token=4f6f2850-bdb0-4242-a575-03b6c05bc678",
+    },
+    {
+      id: "7ba2iilOo8q0rbCHZDiT",
+      originalFileName:
+        "JtkGnjOnVfRlxLGxYjhHmMBjruocxNqZHPrFuDbyNQEOlykDtVuMJBkFiHeymGnfIuHjsSDqHNhecsDE",
+      name: "aktiviteter du må",
+      duration: 4.896,
+      size: 39405,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F7ba2iilOo8q0rbCHZDiT?alt=media&token=1e82b7b3-a25f-44de-a525-b5cc750068bc",
+    },
+    {
+      id: "7xfk0nk9u9k3fJm5xwj2",
+      originalFileName:
+        "FxeyAXBquddafbAQjDlqjYqdoUdQkGRxQMkYGYsuNJNIusVClnbgicOiCSgRaGAKJCVkILqdIyKCgeGt",
+      name: "blir glad",
+      duration: 3.432,
+      size: 27693,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F7xfk0nk9u9k3fJm5xwj2?alt=media&token=76d6b521-a33d-4657-afb1-367b273ad5a5",
+    },
+    {
+      id: "9iM20PWHgv2TviLsHxXA",
+      originalFileName:
+        "LOImhQQFOyBfcBDBScSysXCtKMxdHOyicOCnffZeCCzmsrtVtjnjnMIIJIoFBmKXhLSomoFffCOqEpJZ",
+      name: "asdfasdfasdf",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2F9iM20PWHgv2TviLsHxXA?alt=media&token=afb04c8a-0e34-4a9c-aca4-732a3b27c5c3",
+    },
+    {
+      id: "Asxvf46UEDNkIJiwybOQ",
+      originalFileName:
+        "BcYUgPmnUaHzENKZGNXfaVJvgVxHFYgDCMQYxazzOZYYSEVGjSYKIjYxUIVCFLSKdTgMqGBEpEhQEjuA",
+      name: "ny lydfil",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FAsxvf46UEDNkIJiwybOQ?alt=media&token=da8d2cf5-586a-46f0-a12d-fd4e2ceebef9",
+    },
+    {
+      id: "H4gOoknUZ7gWWDyTnOfi",
+      originalFileName:
+        "dNcOlktKIsrIyVGFerEzboZDItgvGHJPdRgSIdNTizSXTTXsMBzcGqDhueRoMeMUYDeRrpepTKtPokbP",
+      name: "snakke med",
+      duration: 3.432,
+      size: 27693,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FH4gOoknUZ7gWWDyTnOfi?alt=media&token=1fa844de-fea3-4664-9e43-67fe0a5fa1ad",
+    },
+    {
+      id: "J4EfWCzM46dKHkM0DGZe",
+      originalFileName:
+        "DXsLmsVgsafqQMhpcJGCQttGQIvNaOYVdMtYHizkVOfGUklzGviVSluZLOqRJQkmPfYdVHEtGLOrVoDa",
+      name: "Hel på deg. Dette er en ny lydfile",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FJ4EfWCzM46dKHkM0DGZe?alt=media&token=252fc7cb-46ea-4887-89cd-5ff01eff800c",
+    },
+    {
+      id: "Kb5xgkhuB1lizF3YmJfl",
+      originalFileName:
+        "KXefHVbqSUsKuFsmzgPmPqQkogidTTVVgNAluVhRgtTbKOTlPmTVqVjdDllviaqNPsPPDcsDiNIcRfCg",
+      name: "David sin lysfil",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FKb5xgkhuB1lizF3YmJfl?alt=media&token=a16bec25-0eb6-47cb-a318-4f4bd6e02dd9",
+    },
+    {
+      id: "Q2ijBNAtntvYhPPp0WHC",
+      originalFileName:
+        "GDkitrJpigGpXQpXtFssXjfhylIAGgplgJAOLsiOIPPsBgYbThMqMfyBEcevCNteHCoZYQvMiaDjehqp",
+      name: "glede andre",
+      duration: 2.688,
+      size: 21741,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FQ2ijBNAtntvYhPPp0WHC?alt=media&token=a6e11c5b-9923-4c83-9682-cc58663725de",
+    },
+    {
+      id: "QQxsBi3Xb3LwESWT8JWU",
+      originalFileName:
+        "CUlMCHauKFdACtUrmPeeNypGySHclQhOlNxfRaaKDfmFAeELMjovvkkSLHsnJEUOaOgEDtHhPDxHIBME",
+      name: "ASdaSDASD",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FQQxsBi3Xb3LwESWT8JWU?alt=media&token=2fe44195-1b0e-48cc-8ed6-b74ff6691eb6",
+    },
+    {
+      id: "QdR8LQV3d4875cU9tTbv",
+      originalFileName:
+        "czCTTQbdExQkRFdQtoVDfRVOCjdUzbJOLAxpVJbGcdgczXVlHMtGnckGDrhDlCMqIeZOVJbscRBEeIJq",
+      name: "øver for å bli bedre",
+      duration: 2.592,
+      size: 20973,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FQdR8LQV3d4875cU9tTbv?alt=media&token=c1eb6ce4-6306-442e-98d0-58f9d8bb2cb0",
+    },
+    {
+      id: "Zq45MDcHTeasdYc4EniO",
+      originalFileName:
+        "cAXVFgbMGaYzFdjUxnoOlCCUviZXevDfuSLrVYdkTGDCRtfYiClHEFIEgpcorIJlrYpMCmqLbhjcYRUy",
+      name: "asdasdfasdf",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FZq45MDcHTeasdYc4EniO?alt=media&token=2a8ff70c-a3ab-4b4b-9cab-efd4381b1a96",
+    },
+    {
+      id: "eJcQ8VsCoiU8Etq9DnJ4",
+      originalFileName:
+        "TsjiNrqCHTHoHafKTtySjhAFVpEYfYqzqKIXzdSAllmIZkXvLLaaUjhOhKiaUNdOjskPDikNAgzcCBiS",
+      name: "jkhgjgh",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FeJcQ8VsCoiU8Etq9DnJ4?alt=media&token=82bc0cf7-2cb7-4134-a672-d180bb088f00",
+    },
+    {
+      id: "lLoZedecHmDLM4i6jqIW",
+      originalFileName:
+        "iiymgneiKOfNrONKzDalFDQjrdVUDfCECTgeLTFILTGAyeZPJAmZsGZoNYNFGJzQiUqaVJgumuQMlIBm",
+      name: "asldfajsldfja",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FlLoZedecHmDLM4i6jqIW?alt=media&token=bebaf877-7dc1-44da-bc58-506582285166",
+    },
+    {
+      id: "pLR8ezaEJzdQcbJX6Oso",
+      originalFileName:
+        "SfFrBfyGunEivIUIMxyjXhGYqlUlEbvtfVqUIukqzuvryGxMBosCPEAYuzIGSXtKSTArrzjZaBUTjQCJ",
+      name: "se film",
+      duration: 5.52,
+      size: 44397,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FpLR8ezaEJzdQcbJX6Oso?alt=media&token=5a6b1521-1fe6-41ec-8a4d-07d6767a7d14",
+    },
+    {
+      id: "qEYp6oIlVHfH4cnJNMxU",
+      originalFileName:
+        "yGNzzkdakENSkmTVLkKlxFgkGaCDNvVOAdFAtpsmMNyibIlUrrQESOJIcvKbgfxOXOeaTQnnCtHXRkRe",
+      name: "End",
+      duration: 3.672,
+      size: 29613,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FqEYp6oIlVHfH4cnJNMxU?alt=media&token=a149c712-a8de-4329-abe9-64a4db125e80",
+    },
+    {
+      id: "qZXbiKemy4WtbNWFgRgb",
+      originalFileName:
+        "ZijdadfmDqvaTLQcqkPJBHBdpDuIHlDBLuHssCyHCkEAhaEYuGrNBEIrAtOYlSnLincmLCHYbabxUjQM",
+      name: "ASASDASD",
+      duration: 12.826122,
+      size: 205470,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FqZXbiKemy4WtbNWFgRgb?alt=media&token=4b45ecf7-5f76-42ac-a2d6-1dbb2ee739c3",
+    },
+    {
+      id: "qy0s4gHKBp8sEbQdDniS",
+      originalFileName:
+        "hhKFDGjnszTYEvERLPAZrHBISFvAYAvOqemrloVZexgOJFNqGKeIGpTGiJitxRohnzHXOIvvHTrFohzQ",
+      name: "takk",
+      duration: 3.672,
+      size: 29613,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2Fqy0s4gHKBp8sEbQdDniS?alt=media&token=af3a6a87-a7e3-4055-910e-25f1f1fd371e",
+    },
+    {
+      id: "sOxsH61myMOSQ0sYM3Ns",
+      originalFileName:
+        "spzsHaneaybCJRcQjMQYFjDJgniUIasFcRZhhvNjYkTditberanHiyaoqnMcvLkbgByIsgGJzDbJlXqo",
+      name: "hjelp til å ikke gi opp",
+      duration: 3.816,
+      size: 30765,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FsOxsH61myMOSQ0sYM3Ns?alt=media&token=4dd586e7-4be3-42e4-8c57-91316e654889",
+    },
+    {
+      id: "ssIDQqrkQnjlmiJcmMmg",
+      originalFileName:
+        "gqZTMDMQpoASfkRKSZlRMlCSQynSNPErghMKNfPaHKaSfGTLmxhaKZHJYyMhpsSloaxaNeBtDHVolsAC",
+      name: "kjekke ting",
+      duration: 2.928,
+      size: 23661,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FssIDQqrkQnjlmiJcmMmg?alt=media&token=4d407aa1-a08e-42bf-bbdb-09ba9ccdb7d7",
+    },
+    {
+      id: "wlPMt6SjK75hVZKUQwt3",
+      originalFileName:
+        "VkBkEMIDrxlviRzVMgksLZuDFJFJKAzGzxqtJjfnogdxFCDZfefxMfIrgMGZeRbhfSPYmgSHVXuLNrmr",
+      name: "undersøkelse om mestring",
+      duration: 12.168,
+      size: 97581,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FwlPMt6SjK75hVZKUQwt3?alt=media&token=fa00e222-abd3-4cb9-8eb9-fcd617174945",
+    },
+    {
+      id: "xXphpAFKhVP0XSVknFMC",
+      originalFileName:
+        "qFfyHjhrIGyDnkaxUcshvZIoKZoHpVhHkQGhmdcpYsksDcxmKmkmKGqmPHnuTqKeFuiCuTmtjaFbNHrK",
+      name: "mestring",
+      duration: 2.928,
+      size: 23661,
+      downloadUrl:
+        "https://firebasestorage.googleapis.com/v0/b/ispe-backend-dev.appspot.com/o/user-data%2Fpol8uyHKikQdfFAyXdkuBfxIa0H3%2Faudio%2FxXphpAFKhVP0XSVknFMC?alt=media&token=f02d5b95-289a-426a-b350-1e76c1eb213c",
+    },
+  ] as Array<AudioFile>;
 
 export const dummyImageFiles: Array<ImageFile> = [
   {

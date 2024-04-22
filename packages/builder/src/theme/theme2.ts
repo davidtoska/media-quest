@@ -22,6 +22,7 @@ const Colors = {
   backgroundWhite: "white",
   // progressBackGround: "#164AC4",
   // progressForGround: "#F5F5F5",
+
   // red: "red",
   // yellow: "yellow",
 };
