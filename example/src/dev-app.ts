@@ -24,7 +24,7 @@ if (a.name === "refresh when libs change. ") {
   console.log(a);
 }
 // const initialSchema: IExampleSchema = Page2Works;
-const initialSchema: IExampleSchema = defaultThemeWorks;
+const initialSchema: IExampleSchema = redesignWorks;
 // console.log(initialSchema);
 console.log(overrideMediaPathsWorks.dto);
 new EventSource("/esbuild").addEventListener("change", () => location.reload());

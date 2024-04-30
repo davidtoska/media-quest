@@ -40,9 +40,6 @@ class PageBuilder {
     }
   }
   addAudio(autoplay = false, delay = 1000) {
-    console.log(audio);
-    console.log(audio);
-    console.log(audio);
     this.page.mainText.audioFile = audio;
     this.page.mainText.autoplay = autoplay;
     this.page.mainText.autoplayDelay = delay;
