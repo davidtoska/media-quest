@@ -617,7 +617,7 @@ export class DefaultThemeCompiler implements ThemeCompiler<IDefaultTheme> {
       | { kind: "response-button"; questionId: string; questionText: string }
       | { kind: "next-button" },
   ): DButtonDto {
-    const { id, value, label } = buttonDto;
+    const { id, value, label, cssOverride } = buttonDto;
     const t = this.currentTheme;
     const onclickAction: ButtonClickAction =
       options.kind === "response-button"
@@ -633,10 +633,14 @@ export class DefaultThemeCompiler implements ThemeCompiler<IDefaultTheme> {
           }
         : { kind: "next-page" };
 
-    const btnStyles =
+    let btnStyles =
       value === 9 ? t.buttonBar.responseButtons.dontKnow : t.buttonBar.responseButtons.normal;
     if (t.buttonBar.vibrateMs) {
       onclickAction.vibrateMs = t.buttonBar.vibrateMs;
+    }
+
+    if(cssOverride) {
+      btnStyles.btn.css = {...btnStyles.btn.css, ...cssOverride}
     }
 
     const btn: DButtonDto = {

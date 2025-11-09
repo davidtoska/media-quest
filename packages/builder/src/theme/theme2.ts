@@ -155,7 +155,10 @@ const responseButtonBaseCss = (): CssTheme => ({
     fontWeight: 600,
     fontSize: { _unit: "px", value: 28 },
     lineHeight: 1.1,
+
+    // TODO Denne angir knappens max-bredde. Default bør være 25.
     maxWidth: 25,
+    minWidth: 12,
     // width: 20,
     // flex: "0 0 auto",
     paddingLeft: { _unit: "px", value: 10 },
