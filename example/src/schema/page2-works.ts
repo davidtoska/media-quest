@@ -1,9 +1,7 @@
 import { IExampleSchema } from "./IExample-schema";
-import * as E from "@media-quest/engine";
-import * as B from "@media-quest/builder";
+import * as E from "../../../packages/engine/src/public-api";
+import * as B from "../../../packages/builder/src/public-api";
 import { dummyAudioFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
-// import { PlayAudioTask, PlayVideoTask, Task } from "../../../packages/engine/src/page/task";
-// import { PageComponentDto } from "../../../packages/engine/src/page/page-component";
 
 const playVideoTask0 = (
   priority: E.PlayVideoTask["priority"],
@@ -39,21 +37,18 @@ const createText = (text: string): E.DTextDto => ({
   style: { x: 20, y: 70, fontSize: { _unit: "px", value: 60 }, backgroundColor: "gray" },
 });
 
-const createNextButton = (): E.PageComponentDto => ({
-  el: {
-    _tag: "div",
-    style: {
-      x: 30,
-      y: 5,
-      w: 40,
-      h: 10,
-      backgroundColor: "red",
-      textColor: "yellow",
-      fontSize: { _unit: "px", value: 60 },
-    },
-    children: [],
-    innerText: "Next btn ",
+const createNextButton = (): E.DButtonDto => ({
+  _tag: "button",
+  style: {
+    x: 30,
+    y: 5,
+    w: 40,
+    h: 10,
+    backgroundColor: "red",
+    textColor: "yellow",
+    fontSize: { _unit: "px", value: 60 },
   },
+  innerText: "Next btn ",
   onClick: { kind: "next-page" },
 });
 
@@ -70,14 +65,11 @@ const playVideoBtn = (task: E.PlayVideoTask) => {
     },
     children: [],
     innerText: "Play video",
-  };
-  const component: E.PageComponentDto = {
-    el: btn,
     onClick: { kind: "play-video", task },
   };
-  return component;
+  return btn;
 };
-const pauseVideoBtn = (): E.PageComponentDto => {
+const pauseVideoBtn = (): E.DDivDto => {
   const btn: E.DDivDto = {
     _tag: "div",
     style: {
@@ -90,15 +82,12 @@ const pauseVideoBtn = (): E.PageComponentDto => {
     },
     children: [],
     innerText: "Pause video",
-  };
-  const component: E.PageComponentDto = {
-    el: btn,
     onClick: { kind: "pause-video" },
   };
-  return component;
+  return btn;
 };
 
-const playAudioBtn = (task: E.PlayAudioTask): E.PageComponentDto => {
+const playAudioBtn = (task: E.PlayAudioTask): E.DDivDto => {
   const btn: E.DDivDto = {
     _tag: "div",
     style: {
@@ -111,15 +100,12 @@ const playAudioBtn = (task: E.PlayAudioTask): E.PageComponentDto => {
     },
     children: [],
     innerText: "Play audio",
-  };
-  const component: E.PageComponentDto = {
-    el: btn,
     onClick: { kind: "play-audio", task },
   };
-  return component;
+  return btn;
 };
 
-const pauseAudioBtn = (): E.PageComponentDto => {
+const pauseAudioBtn = (): E.DDivDto => {
   const btn: E.DDivDto = {
     _tag: "div",
     style: {
@@ -132,12 +118,9 @@ const pauseAudioBtn = (): E.PageComponentDto => {
     },
     children: [],
     innerText: "Pause audio",
-  };
-  const component: E.PageComponentDto = {
-    el: btn,
     onClick: { kind: "pause-audio" },
   };
-  return component;
+  return btn;
 };
 export const Page2Works: IExampleSchema = {
   menuLabel: "page2-works",
@@ -153,11 +136,41 @@ export const Page2Works: IExampleSchema = {
         background: "white",
         prefix: B.PagePrefix.create().value,
         tags: [],
-        staticElements: [],
-        components: [
+        elements: [
+          {
+            _tag: "div",
+            children: [
+              {
+                _tag: "button",
+                innerText: "Button1",
+                style: { backgroundColor: "blue", display: "block", position: "relative" },
+              },
+              {
+                _tag: "button",
+                innerText: "B2",
+                style: {
+                  backgroundColor: "blue",
+                  display: "block",
+                  position: "relative",
+                  borderColor: "",
+                  borderRadius: { _unit: "px", value: 50 },
+                },
+              },
+            ],
+            style: {
+              x: 5,
+              y: 40,
+              h: 10,
+              w: 90,
+              backgroundColor: "red",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+            },
+          },
           playVideoBtn(playVideoTask0("replace-all")),
           createNextButton(),
-          { el: createText("Video works"), onClick: { kind: "next-page" } },
           pauseVideoBtn(),
         ],
         videoPlayer: { playUrl: playVideoTask0("replace-all").url },
@@ -167,13 +180,13 @@ export const Page2Works: IExampleSchema = {
         id: B.PageID.create(),
         background: "white",
         prefix: B.PagePrefix.create().value,
-        components: [
+        elements: [
+          createText("Audio works"),
           playAudioBtn(playAudioTask0("replace-all")),
           createNextButton(),
           pauseAudioBtn(),
         ],
         tags: [],
-        staticElements: [createText("Audio works")],
         initialTasks: [],
       },
       {
@@ -181,21 +194,22 @@ export const Page2Works: IExampleSchema = {
         background: "white",
         prefix: B.PagePrefix.create().value,
         tags: [],
-        components: [
+        elements: [
+          createText("Gif-mode works"),
           pauseVideoBtn(),
           createNextButton(),
           playAudioBtn(playAudioTask0("replace-all")),
           playVideoBtn(playVideoTask0("replace-all")),
           pauseAudioBtn(),
         ],
-        staticElements: [createText("Gif-mode works")],
         initialTasks: [playVideoTask0("follow-queue", "gif")],
       },
       {
         id: B.PageID.create(),
         prefix: B.PagePrefix.create().value,
         tags: [],
-        components: [
+        elements: [
+          createText("Destroy mode works"),
           pauseVideoBtn(),
           createNextButton(),
           playAudioBtn(playAudioTask0("replace-all")),
@@ -203,20 +217,19 @@ export const Page2Works: IExampleSchema = {
           pauseAudioBtn(),
         ],
         background: "white",
-        staticElements: [createText("Destroy mode works")],
         initialTasks: [playVideoTask0("follow-queue"), playAudioTask0("follow-queue")],
       },
       {
         id: B.PageID.create(),
         prefix: B.PagePrefix.create().value,
         tags: [],
-        staticElements: [createText("Video works")],
-        background: "white",
-        components: [
+        elements: [
+          createText("Video works"),
           pauseVideoBtn(),
           createNextButton(),
           playVideoBtn(playVideoTask0("replace-all")),
         ],
+        background: "white",
         videoPlayer: { playUrl: playVideoTask0("replace-all").url },
         initialTasks: [],
       },

@@ -1,4 +1,4 @@
-import { AudioFile, ImageFile, VideoFile } from "@media-quest/builder";
+import { AudioFile, ImageFile, VideoFile } from "../../../packages/builder/src/public-api";
 
 export const dummyVideoFiles = [
   {
@@ -83,7 +83,8 @@ export const dummyVideoFiles = [
 export const dummyAudioFiles = [
   {
     id: "0UBwDUDo2VzqJzJfLNK0",
-    originalFileName: "rbBJYzQgSbCRuqLorfkysAAgzYUfsxFVYdpxFdyxmOsdEnxPGYlgNFRCZPIFHQIuojiSCvuOhQQKSyQO",
+    originalFileName:
+      "rbBJYzQgSbCRuqLorfkysAAgzYUfsxFVYdpxFdyxmOsdEnxPGYlgNFRCZPIFHQIuojiSCvuOhQQKSyQO",
     name: "føle nok glede",
     duration: 3.192,
     size: 25773,
@@ -92,7 +93,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "0fW8PUbeVBR1N0mHC1BE",
-    originalFileName: "IcAcnxmPJTHDhyKqSCyOgIogJEFkLsExONggqKubBLxbKrbUEEVJngbIOiDobbxgXlOhEOpTDSCSzQQl",
+    originalFileName:
+      "IcAcnxmPJTHDhyKqSCyOgIogJEFkLsExONggqKubBLxbKrbUEEVJngbIOiDobbxgXlOhEOpTDSCSzQQl",
     name: "gi opp",
     duration: 4.032,
     size: 32493,
@@ -101,7 +103,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "4Dn5Egd0pym5ZtghStit",
-    originalFileName: "nuoYSykNkbFCkvFgSOxkdNcjfRJoOEnTTPeTRgDMeBNMykILJuyqKKVMqBUjjCNvazueXyVBADoKxmqn",
+    originalFileName:
+      "nuoYSykNkbFCkvFgSOxkdNcjfRJoOEnTTPeTRgDMeBNMykILJuyqKKVMqBUjjCNvazueXyVBADoKxmqn",
     name: "hjelp til å finne noen å snakke med",
     duration: 3.72,
     size: 29997,
@@ -110,7 +113,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "5WCsQIj8n4XgtPtthU3z",
-    originalFileName: "XRYDuhPvLReCQPnJmIaqNaZtjXHpMQHUnaSBNFbmpEnVKQrxzeGmLckLUnNBlNSJoIqxuCZdiKAFrAdR",
+    originalFileName:
+      "XRYDuhPvLReCQPnJmIaqNaZtjXHpMQHUnaSBNFbmpEnVKQrxzeGmLckLUnNBlNSJoIqxuCZdiKAFrAdR",
     name: "aktiviteter du liker",
     duration: 4.224,
     size: 34029,
@@ -119,7 +123,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "7ba2iilOo8q0rbCHZDiT",
-    originalFileName: "JtkGnjOnVfRlxLGxYjhHmMBjruocxNqZHPrFuDbyNQEOlykDtVuMJBkFiHeymGnfIuHjsSDqHNhecsDE",
+    originalFileName:
+      "JtkGnjOnVfRlxLGxYjhHmMBjruocxNqZHPrFuDbyNQEOlykDtVuMJBkFiHeymGnfIuHjsSDqHNhecsDE",
     name: "aktiviteter du må",
     duration: 4.896,
     size: 39405,
@@ -128,7 +133,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "7xfk0nk9u9k3fJm5xwj2",
-    originalFileName: "FxeyAXBquddafbAQjDlqjYqdoUdQkGRxQMkYGYsuNJNIusVClnbgicOiCSgRaGAKJCVkILqdIyKCgeGt",
+    originalFileName:
+      "FxeyAXBquddafbAQjDlqjYqdoUdQkGRxQMkYGYsuNJNIusVClnbgicOiCSgRaGAKJCVkILqdIyKCgeGt",
     name: "blir glad",
     duration: 3.432,
     size: 27693,
@@ -137,7 +143,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "9iM20PWHgv2TviLsHxXA",
-    originalFileName: "LOImhQQFOyBfcBDBScSysXCtKMxdHOyicOCnffZeCCzmsrtVtjnjnMIIJIoFBmKXhLSomoFffCOqEpJZ",
+    originalFileName:
+      "LOImhQQFOyBfcBDBScSysXCtKMxdHOyicOCnffZeCCzmsrtVtjnjnMIIJIoFBmKXhLSomoFffCOqEpJZ",
     name: "asdfasdfasdf",
     duration: 12.826122,
     size: 205470,
@@ -146,7 +153,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "Asxvf46UEDNkIJiwybOQ",
-    originalFileName: "BcYUgPmnUaHzENKZGNXfaVJvgVxHFYgDCMQYxazzOZYYSEVGjSYKIjYxUIVCFLSKdTgMqGBEpEhQEjuA",
+    originalFileName:
+      "BcYUgPmnUaHzENKZGNXfaVJvgVxHFYgDCMQYxazzOZYYSEVGjSYKIjYxUIVCFLSKdTgMqGBEpEhQEjuA",
     name: "ny lydfil",
     duration: 12.826122,
     size: 205470,
@@ -155,7 +163,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "H4gOoknUZ7gWWDyTnOfi",
-    originalFileName: "dNcOlktKIsrIyVGFerEzboZDItgvGHJPdRgSIdNTizSXTTXsMBzcGqDhueRoMeMUYDeRrpepTKtPokbP",
+    originalFileName:
+      "dNcOlktKIsrIyVGFerEzboZDItgvGHJPdRgSIdNTizSXTTXsMBzcGqDhueRoMeMUYDeRrpepTKtPokbP",
     name: "snakke med",
     duration: 3.432,
     size: 27693,
@@ -164,7 +173,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "J4EfWCzM46dKHkM0DGZe",
-    originalFileName: "DXsLmsVgsafqQMhpcJGCQttGQIvNaOYVdMtYHizkVOfGUklzGviVSluZLOqRJQkmPfYdVHEtGLOrVoDa",
+    originalFileName:
+      "DXsLmsVgsafqQMhpcJGCQttGQIvNaOYVdMtYHizkVOfGUklzGviVSluZLOqRJQkmPfYdVHEtGLOrVoDa",
     name: "Hel på deg. Dette er en ny lydfile",
     duration: 12.826122,
     size: 205470,
@@ -173,7 +183,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "Kb5xgkhuB1lizF3YmJfl",
-    originalFileName: "KXefHVbqSUsKuFsmzgPmPqQkogidTTVVgNAluVhRgtTbKOTlPmTVqVjdDllviaqNPsPPDcsDiNIcRfCg",
+    originalFileName:
+      "KXefHVbqSUsKuFsmzgPmPqQkogidTTVVgNAluVhRgtTbKOTlPmTVqVjdDllviaqNPsPPDcsDiNIcRfCg",
     name: "David sin lysfil",
     duration: 12.826122,
     size: 205470,
@@ -182,7 +193,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "Q2ijBNAtntvYhPPp0WHC",
-    originalFileName: "GDkitrJpigGpXQpXtFssXjfhylIAGgplgJAOLsiOIPPsBgYbThMqMfyBEcevCNteHCoZYQvMiaDjehqp",
+    originalFileName:
+      "GDkitrJpigGpXQpXtFssXjfhylIAGgplgJAOLsiOIPPsBgYbThMqMfyBEcevCNteHCoZYQvMiaDjehqp",
     name: "glede andre",
     duration: 2.688,
     size: 21741,
@@ -191,7 +203,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "QQxsBi3Xb3LwESWT8JWU",
-    originalFileName: "CUlMCHauKFdACtUrmPeeNypGySHclQhOlNxfRaaKDfmFAeELMjovvkkSLHsnJEUOaOgEDtHhPDxHIBME",
+    originalFileName:
+      "CUlMCHauKFdACtUrmPeeNypGySHclQhOlNxfRaaKDfmFAeELMjovvkkSLHsnJEUOaOgEDtHhPDxHIBME",
     name: "ASdaSDASD",
     duration: 12.826122,
     size: 205470,
@@ -200,7 +213,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "QdR8LQV3d4875cU9tTbv",
-    originalFileName: "czCTTQbdExQkRFdQtoVDfRVOCjdUzbJOLAxpVJbGcdgczXVlHMtGnckGDrhDlCMqIeZOVJbscRBEeIJq",
+    originalFileName:
+      "czCTTQbdExQkRFdQtoVDfRVOCjdUzbJOLAxpVJbGcdgczXVlHMtGnckGDrhDlCMqIeZOVJbscRBEeIJq",
     name: "øver for å bli bedre",
     duration: 2.592,
     size: 20973,
@@ -209,7 +223,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "Zq45MDcHTeasdYc4EniO",
-    originalFileName: "cAXVFgbMGaYzFdjUxnoOlCCUviZXevDfuSLrVYdkTGDCRtfYiClHEFIEgpcorIJlrYpMCmqLbhjcYRUy",
+    originalFileName:
+      "cAXVFgbMGaYzFdjUxnoOlCCUviZXevDfuSLrVYdkTGDCRtfYiClHEFIEgpcorIJlrYpMCmqLbhjcYRUy",
     name: "asdasdfasdf",
     duration: 12.826122,
     size: 205470,
@@ -218,7 +233,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "eJcQ8VsCoiU8Etq9DnJ4",
-    originalFileName: "TsjiNrqCHTHoHafKTtySjhAFVpEYfYqzqKIXzdSAllmIZkXvLLaaUjhOhKiaUNdOjskPDikNAgzcCBiS",
+    originalFileName:
+      "TsjiNrqCHTHoHafKTtySjhAFVpEYfYqzqKIXzdSAllmIZkXvLLaaUjhOhKiaUNdOjskPDikNAgzcCBiS",
     name: "jkhgjgh",
     duration: 12.826122,
     size: 205470,
@@ -227,7 +243,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "lLoZedecHmDLM4i6jqIW",
-    originalFileName: "iiymgneiKOfNrONKzDalFDQjrdVUDfCECTgeLTFILTGAyeZPJAmZsGZoNYNFGJzQiUqaVJgumuQMlIBm",
+    originalFileName:
+      "iiymgneiKOfNrONKzDalFDQjrdVUDfCECTgeLTFILTGAyeZPJAmZsGZoNYNFGJzQiUqaVJgumuQMlIBm",
     name: "asldfajsldfja",
     duration: 12.826122,
     size: 205470,
@@ -236,7 +253,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "pLR8ezaEJzdQcbJX6Oso",
-    originalFileName: "SfFrBfyGunEivIUIMxyjXhGYqlUlEbvtfVqUIukqzuvryGxMBosCPEAYuzIGSXtKSTArrzjZaBUTjQCJ",
+    originalFileName:
+      "SfFrBfyGunEivIUIMxyjXhGYqlUlEbvtfVqUIukqzuvryGxMBosCPEAYuzIGSXtKSTArrzjZaBUTjQCJ",
     name: "se film",
     duration: 5.52,
     size: 44397,
@@ -245,7 +263,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "qEYp6oIlVHfH4cnJNMxU",
-    originalFileName: "yGNzzkdakENSkmTVLkKlxFgkGaCDNvVOAdFAtpsmMNyibIlUrrQESOJIcvKbgfxOXOeaTQnnCtHXRkRe",
+    originalFileName:
+      "yGNzzkdakENSkmTVLkKlxFgkGaCDNvVOAdFAtpsmMNyibIlUrrQESOJIcvKbgfxOXOeaTQnnCtHXRkRe",
     name: "End",
     duration: 3.672,
     size: 29613,
@@ -254,7 +273,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "qZXbiKemy4WtbNWFgRgb",
-    originalFileName: "ZijdadfmDqvaTLQcqkPJBHBdpDuIHlDBLuHssCyHCkEAhaEYuGrNBEIrAtOYlSnLincmLCHYbabxUjQM",
+    originalFileName:
+      "ZijdadfmDqvaTLQcqkPJBHBdpDuIHlDBLuHssCyHCkEAhaEYuGrNBEIrAtOYlSnLincmLCHYbabxUjQM",
     name: "ASASDASD",
     duration: 12.826122,
     size: 205470,
@@ -263,7 +283,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "qy0s4gHKBp8sEbQdDniS",
-    originalFileName: "hhKFDGjnszTYEvERLPAZrHBISFvAYAvOqemrloVZexgOJFNqGKeIGpTGiJitxRohnzHXOIvvHTrFohzQ",
+    originalFileName:
+      "hhKFDGjnszTYEvERLPAZrHBISFvAYAvOqemrloVZexgOJFNqGKeIGpTGiJitxRohnzHXOIvvHTrFohzQ",
     name: "takk",
     duration: 3.672,
     size: 29613,
@@ -272,7 +293,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "sOxsH61myMOSQ0sYM3Ns",
-    originalFileName: "spzsHaneaybCJRcQjMQYFjDJgniUIasFcRZhhvNjYkTditberanHiyaoqnMcvLkbgByIsgGJzDbJlXqo",
+    originalFileName:
+      "spzsHaneaybCJRcQjMQYFjDJgniUIasFcRZhhvNjYkTditberanHiyaoqnMcvLkbgByIsgGJzDbJlXqo",
     name: "hjelp til å ikke gi opp",
     duration: 3.816,
     size: 30765,
@@ -281,7 +303,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "ssIDQqrkQnjlmiJcmMmg",
-    originalFileName: "gqZTMDMQpoASfkRKSZlRMlCSQynSNPErghMKNfPaHKaSfGTLmxhaKZHJYyMhpsSloaxaNeBtDHVolsAC",
+    originalFileName:
+      "gqZTMDMQpoASfkRKSZlRMlCSQynSNPErghMKNfPaHKaSfGTLmxhaKZHJYyMhpsSloaxaNeBtDHVolsAC",
     name: "kjekke ting",
     duration: 2.928,
     size: 23661,
@@ -290,7 +313,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "wlPMt6SjK75hVZKUQwt3",
-    originalFileName: "VkBkEMIDrxlviRzVMgksLZuDFJFJKAzGzxqtJjfnogdxFCDZfefxMfIrgMGZeRbhfSPYmgSHVXuLNrmr",
+    originalFileName:
+      "VkBkEMIDrxlviRzVMgksLZuDFJFJKAzGzxqtJjfnogdxFCDZfefxMfIrgMGZeRbhfSPYmgSHVXuLNrmr",
     name: "undersøkelse om mestring",
     duration: 12.168,
     size: 97581,
@@ -299,7 +323,8 @@ export const dummyAudioFiles = [
   },
   {
     id: "xXphpAFKhVP0XSVknFMC",
-    originalFileName: "qFfyHjhrIGyDnkaxUcshvZIoKZoHpVhHkQGhmdcpYsksDcxmKmkmKGqmPHnuTqKeFuiCuTmtjaFbNHrK",
+    originalFileName:
+      "qFfyHjhrIGyDnkaxUcshvZIoKZoHpVhHkQGhmdcpYsksDcxmKmkmKGqmPHnuTqKeFuiCuTmtjaFbNHrK",
     name: "mestring",
     duration: 2.928,
     size: 23661,

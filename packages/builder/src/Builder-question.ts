@@ -7,11 +7,7 @@ export type BuilderQuestionType =
   | "select-one"
   | "select-many"
   | "text"
-  | "color"
-  | "radio"
-  | "email"
   | "time"
-  | "checkbox"
   | "textarea"
   | "date"
   | "numeric-range"
@@ -60,7 +56,7 @@ export class BuilderQuestion extends BuilderObject<"builder-question", BuilderQu
   }
 
   addOption(label: string, value: number, atIndex = -1) {
-    const option = BuilderOption.create(value, label);
+    const option = BuilderOption.create(value, label, {});
     if (atIndex >= 0 && atIndex < this.options.length) {
       this.options.splice(atIndex, 0, option);
     } else {

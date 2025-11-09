@@ -51,8 +51,8 @@ export class SchemaEngine implements ISchemaEngine {
     this.scale = new ScaleService({
       baseHeight: schema.baseHeight,
       baseWidth: schema.baseWidth,
-      containerWidth: width,
-      containerHeight: height,
+      containerWidth: this.width,
+      containerHeight: this.height,
     });
     this.logger.info(this.TAG + "Scale: " + JSON.stringify(this.scale));
     this.player = new DPlayer(this.schema);
@@ -109,6 +109,11 @@ export class SchemaEngine implements ISchemaEngine {
     if (this.currentPage) {
       this.currentPage.destroy();
       this.uiLayer.innerHTML = "";
+    }
+
+    // console.log(nextPage);
+    if (nextPage && nextPage.videoPlayer && nextPage.videoPlayer.style) {
+      this.taskManager.setVideoStyles(nextPage.videoPlayer.style);
     }
 
     if (!nextPage) {

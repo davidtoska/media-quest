@@ -1,4 +1,10 @@
-import { BuilderPage, BuilderSchema, PagePrefix, PagePrefixValue } from "@media-quest/builder";
+import {
+  BuilderPage,
+  BuilderSchema,
+  PagePrefix,
+  PagePrefixValue,
+} from "../../../packages/builder/src/public-api";
+
 import { dummyAudioFiles, dummyImageFiles, dummyVideoFiles } from "../dummy-data/hardcoded-media";
 const audio = dummyAudioFiles[0];
 const video = dummyVideoFiles[1];
@@ -77,9 +83,11 @@ export const addQuestionPage109 = (
 ) => {
   const questionPage = schema.addPage("question");
   questionPage.mainText.text = question;
-  questionPage.defaultQuestion.addOption("Ja", 1);
-  questionPage.defaultQuestion.addOption("Nei", 0);
-  questionPage.defaultQuestion.addOption("Vet ikke", 9);
+  questionPage.defaultQuestion.addOption("aldri", 1);
+  questionPage.defaultQuestion.addOption("av og til", 0);
+  questionPage.defaultQuestion.addOption("somewhat å simwhat", 0);
+  const lastButton = questionPage.defaultQuestion.addOption("Vet ikke på to linjer", 9);
+  lastButton.cssOverride = {maxWidth: 40}
   const prefix = PagePrefix.fromStringOrThrow(pagePrefix);
   questionPage.prefix = prefix;
   if (options?.audio) {
@@ -87,6 +95,7 @@ export const addQuestionPage109 = (
     questionPage.mainText.autoplay = options.autoplayAudio;
     questionPage.mainText.autoplayDelay = options.audioDelay;
   }
+
   if (options?.video) {
     questionPage.mainMedia = {
       kind: "main-video",

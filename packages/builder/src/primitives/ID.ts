@@ -133,6 +133,3 @@ export const QuestionID = createTypedIdSingleton("QUESTION");
 
 export type SumScoreVariableID = ID<"SUM_SCORE_VARIABLE">;
 export const SumScoreVariableID = createTypedIdSingleton("SUM_SCORE_VARIABLE");
-
-export type SumScoreMemberShipID = ID<"SUM_SCORE_MEMBERSHIP">;
-export const SumScoreMemberShipID = createTypedIdSingleton("SUM_SCORE_MEMBERSHIP");

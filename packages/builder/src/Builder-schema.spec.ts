@@ -1,8 +1,8 @@
 import type { BuilderSchemaDto } from "./Builder-schema";
 import { BuilderSchema } from "./Builder-schema";
-import { BuilderPage } from "./Builder-page";
-import type { BuilderTagDto } from "./BuilderTag";
-import { BuilderTag } from "./BuilderTag";
+import { BuilderPage } from "./page/Builder-page";
+import type { BuilderTagDto } from "./tag/BuilderTag";
+import { BuilderTag } from "./tag/BuilderTag";
 import { PagePrefix } from "./primitives/page-prefix";
 import { SchemaPrefix } from "./primitives/schema-prefix";
 
@@ -28,13 +28,14 @@ const schemaDto1: BuilderSchemaDto = {
       name: "label for dummy sum-score",
       description: "testId",
       useAvg: false,
-      basedOn: [],
+      // basedOn: [],
     },
   ],
   pages: [
     {
       id: PageID.validateOrCreate("a".repeat(24)),
       _type: "info-page",
+      includedInSumScores: [],
       prefix: PagePrefix.fromStringOrThrow("p1"),
       mainText: {
         text: "hello from test",
@@ -77,14 +78,14 @@ const schemaDto1: BuilderSchemaDto = {
         // { tag: 'can_read', description: 'The patient can read' },
         // { tag: 'is grown up', description: 'Is grownUp.' }
       ],
-      questions: [],
       autoplaySequence: [],
     },
     {
       id: PageID.dummy.b,
-      _type: "multi-select",
+      _type: "question",
       prefix: PagePrefix.fromStringOrThrow("page2-prefix"),
       tags: [tag3.tag],
+      includedInSumScores: [],
       mainText: {
         text: "hello from test",
         autoplay: false,
@@ -103,31 +104,6 @@ const schemaDto1: BuilderSchemaDto = {
         text: "q1",
         options: [],
       },
-      questions: [
-        {
-          id: QuestionID.create(),
-          prefix: "one-prefix",
-          _type: "select-one",
-          text: "q1-text",
-          options: [
-            {
-              id: "opt-nei" as OptionID,
-              value: 0,
-              label: "Nei",
-            },
-            {
-              id: "opt-ja" as OptionID,
-              value: 1,
-              label: "Ja",
-            },
-            {
-              id: "opt-vet-ikke" as OptionID,
-              value: 9,
-              label: "Vet ikke",
-            },
-          ],
-        },
-      ],
       autoplaySequence: [],
     },
   ],
@@ -206,30 +182,29 @@ describe("Builder schema", () => {
   });
 
   test("Can add page at concrete index", () => {
-    const p1 = s1.addPage("form");
-    expect(p1.pageType).toBe("form");
-    const p2 = s1.addPage("multi-select", 0);
-    expect(p2.pageType).toBe("multi-select");
-    const pages = s1.pages;
-    expect(pages[0].id).toBe(p2.id);
-    s1.addPage("form");
-    s1.addPage("form");
-    const last = s1.addPage("form");
+    const p1 = s1.addPage("question");
+    expect(p1.pageType).toBe("question");
+    const p2 = s1.addPage("info-page", 0);
+    expect(p2.pageType).toBe("info-page");
+    // const pages = s1.pages;
+    expect(s1.pages[0].id).toBe(p2.id);
+    s1.addPage("question");
+    s1.addPage("question");
+    const last = s1.addPage("question");
     expect(s1.pages[s1.pages.length - 1]).toBe(last);
     const p3 = s1.addPage("info-page", 4);
-    expect(pages[4].id).toBe(p3.id);
+    expect(s1.pages[4].id).toBe(p3.id);
   });
 
   test("Can move page up and down", () => {
-    const p1 = s1.addPage("form");
-    const p2 = s1.addPage("form");
-    const p3 = s1.addPage("form");
-    const p4 = s1.addPage("multi-select");
-    const last = s1.addPage("form");
-    const pages = s1.pages;
+    const p1 = s1.addPage("question");
+    const p2 = s1.addPage("question");
+    const p3 = s1.addPage("question");
+    const p4 = s1.addPage("info-page");
+    const last = s1.addPage("question");
     s1.movePage(p2, 0);
-    expect(pages[0]).toBe(p2);
-    expect(pages[1]).toBe(p1);
+    expect(s1.pages[0]).toBe(p2);
+    expect(s1.pages[1]).toBe(p1);
     expect(s1.movePage(p4, 4)).toBeTruthy();
     expect(s1.movePage(p4, 5)).toBeFalsy();
     expect(s1.movePage(p4, 10)).toBeFalsy();
@@ -238,11 +213,11 @@ describe("Builder schema", () => {
   });
 
   test("Can clone a page and insert at index", () => {
-    const p1 = s1.addPage("form");
-    const p2 = s1.addPage("form");
-    const p3 = s1.addPage("form");
+    const p1 = s1.addPage("question");
+    const p2 = s1.addPage("question");
+    const p3 = s1.addPage("question");
     const mainTextContent = "Hello from test";
-    const p4 = s1.addPage("multi-select");
+    const p4 = s1.addPage("info-page");
     p3.mainText.text = mainTextContent;
     const p1Clone = BuilderPage.fromJson(p1.clone());
     const beforeLen = s1.pages.length;
@@ -253,9 +228,9 @@ describe("Builder schema", () => {
   });
 
   test("Will not insert a page that is already in array.", () => {
-    const p1 = s1.addPage("form");
-    const p2 = s1.addPage("form");
-    const p3 = s1.addPage("form");
+    const p1 = s1.addPage("question");
+    const p2 = s1.addPage("question");
+    const p3 = s1.addPage("question");
     const beforeLen = s1.pages.length;
     const result = s1.insertPage(p1, 0);
     const pages = s1.pages;
@@ -318,38 +293,56 @@ describe("Builder schema", () => {
     });
   });
 
-  test("Can add sum-variables, but not twice", () => {
-    // p0.prefix = "info_page_prefix_";
+  test("Can add, update and delete sum-variable", () => {
+    const ssv = (name: string) =>
+      s1.sumScoreVariableCreate({ name, useAvg: true, description: "description for " + name });
+
+    const v1 = ssv("v1");
+    const v2 = ssv("v2");
+    const v3 = ssv("v3");
+    expect(s1.sumScoreVariables.length).toBe(3);
+    s1.sumScoreVariableUpdate(v1.id, { name: "updatedName" });
+    expect(s1.sumScoreVariables[0].name).toBe("updatedName");
+    const success = s1.sumScoreVariableDelete(v2.id);
+    expect(success).toBeTruthy();
+    expect(s1.sumScoreVariables.length).toBe(2);
+    const failure = s1.sumScoreVariableDelete(SumScoreVariableID.create());
+    expect(failure).toBeFalsy();
+    // s1.sumScoreVariableDelete(v2.id);
+  });
+
+  test("When a sum-score updates, then the pages update as well", () => {
     const p1 = s1.addPage("question");
-    const p2 = s1.addPage("question");
-    p1.prefix = PagePrefix.fromStringOrThrow("p1_prefix");
-    p2.prefix = PagePrefix.fromStringOrThrow("p2_prefix");
+    const v1 = s1.sumScoreVariableCreate({
+      name: "v1",
+      useAvg: true,
+      description: "description for v1",
+    });
+    expect(s1.sumScoreVariables.length).toBe(1);
+    expect(s1.pages.length).toBe(1);
+    const success = s1.sumScoreVariableAddToPage(v1, p1, 1);
+    expect(success).toBe(true);
+    expect(p1.includedInSumScores.length).toBe(1);
+    const updateSuccess = s1.sumScoreVariableUpdate(v1.id, {
+      name: "updated_name",
+      description: "updated_description",
+      useAvg: !v1.useAvg,
+    });
+    expect(updateSuccess).toBe(true);
+    expect(p1.includedInSumScores[0].name).toBe("updated_name");
+    expect(p1.includedInSumScores[0].description).toBe("updated_description");
+  });
 
-    const ss1: SumScoreVariableDto = {
-      id: SumScoreVariableID.dummy.a,
-      name: "ss1",
-      description: "",
-      useAvg: false,
-      basedOn: [],
-    };
-
-    s1.addSumScoreVariable(ss1);
-    s1.addSumScoreVariable(ss1);
-
-    // expect(s1.sumScoreVariables.length).toBe(1);
-
-    // TODO add TAGS!!
-    // expect(ruleInput.excludeByTagActions.length).toBe(0);
-    // expect(ruleInput.excludeByPageIdActions.length).toBe(3);
-    // const allPageIds = new Set(ruleInput.jumpToPageActions.map((a) => a.pageId));
-    // expect(allPageIds.has(p0.id)).toBe(true);
-    // expect(allPageIds.has(p1.id)).toBe(true);
-    // expect(allPageIds.has(p2.id)).toBe(true);
-    // ruleInput.questionVars.forEach((v) => {
-    //   expect(allPageIds.has(v.varId)).toBe(true);
-    // });
-    // ruleInput.jumpToPageActions.forEach((v) => {
-    //   expect(allPageIds.has(v.pageId)).toBe(true);
-    // });
+  test("When a sum-score is deleted, then pages will delete from included in sum-scores.", () => {
+    const p1 = s1.addPage("question");
+    const v1 = s1.sumScoreVariableCreate({
+      name: "v1",
+      useAvg: true,
+      description: "description for v1",
+    });
+    const success = s1.sumScoreVariableAddToPage(v1, p1, 1);
+    expect(success).toBe(true);
+    s1.sumScoreVariableDelete(v1.id);
+    expect(p1.includedInSumScores.length).toBe(0);
   });
 });

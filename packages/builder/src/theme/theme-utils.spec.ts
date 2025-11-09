@@ -1,7 +1,7 @@
 import { ThemeUtils } from "./theme-utils";
 import { DStyle } from "@media-quest/engine";
 
-describe("Theme1 works", () => {
+describe("Theme-utils works", () => {
   test("Can space evenly when all is even", () => {
     const btn1 = {};
     const els = ThemeUtils.spaceEvenlyX<{ style: Partial<DStyle> }>([

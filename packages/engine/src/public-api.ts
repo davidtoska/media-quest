@@ -11,13 +11,12 @@ export * from "./utils/DUtil";
 
 export * from "./events/mq-events";
 
-export * from "./page/page-component";
-
 // ELEMENTS
 export * from "./Delement/css";
 export * from "./Delement/DStyle";
 export * from "./Delement/DImg";
 export * from "./Delement/DText";
+export * from "./Delement/DButton";
 export * from "./Delement/Ddiv";
 export * from "./Delement/button-click-action";
 export * from "./Delement/DElement";

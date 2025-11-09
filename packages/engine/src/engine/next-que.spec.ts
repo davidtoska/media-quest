@@ -11,9 +11,9 @@ const createPage = (tags: string[]): PageDto => {
   const dto: PageDto = {
     id: DUtil.randomObjectId(),
     prefix: "prefix",
-    staticElements: [],
+    elements: [],
     background: "white",
-    components: [],
+    // components: [],
     initialTasks: [],
     tags,
   };

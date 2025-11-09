@@ -1,6 +1,5 @@
-import { PageID } from "@media-quest/engine";
-
 import { PagePrefixValue } from "../primitives/page-prefix";
+import { PageID } from "../primitives/ID";
 
 export interface ExcludeByPageAction {
   readonly kind: "exclude-by-pageId";

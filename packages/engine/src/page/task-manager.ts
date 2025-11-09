@@ -9,12 +9,13 @@ export class TaskManager {
   private readonly videoElement = document.createElement("video");
   private readonly audioElement = document.createElement("audio");
   private readonly showConsoleLogs = false;
-  private videoStyles: PStyle = {
-    h: 40,
-    w: 80,
-    y: 60,
-    x: 10,
+  private readonly defaultVideoStyles: PStyle = {
+    height: 50,
+    width: 100,
+    top: 0,
+    left: 0,
   };
+  private videoStyles: PStyle;
   private runningTask: { task: Task; startedAt: DTimestamp } | false = false;
   private taskList: Array<Task> = [];
   private delayRef: number | false = false;
@@ -45,10 +46,22 @@ export class TaskManager {
     const blockAudio = c && c.task.blockAudio;
     const blockVideo = c && c.task.blockVideo;
     const blockFormInput = c && c.task.blockFormInput;
+    const videoIsMuted = this.videoElement.muted;
+
+    const videoIsAtTheEnd = this.videoElement.ended;
+    let videoPlayState: TaskState["videoPlayState"] = videoIsMuted ? "paused-and-muted" : "paused";
+
+    if (videoIsPlaying) {
+      videoPlayState = videoIsMuted ? "playing-and-muted" : "playing";
+    }
+    if (videoIsAtTheEnd) {
+      videoPlayState = videoIsMuted ? "ended-and-muted" : "ended";
+    }
+
     return {
       audioIsPlaying,
+      videoPlayState,
       isGifMode,
-      videoIsPlaying,
       blockFormInput,
       blockResponseButton,
       blockAudio,
@@ -64,6 +77,7 @@ export class TaskManager {
     this.hideVideo();
     this.mediaLayer.appendChild(this.videoElement);
     this.mediaLayer.appendChild(this.audioElement);
+    this.videoStyles = this.defaultVideoStyles;
     DStyle.normalize(this.videoElement);
     DStyle.applyStyles(this.videoElement, this.videoStyles, this.scale.scale);
 
@@ -80,6 +94,7 @@ export class TaskManager {
         onError("Error playing video: " + this.videoElement.src);
       }
     };
+
     this.audioElement.onended = () => {
       const next = this.getNextTask();
       if (next) {
@@ -168,7 +183,7 @@ export class TaskManager {
   }
 
   setVideoStyles(styles: PStyle) {
-    this.videoStyles = styles;
+    this.videoStyles = { ...styles };
     DStyle.applyStyles(this.videoElement, this.videoStyles, this.scale.scale);
   }
 
@@ -232,9 +247,17 @@ export class TaskManager {
   }
 
   private getNextTask(): Task | false {
-    console.log("Getting next task.");
+    // console.log("Getting next task.");
     // console.log(this.taskList);
     const first = this.taskList.shift();
     return first ?? false;
+  }
+
+  muteVideo() {
+    this.videoElement.muted = true;
+  }
+
+  unMuteVideo() {
+    this.videoElement.muted = false;
   }
 }

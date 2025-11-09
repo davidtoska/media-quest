@@ -1,8 +1,7 @@
-import { DStyle } from "@media-quest/engine";
-import { DElementDto } from "@media-quest/engine";
+import { DElementDto, DStyle } from "@media-quest/engine";
 
-export namespace ThemeUtils {
-  export const spaceEvenlyX = <T extends Pick<DElementDto, "style">>(
+export const ThemeUtils = {
+  spaceEvenlyX: <T extends Pick<DElementDto, "style">>(
     items: ReadonlyArray<T>,
     options: { startAt: number; endAt: number; defaultItemWidth: number } = {
       startAt: 0,
@@ -38,20 +37,20 @@ export namespace ThemeUtils {
     });
 
     return items;
-  };
+  },
 
-  export const centerY = (): Pick<DStyle, "y" | "transform"> => ({
+  centerY: (): Pick<DStyle, "y" | "transform"> => ({
     y: 50,
     transform: "translate(0%, 50%)",
-  });
-  export const centerX = (): Pick<DStyle, "x" | "transform"> => ({
+  }),
+  centerX: (): Pick<DStyle, "x" | "transform"> => ({
     x: 50,
     transform: "translate(-50%, 0%)",
-  });
+  }),
 
-  export const centerXY = (): Pick<DStyle, "x" | "y" | "transform"> => ({
+  centerXY: (): Pick<DStyle, "x" | "y" | "transform"> => ({
     x: 50,
     y: 50,
     transform: "translate(-50%, 50%)",
-  });
-}
+  }),
+};

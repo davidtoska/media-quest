@@ -9,7 +9,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "rootDir": "./src",
-    "composite": true,
+    "stripInternal": true,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true,
     "outDir": "./dist"
   },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

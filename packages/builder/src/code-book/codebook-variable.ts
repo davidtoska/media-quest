@@ -1,4 +1,5 @@
 import { PageID } from "../primitives/ID";
+import { SumScoreVariableDto } from "../sum-score/sum-score-variable";
 
 /**
  * Interface representing a code book question sum-score.
@@ -12,12 +13,9 @@ export interface CodeBookQuestionVariable {
   readonly pageId: PageID;
   readonly pagePrefix: string;
   readonly modulePrefix: string;
-  /**
-   * Show the position of the question on page (a, b, c, d, ...)
-   */
-  readonly questionPrefix: string;
   readonly pagePosition: number;
   readonly options: ReadonlyArray<{ label: string; value: number }>;
+  readonly includedInSumScores: ReadonlyArray<SumScoreVariableDto>;
 }
 
 export interface CodebookPredefinedVariable {

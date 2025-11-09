@@ -1,6 +1,7 @@
 import { DElement, DElementBaseDto } from "./DElement";
 import { ScaleService } from "../engine/scale";
 import { DTimestamp } from "../common/DTimestamp";
+import { ButtonClickAction } from "./button-click-action";
 
 export interface DImgDto extends DElementBaseDto {
   readonly _tag: "img";
@@ -14,6 +15,14 @@ export class DImg extends DElement<HTMLImageElement> {
   readonly TAG: string;
   readonly TIMING_TAG: string;
   private readonly loadStart: DTimestamp;
+  registerClickHandler(clickHandler: (action: ButtonClickAction) => void): void {
+    this.el.onclick = () => {
+      const action = this.dto.onClick;
+      if (action) {
+        clickHandler(action);
+      }
+    };
+  }
 
   constructor(
     protected readonly dto: DImgDto,
