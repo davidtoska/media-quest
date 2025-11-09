@@ -10,7 +10,7 @@ const dev = async () => {
   console.log(BUILDER_DIR, ENGINE_DIR);
   const exampleAppEntry = path.join(EXAMPLE_DIR, "src", "dev-app.ts");
 
-  shell.cd(BUILDER_DIR).exec("npm run build", { silent: true, async: false });
+  shell.cd(ENGINE_DIR).exec("npm run build", { silent: true, async: false });
   shell.cd(BUILDER_DIR).exec("npm run build", { silent: true, async: false });
 
   const context = await esbuild.context({
@@ -20,7 +20,7 @@ const dev = async () => {
     target: "chrome58",
     sourcemap: true,
     minify: false,
-    outdir: OUT_DIR,
+    outdir: OUT_DIR
   });
 
   await context.watch();
