@@ -1,7 +1,6 @@
-import { DStyle } from "@media-quest/engine";
+import { PStyle } from "@media-quest/engine";
 import type { CssTheme } from "./css-theme";
 
-type PStyle = Partial<DStyle>;
 export interface IDefaultTheme {
   name: string;
   schemaBackgroundColor: string;

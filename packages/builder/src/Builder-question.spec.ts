@@ -21,6 +21,7 @@ const question2: BuilderQuestionDto = {
       id: "q3-opt1" as OptionID,
       value: 0,
       label: "Nei",
+      cssOverride: {maxWidth: 100}
     },
     {
       id: "q3-opt2" as OptionID,

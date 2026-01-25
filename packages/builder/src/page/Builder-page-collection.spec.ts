@@ -44,6 +44,7 @@ const pages: BuilderPageDto[] = [
       id: OptionID.create(),
       label: "Neste",
       value: -1,
+      cssOverride: {}
     },
     defaultQuestion: {
       id: QuestionID.create(),
@@ -55,16 +56,19 @@ const pages: BuilderPageDto[] = [
           id: "opt-nei" as OptionID,
           value: 0,
           label: "Nei",
+          cssOverride: {}
         },
         {
           id: "opt-ja" as OptionID,
           value: 1,
           label: "Ja",
+          cssOverride: {}
         },
         {
           id: "opt-vet-ikke" as OptionID,
           value: 9,
           label: "Vet ikke",
+          cssOverride: {}
         },
       ],
     },
@@ -92,6 +96,7 @@ const pages: BuilderPageDto[] = [
       id: "next-button-id-page2" as OptionID,
       label: "Neste",
       value: -1,
+      cssOverride: {}
     },
     defaultQuestion: {
       id: QuestionID.validateOrCreate("default-question-id"),

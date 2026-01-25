@@ -167,6 +167,7 @@ export class Page {
       el.appendYourself(parent);
     });
 
+
     // this.components.forEach((comp) => {
     //   comp.appendToParent(parent);
     // });
@@ -186,5 +187,11 @@ export class Page {
     this.elements.forEach((element) => {
       element.updateState(diff);
     });
+  }
+
+  getComputedStyles() {
+    return  this.elements.map(e => {
+      return e.getComputedStyle();
+    })
   }
 }

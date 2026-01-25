@@ -65,9 +65,6 @@ export namespace DUtil {
       return false;
     }
 
-    if (obj === null) {
-      return false;
-    }
     return true;
   };
 
@@ -113,4 +110,6 @@ export namespace DUtil {
       return Math.min(value, lowerLimit);
     };
   };
+
+
 }

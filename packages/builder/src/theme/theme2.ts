@@ -4,6 +4,10 @@ import { CssTheme } from "./css-theme";
 import { PStyle } from "@media-quest/engine";
 import { THEME_2_ICONS } from "./icons";
 
+const deepClone = <T>(obj: T): T => {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 const translate = (pos: { x?: number; y?: number }) => {
   const x = pos.x || 0;
   const y = pos.y || 0;
@@ -85,21 +89,26 @@ const BUTTON_BAR_WIDTH = Q_AREA_WIDTH - 2 * W_M3;
 const MAIN_TEXT_WIDE = Q_AREA_WIDTH - 2 * W_M3;
 const MAIN_TEXT_NARROW = MAIN_TEXT_WIDE - AUDIO_ICON_WIDTH - W_M3;
 
-const btnTextBase: PStyle = {
-  fontSize: { _unit: "px", value: 25 },
-  bottom: VIDEO_CONTROLS_BOTTOM + 1.2,
-  zIndex: LAYER_5,
-  width: VIDEO_CONTROLS_WIDTH / 2,
-  textAlign: "center",
-  visibility: "hidden",
-  margin: { _unit: "px", value: 0 },
-  // backgroundColor: Colors.yellow,
-};
+// const btnTextBase: PStyle = {
 
-const muteUnmuteText: PStyle = { ...btnTextBase, right: VIDEO_CONTROLS_RIGHT };
-const playPauseText: PStyle = { ...btnTextBase, left: VIDEO_CONTROLS_LEFT };
+  // backgroundColor: Colors.yellow,
+// };
+
+const btnTextBaseObj = (): PStyle => {
+  return {
+    fontSize: { _unit: "px", value: 25 },
+    bottom: VIDEO_CONTROLS_BOTTOM + 1.2,
+    zIndex: LAYER_5,
+    width: VIDEO_CONTROLS_WIDTH / 2,
+    textAlign: "center",
+    visibility: "hidden",
+    margin: { _unit: "px", value: 0 },
+  }
+}
+const muteUnmuteText: PStyle = { ...btnTextBaseObj(), right: VIDEO_CONTROLS_RIGHT };
+const playPauseText: PStyle = { ...btnTextBaseObj(), left: VIDEO_CONTROLS_LEFT };
 const replayText: PStyle = {
-  ...btnTextBase,
+  ...btnTextBaseObj(),
   width: VIDEO_CONTROLS_WIDTH,
   left: VIDEO_CONTROLS_LEFT,
   // backgroundColor: Colors.yellow,
@@ -156,8 +165,9 @@ const responseButtonBaseCss = (): CssTheme => ({
     fontSize: { _unit: "px", value: 28 },
     lineHeight: 1.1,
 
-    // TODO Denne angir knappens max-bredde. Default bør være 25.
-    maxWidth: 25,
+    // TODO Skal knappene vokse, med mindre det settes en maksbredde?
+    // maxWidth: 25,
+    // maxWidth: { _unit: "percent", value: 10 },
     minWidth: 12,
     // width: 20,
     // flex: "0 0 auto",
@@ -171,11 +181,11 @@ const responseButtonBaseCss = (): CssTheme => ({
     position: "relative",
     display: "block",
     cursor: "pointer",
-    // maxWidth: { _unit: "percent", value: 10 },
   },
   cssDisabled: { opacity: 0.3, cursor: "not-allowed" },
   cssEnabled: { opacity: 1, cursor: "pointer" },
 });
+
 export const primaryButton = (overridesCss: PStyle): BuilderOptionTheme => {
   const base = responseButtonBaseCss();
   const optionTheme: BuilderOptionTheme = {
@@ -183,8 +193,8 @@ export const primaryButton = (overridesCss: PStyle): BuilderOptionTheme => {
     normal: {
       btn: {
         css: {
-          ...base.css,
-          ...overridesCss,
+          ...deepClone(base.css),
+          ...deepClone(overridesCss),
           backgroundColor: Colors.primary,
           borderColor: Colors.primary,
           textColor: Colors.white,
@@ -200,8 +210,8 @@ export const primaryButton = (overridesCss: PStyle): BuilderOptionTheme => {
     dontKnow: {
       btn: {
         css: {
-          ...base.css,
-          ...overridesCss,
+          ...deepClone(base.css),
+          ...deepClone(overridesCss),
           backgroundColor: Colors.secondary,
           borderColor: Colors.secondary,
           textColor: Colors.primary,
@@ -375,14 +385,15 @@ export const Theme2: IDefaultTheme = {
         bottom: Q_AREA_BOTTOM + H_M3,
         left: Q_AREA_LEFT + W_M3,
         // backgroundColor: "green",
-        gap: { _unit: "px", value: 40 },
+        gap: { _unit: "px", value: 32 },
         alignItems: "stretch",
       },
       whenSingle: { justifyContent: "center" },
       whenMany: { justifyContent: "flex-start" },
     },
 
-    nextButtonTheme: primaryButton({}),
-    responseButtons: primaryButton({}),
+    nextButtonTheme: primaryButton({fontSize: { _unit: "px", value: 28 }, maxWidth: {_unit: "percent", value: 25}}),
+    responseButtons: primaryButton({fontSize: { _unit: "px", value: 28 }, maxWidth: {_unit: "percent", value: 25 }}),
   },
 };
+console.log(Theme2);

@@ -6,7 +6,20 @@ export namespace DCss {
     readonly value: number;
   }
 
+
   export type LengthString = `${number}px` | `${number}%`;
+  export const isPx = (unit?: LengthUnit | false | undefined | null): unit is Px => {
+    if(typeof unit === "number") return false;
+    if(!unit) return false;
+    return (unit._unit === "px");
+  }
+  export const isPercent = (unit?: LengthUnit | false | undefined | null): unit is Percent => {
+    if(typeof unit === "number") return false;
+    if(!unit) return false;
+    return (unit._unit === "percent");
+  }
+
+
   export interface Percent {
     readonly _unit: "percent";
     readonly value: number;
@@ -24,6 +37,7 @@ export namespace DCss {
       typeof unit === "number" ? { _unit: "percent", value: unit } : unit;
     return _toString(_mapped, scale);
   };
+
   const _toString = (unit: Readonly<Percent | Px>, scale: number): LengthString => {
     const clampedScale = Math.max(scale, 0.03);
     if (unit._unit === "px") {

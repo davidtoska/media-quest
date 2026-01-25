@@ -56,8 +56,7 @@ export class BuilderOption extends BuilderObject<"builder-question-option", Buil
   }
 
   public static fromJson(dto: BuilderOptionDto) {
-    const instance = new BuilderOption(dto);
-    return instance;
+    return new BuilderOption(dto);
   }
 
   toJson(): BuilderOptionDto {

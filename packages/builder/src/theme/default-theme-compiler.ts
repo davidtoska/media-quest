@@ -11,7 +11,7 @@ import {
   DDivDto,
   DelayTask,
   DElementDto,
-  DImgDto,
+  DImgDto, DStyle,
   DTextDto,
   PageDto,
   PlayAudioTask,
@@ -633,20 +633,25 @@ export class DefaultThemeCompiler implements ThemeCompiler<IDefaultTheme> {
           }
         : { kind: "next-page" };
 
-    let btnStyles =
+    const _btnStyles =
       value === 9 ? t.buttonBar.responseButtons.dontKnow : t.buttonBar.responseButtons.normal;
+    let css: PStyle = DStyle.clone(_btnStyles.btn.css)
+    const cssEnabled = DStyle.clone(_btnStyles.btn.cssEnabled)
+
     if (t.buttonBar.vibrateMs) {
-      onclickAction.vibrateMs = t.buttonBar.vibrateMs;
+      // TODO DO NOT WORK.
+      // onclickAction.vibrateMs = t.buttonBar.vibrateMs;
     }
 
     if(cssOverride) {
-      btnStyles.btn.css = {...btnStyles.btn.css, ...cssOverride}
+      console.log(cssOverride);
+      css = {...css, ...cssOverride}
     }
 
     const btn: DButtonDto = {
       _tag: "button",
       innerText: label,
-      style: { ...btnStyles.btn.css, ...btnStyles.btn.cssEnabled },
+      style: { ...css, ...cssEnabled },
       onClick: onclickAction,
     };
 
