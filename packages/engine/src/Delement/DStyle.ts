@@ -93,6 +93,7 @@ export interface DStyle {
 export namespace DStyle {
   // import isNumber = DUtil.isNumber;
   import isLengthUnit = DCss.isLengthUnit;
+  // export const isP
   export const normalize = <T extends HTMLElement>(el: T): T => {
     const s = el.style;
     s.position = "absolute";
@@ -110,6 +111,7 @@ export namespace DStyle {
     s.flex = "none";
 
     s.boxShadow = "";
+    s.fontFamily = "'Inter', sans-serif"
     s.fontSize = "12px";
     s.lineHeight = "1";
     s.textAlign = "center";
@@ -370,6 +372,10 @@ export namespace DStyle {
     }
     return el;
   };
+
+  export const clone = <T extends PStyle>(style: T): T => {
+    return JSON.parse(JSON.stringify(style));
+  }
 
   // const propNames = new Set(...ElementKeyNames);
   // export const validKey = (keyName: string) => propNames.has(keyName);

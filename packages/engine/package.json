@@ -1,6 +1,6 @@
 {
   "name": "@media-quest/engine",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "Rendering engine for media-quest schemas.",
   "main": "dist/public-api.js",
   "types": "dist/public-api.d.ts",

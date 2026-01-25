@@ -42,8 +42,7 @@ export class BuilderQuestion extends BuilderObject<"builder-question", BuilderQu
   };
 
   public static fromJson(dto: BuilderQuestionDto): BuilderQuestion {
-    const question = new BuilderQuestion(dto);
-    return question;
+    return new BuilderQuestion(dto);
   }
 
   private constructor(dto: BuilderQuestionDto) {

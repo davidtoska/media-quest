@@ -152,4 +152,8 @@ export class SchemaEngine implements ISchemaEngine {
   setLogger(logger: EngineLogger) {
     this.logger = logger;
   }
+
+  getComputedStylesOfCurrentPage() {
+    return this.currentPage ? this.currentPage.getComputedStyles(): false;
+  }
 }

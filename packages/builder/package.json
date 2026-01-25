@@ -1,6 +1,6 @@
 {
   "name": "@media-quest/builder",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "Builder library for Media-quest schemas",
   "main": "dist/public-api.js",
   "types": "dist/public-api.d.js",

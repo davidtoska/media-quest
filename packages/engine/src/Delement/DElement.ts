@@ -180,6 +180,14 @@ export abstract class DElement<T extends HTMLElement> {
   // this.el.style.boxSizing = "border-box";
   // }
 
+  getComputedStyle() {
+    const el = this.el;
+    const isConnected = this.el.isConnected;
+
+    return window.getComputedStyle(this.el);
+
+  }
+
   abstract registerClickHandler(clickHandler: (action: ButtonClickAction) => void): void;
 
   protected updateStyles(style: Partial<DStyle>) {

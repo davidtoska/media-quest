@@ -27,6 +27,25 @@ const initialSchema: IExampleSchema = autoplayWorks;
 new EventSource("/esbuild").addEventListener("change", () => location.reload());
 const engineRoot = document.createElement("div");
 const nameElement = document.createElement("h1");
+const addExternalCssButton = document.createElement("button");
+addExternalCssButton.innerText = "External Css";
+
+const addStaticCss = (url: string) => {
+  console.log("ADDING CSS: " + url);
+  const link = document.createElement('link');
+
+  // Set the necessary attributes for a stylesheet
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = url;
+  link.crossOrigin = 'anonymous';
+
+  // Append the <link> element to the <head> section of the document
+  document.head.appendChild(link);
+}
+addExternalCssButton.onclick = () => {
+  addStaticCss("https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css")
+}
 nameElement.innerText = initialSchema.menuLabel;
 // nameElement.style.backgroundColor = "red";
 nameElement.style.textAlign = "center";
@@ -80,3 +99,6 @@ const menu = createMenu([
 document.body.prepend(menu);
 menu.after(engineRoot);
 menu.after(nameElement);
+menu.after(addExternalCssButton)
+
+

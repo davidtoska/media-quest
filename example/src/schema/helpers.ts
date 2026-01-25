@@ -83,11 +83,12 @@ export const addQuestionPage109 = (
 ) => {
   const questionPage = schema.addPage("question");
   questionPage.mainText.text = question;
-  questionPage.defaultQuestion.addOption("aldri", 1);
+  const yesButton = questionPage.defaultQuestion.addOption("Jaasdfsdfasasdfasdf", 1);
+  yesButton.cssOverride = {fontSize: {_unit: "px", value: 15}, maxWidth: {_unit: "percent", value: 20}};
   questionPage.defaultQuestion.addOption("av og til", 0);
   questionPage.defaultQuestion.addOption("somewhat å simwhat", 0);
   const lastButton = questionPage.defaultQuestion.addOption("Vet ikke på to linjer", 9);
-  lastButton.cssOverride = {maxWidth: 40}
+  lastButton.cssOverride = {maxWidth: 18, fontSize: {_unit: "px", value: 12}}
   const prefix = PagePrefix.fromStringOrThrow(pagePrefix);
   questionPage.prefix = prefix;
   if (options?.audio) {
