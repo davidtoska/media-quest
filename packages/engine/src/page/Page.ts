@@ -115,11 +115,6 @@ export class Page {
       descriptions: ButtonClickAction.describe(a),
     });
     this.eventLog.push(event);
-    navigator.vibrate(200);
-    const { vibrateMs } = a;
-    if (vibrateMs) {
-      navigator.vibrate(vibrateMs);
-    }
 
     switch (a.kind) {
       case "next-page":
